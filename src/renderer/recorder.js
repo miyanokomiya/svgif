@@ -2,7 +2,7 @@ import Vue from 'vue'
 import axios from 'axios'
 
 import Recorder from './Recorder.vue'
-import store from './store'
+import store from '../main/store'
 import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
 
