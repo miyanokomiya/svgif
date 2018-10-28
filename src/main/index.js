@@ -14,12 +14,11 @@ if (process.env.NODE_ENV !== 'development') {
 }
 
 let mainWindow
-const winURL =
-  process.env.NODE_ENV === 'development'
-    ? `http://localhost:9080`
-    : `file://${__dirname}/index.html`
-
-function createWindow() {
+function createMainWindow() {
+  const winURL =
+    process.env.NODE_ENV === 'development'
+      ? `http://localhost:9080/index.html`
+      : `file://${__dirname}/index.html`
   /**
    * Initial window options
    */
@@ -34,6 +33,33 @@ function createWindow() {
   mainWindow.on('closed', () => {
     mainWindow = null
   })
+}
+
+let recorderWindow
+function createRecorderWindow() {
+  const winURL =
+    process.env.NODE_ENV === 'development'
+      ? `http://localhost:9080/recorder.html`
+      : `file://${__dirname}/recorder.html`
+  /**
+   * Initial window options
+   */
+  recorderWindow = new BrowserWindow({
+    height: 563,
+    useContentSize: true,
+    width: 1000
+  })
+
+  recorderWindow.loadURL(winURL)
+
+  recorderWindow.on('closed', () => {
+    recorderWindow = null
+  })
+}
+
+function createWindow() {
+  createMainWindow()
+  createRecorderWindow()
 }
 
 app.on('ready', createWindow)

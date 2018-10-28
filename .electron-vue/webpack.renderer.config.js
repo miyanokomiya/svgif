@@ -24,7 +24,8 @@ let whiteListedModules = ['vue']
 let rendererConfig = {
   devtool: '#cheap-module-eval-source-map',
   entry: {
-    renderer: path.join(__dirname, '../src/renderer/main.js')
+    renderer: path.join(__dirname, '../src/renderer/main.js'),
+    recorder: path.join(__dirname, '../src/renderer/recorder.js')
   },
   externals: [
     ...Object.keys(dependencies || {}).filter(d => !whiteListedModules.includes(d))
@@ -125,6 +126,20 @@ let rendererConfig = {
     new HtmlWebpackPlugin({
       filename: 'index.html',
       template: path.resolve(__dirname, '../src/index.ejs'),
+      chunks: ['renderer'],
+      minify: {
+        collapseWhitespace: true,
+        removeAttributeQuotes: true,
+        removeComments: true
+      },
+      nodeModules: process.env.NODE_ENV !== 'production'
+        ? path.resolve(__dirname, '../node_modules')
+        : false
+    }),
+    new HtmlWebpackPlugin({
+      filename: 'recorder.html',
+      template: path.resolve(__dirname, '../src/recorder.ejs'),
+      chunks: ['recorder'],
       minify: {
         collapseWhitespace: true,
         removeAttributeQuotes: true,
