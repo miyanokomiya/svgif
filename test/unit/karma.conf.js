@@ -11,6 +11,7 @@ const projectRoot = path.resolve(__dirname, '../../src/renderer')
 process.env.BABEL_ENV = 'test'
 
 let webpackConfig = merge(baseConfig, {
+  mode: 'development',
   devtool: '#inline-source-map',
   plugins: [
     new webpack.DefinePlugin({
@@ -43,8 +44,8 @@ module.exports = config => {
     },
     customLaunchers: {
       'visibleElectron': {
-        base: 'Electron',
-        flags: ['--show']
+        base: 'Electron'
+        // flags: ['--show']
       }
     },
     frameworks: ['mocha', 'chai'],
@@ -53,7 +54,7 @@ module.exports = config => {
       './index.js': ['webpack', 'sourcemap']
     },
     reporters: ['spec', 'coverage'],
-    singleRun: true,
+    singleRun: false,
     webpack: webpackConfig,
     webpackMiddleware: {
       noInfo: true

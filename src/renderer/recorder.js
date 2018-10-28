@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import axios from 'axios'
 
-import Recorder from './Recorder.vue'
+import RecorderApp from './RecorderApp'
 import store from '../main/store'
 import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
@@ -14,7 +14,7 @@ Vue.use(ElementUI)
 
 /* eslint-disable no-new */
 new Vue({
-  components: { Recorder },
+  components: { RecorderApp },
   store,
-  template: '<Recorder/>'
+  template: '<RecorderApp/>'
 }).$mount('#recorder')

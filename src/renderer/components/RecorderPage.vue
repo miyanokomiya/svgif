@@ -16,7 +16,7 @@
 <script>
 import electron from 'electron'
 import { mapActions } from 'vuex'
-import { types as clipTypes } from '@main/store/modules/Clips'
+import { types as clipTypes } from '@main/store/modules/clips'
 import { screenshot } from '@/commons/utils/screenCapture'
 
 const VORDER_SIZE = 6

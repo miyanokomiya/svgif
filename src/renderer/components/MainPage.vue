@@ -32,7 +32,7 @@
 
 <script>
 import { mapActions, mapGetters } from 'vuex'
-import { types as clipTypes } from '@main/store/modules/Clips'
+import { types as clipTypes } from '@main/store/modules/clips'
 import ThumbnailList from '@/components/organisms/ThumbnailList'
 import ClipCanvas from '@/components/organisms/ClipCanvas'
 
