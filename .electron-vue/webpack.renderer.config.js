@@ -24,7 +24,7 @@ let whiteListedModules = ['vue']
 let rendererConfig = {
   devtool: '#cheap-module-eval-source-map',
   entry: {
-    renderer: path.join(__dirname, '../src/renderer/main.js'),
+    main: path.join(__dirname, '../src/renderer/main.js'),
     recorder: path.join(__dirname, '../src/renderer/recorder.js')
   },
   externals: [
@@ -124,9 +124,9 @@ let rendererConfig = {
     new VueLoaderPlugin(),
     new MiniCssExtractPlugin({filename: 'styles.css'}),
     new HtmlWebpackPlugin({
-      filename: 'index.html',
-      template: path.resolve(__dirname, '../src/index.ejs'),
-      chunks: ['renderer'],
+      filename: 'main.html',
+      template: path.resolve(__dirname, '../src/main.ejs'),
+      chunks: ['main'],
       minify: {
         collapseWhitespace: true,
         removeAttributeQuotes: true,
