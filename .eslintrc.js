@@ -28,8 +28,7 @@ module.exports = {
       'error',
       {
         'singleQuote': true,
-        'semi': false,
-        'space-before-function-paren': 0,
+        'semi': false
       }
     ],
     'yoda': 0,
