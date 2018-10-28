@@ -28,7 +28,7 @@
 
 <script>
 import { mapActions, mapGetters } from 'vuex'
-import { types as clipTypes } from '@/store/modules/Clips'
+import { types as clipTypes } from '@main/store/modules/Clips'
 import { screenshot } from '@/commons/utils/screenCapture'
 import thumbnailList from '@/components/organisms/thumbnailList'
 const electron = require('electron')
@@ -37,8 +37,7 @@ export default {
   components: {
     thumbnailList
   },
-  data: () => ({
-  }),
+  data: () => ({}),
   computed: {
     ...mapGetters({
       CLIP_LIST: clipTypes.g.CLIP_LIST
@@ -49,7 +48,7 @@ export default {
       _createClip: clipTypes.a.CREATE_CLIP,
       _deleteClip: clipTypes.a.DELETE_CLIP
     }),
-    addImage ({ index }) {
+    addImage({ index }) {
       const workArea = electronScreen.getPrimaryDisplay().workArea
       const range = {
         x: window.screenX + workArea.x,
@@ -69,7 +68,7 @@ export default {
 
 <style lang="scss" scoped>
 .el-header {
-  background-color: #B3C0D1;
+  background-color: #b3c0d1;
   color: #333;
   line-height: 60px;
 }
@@ -78,4 +77,3 @@ export default {
   color: #333;
 }
 </style>
-

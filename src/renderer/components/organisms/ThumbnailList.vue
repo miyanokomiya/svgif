@@ -30,7 +30,7 @@ export default {
     }
   },
   methods: {
-    addImage ({ index }) {
+    addImage({ index }) {
       this.$emit('addImage', { index })
     }
   }
@@ -47,4 +47,3 @@ export default {
   }
 }
 </style>
-
