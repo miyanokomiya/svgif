@@ -1,12 +1,16 @@
 <template>
-  <div id="app">
-    eeeeeeeeeee
+  <div id="recorder">
+    <RecorderPage />
   </div>
 </template>
 
 <script>
+import RecorderPage from '@/components/RecorderPage'
 export default {
-  name: 'svgif'
+  name: 'Recorder',
+  components: {
+    RecorderPage
+  }
 }
 </script>
 

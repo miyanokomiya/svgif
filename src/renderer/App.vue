@@ -6,7 +6,7 @@
 
 <script>
 export default {
-  name: 'svgif'
+  name: 'App'
 }
 </script>
 

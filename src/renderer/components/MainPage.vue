@@ -13,27 +13,26 @@
     </el-header>
     
     <el-container>
-      <el-aside width="200px" style="background-color: rgb(238, 241, 246)">
+      <el-aside width="200px">
+        <el-button type="danger" size="mini" icon="el-icon-delete" @click="deleteAllClip">Delete All</el-button>
         <ThumbnailList
+          class="thumbnail-list"
           :clipList="CLIP_LIST"
-          :selectedId="selectedId"
-          @addImage="addImage"
-          @removeImage="removeImage"
-          @selectImage="selectImage"
+          :selectedId="SELECTED_CLIP ? SELECTED_CLIP.id : undefined"
+          @removeClip="removeClip"
+          @selectClip="selectClip"
         />
       </el-aside>
       <el-main>
-        <ClipCanvas :clip="selectedClip" />
+        <ClipCanvas :clip="SELECTED_CLIP" />
       </el-main>
     </el-container>
   </el-container>
 </template>
 
 <script>
-import electron from 'electron'
 import { mapActions, mapGetters } from 'vuex'
 import { types as clipTypes } from '@main/store/modules/Clips'
-import { screenshot } from '@/commons/utils/screenCapture'
 import ThumbnailList from '@/components/organisms/ThumbnailList'
 import ClipCanvas from '@/components/organisms/ClipCanvas'
 
@@ -42,46 +41,26 @@ export default {
     ThumbnailList,
     ClipCanvas
   },
-  data: () => ({
-    selectedId: -1
-  }),
   computed: {
     ...mapGetters({
-      CLIP_LIST: clipTypes.g.CLIP_LIST
-    }),
-    selectedClip() {
-      return this.CLIP_LIST.find(c => c.id === this.selectedId)
-    }
-  },
-  watch: {
-    CLIP_LIST() {
-      if (!this.selectedClip) this.selectedId = -1
-    }
+      CLIP_LIST: clipTypes.g.CLIP_LIST,
+      SELECTED_CLIP: clipTypes.g.SELECTED_CLIP
+    })
   },
   methods: {
     ...mapActions({
-      _createClip: clipTypes.a.CREATE_CLIP,
-      _deleteClip: clipTypes.a.DELETE_CLIP
+      _deleteClip: clipTypes.a.DELETE_CLIP,
+      _deleteAllClip: clipTypes.a.DELETE_ALL_CLIP,
+      _selectClip: clipTypes.a.SELECT_CLIP
     }),
-    addImage({ index }) {
-      const workArea = electron.screen.getPrimaryDisplay().workArea
-      const range = {
-        x: window.screenX + workArea.x,
-        y: window.screenY + workArea.y - 1,
-        width: window.innerWidth,
-        height: window.innerHeight
-      }
-      screenshot({ range })
-        .then(({ base64 }) => {
-          this._createClip({ clip: { base64 }, index })
-        })
-        .catch(e => console.log(e))
-    },
-    removeImage(id) {
+    removeClip(id) {
       this._deleteClip(id)
     },
-    selectImage(id) {
-      this.selectedId = id
+    deleteAllClip() {
+      this._deleteAllClip()
+    },
+    selectClip(id) {
+      this._selectClip(id)
     }
   }
 }
@@ -98,6 +77,12 @@ export default {
 }
 
 .el-aside {
+  background-color: rgb(238, 241, 246);
   color: #333;
+  text-align: center;
+  padding: 0.4rem 0;
+  .thumbnail-list {
+    margin: 0.4rem 0;
+  }
 }
 </style>

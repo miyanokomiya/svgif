@@ -32,6 +32,7 @@ function createMainWindow() {
 
   mainWindow.on('closed', () => {
     mainWindow = null
+    recorderWindow.close()
   })
 }
 
@@ -47,13 +48,17 @@ function createRecorderWindow() {
   recorderWindow = new BrowserWindow({
     height: 563,
     useContentSize: true,
-    width: 1000
+    width: 1000,
+    transparent: true
+    // alwaysOnTop: true // クリック透過できないので最前面調整は邪魔そう
   })
 
+  // recorderWindow.setIgnoreMouseEvents(true) // 全部透過されてしまう
   recorderWindow.loadURL(winURL)
 
   recorderWindow.on('closed', () => {
     recorderWindow = null
+    mainWindow.close()
   })
 }
 
@@ -65,9 +70,7 @@ function createWindow() {
 app.on('ready', createWindow)
 
 app.on('window-all-closed', () => {
-  if (process.platform !== 'darwin') {
-    app.quit()
-  }
+  app.quit()
 })
 
 app.on('activate', () => {
