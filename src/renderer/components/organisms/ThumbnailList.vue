@@ -15,7 +15,18 @@
         >
           <div class="header">
             <span class="index">{{i + 1}}</span>
+            <el-input
+              class="delay-input"
+              size="mini"
+              placeholder="Delay"
+              type="number"
+              :value="clip.delay"
+              @input="val => updateDelay({ id: clip.id, delay: val })"
+            >
+            </el-input>
+            <span class="delay-input-unit">ms</span>
             <el-button
+              class="delete-button"
               type="danger" size="mini" round
               icon="el-icon-delete"
               @click="removeClip(clip.id)"
@@ -64,6 +75,17 @@ export default {
     },
     swapClipOrder({ moved: { newIndex, oldIndex } }) {
       this.$emit('swapClipOrder', { to: newIndex, from: oldIndex })
+    },
+    updateDelay({ id, delay }) {
+      const num = parseInt(delay)
+      if (isNaN(num) || num < 10 || 10000 < num) {
+        this.$notify.error({
+          title: 'Error',
+          message: 'Delay time must be 10 to 10000.'
+        })
+      } else {
+        this.$emit('updateDelay', { id, delay: num })
+      }
     }
   }
 }
@@ -89,12 +111,24 @@ export default {
       display: flex;
       align-items: center;
       .index {
-        margin-right: auto;
         text-align: center;
         background-color: #fff;
         border: 0.1rem solid #000;
         border-radius: 50%;
         padding: 0 0.7rem;
+      }
+      .delay-input {
+        width: 7rem;
+        margin: 0 0.6rem;
+        text-align: right;
+        /deep/ .el-input__inner {
+          padding: 0 0.4rem;
+          text-align: right;
+        }
+      }
+      // .delay-input-unit {}
+      .delete-button {
+        margin-left: auto;
       }
     }
     .thumbnail {

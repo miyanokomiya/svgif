@@ -134,4 +134,14 @@ describe('store/modules/clips/mutations', () => {
       })
     })
   })
+  describe('UPDATE_DELAY', () => {
+    it('対象idを持つclipの delay が変更されること', () => {
+      const state = {
+        clipList: [{ id: 1, delay: 0 }, { id: 2, delay: 0 }]
+      }
+      clips.mutations[types.m.UPDATE_DELAY](state, { id: 2, delay: 1 })
+      expect(state.clipList[0].delay).to.equal(0)
+      expect(state.clipList[1].delay).to.equal(1)
+    })
+  })
 })

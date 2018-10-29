@@ -4,14 +4,16 @@ export const types = {
     REMOVE_CLIP: 'REMOVE_CLIP',
     REMOVE_ALL_CLIP: 'REMOVE_ALL_CLIP',
     SELECT_CLIP: 'SELECT_CLIP',
-    SWAP_CLIP_ORDER: 'SWAP_CLIP_ORDER'
+    SWAP_CLIP_ORDER: 'SWAP_CLIP_ORDER',
+    UPDATE_DELAY: 'UPDATE_DELAY'
   },
   a: {
     CREATE_CLIP: 'CREATE_CLIP',
     DELETE_CLIP: 'DELETE_CLIP',
     DELETE_ALL_CLIP: 'DELETE_ALL_CLIP',
     SELECT_CLIP: 'SELECT_CLIP',
-    SWAP_CLIP_ORDER: 'SWAP_CLIP_ORDER'
+    SWAP_CLIP_ORDER: 'SWAP_CLIP_ORDER',
+    UPDATE_DELAY: 'UPDATE_DELAY'
   },
   g: {
     CLIP_LIST: 'CLIP_LIST',
@@ -57,6 +59,11 @@ const mutations = {
     const clip = state.clipList[from]
     state.clipList.splice(from, 1)
     state.clipList.splice(to, 0, clip)
+  },
+  [types.m.UPDATE_DELAY](state, { id, delay }) {
+    const clip = state.clipList.find(c => c.id === id)
+    if (!clip) return
+    clip.delay = delay
   }
 }
 
@@ -66,6 +73,7 @@ const actions = {
       clip: {
         id: createId(),
         createdAt: createDate(new Date()),
+        delay: 300,
         ...clip
       },
       index
@@ -86,6 +94,10 @@ const actions = {
   },
   [types.a.SWAP_CLIP_ORDER]({ commit }, { from, to }) {
     commit(types.m.SWAP_CLIP_ORDER, { from, to })
+    return Promise.resolve()
+  },
+  [types.a.UPDATE_DELAY]({ commit }, { id, delay }) {
+    commit(types.m.UPDATE_DELAY, { id, delay })
     return Promise.resolve()
   }
 }
