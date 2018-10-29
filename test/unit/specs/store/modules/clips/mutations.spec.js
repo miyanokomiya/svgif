@@ -106,14 +106,14 @@ describe('store/modules/clips/mutations', () => {
       expect(state.selectedId).to.equal(2)
     })
   })
-  describe('SWAP_ORDER', () => {
+  describe('SWAP_CLIP_ORDER', () => {
     context('from < to のとき', () => {
       it('from の要素がと to の位置に変更されること', () => {
         const state = {
           clipList: [{ id: 1 }, { id: 2 }, { id: 3 }, { id: 4 }],
           selectedId: 2
         }
-        clips.mutations[types.m.SWAP_ORDER](state, { from: 0, to: 2 })
+        clips.mutations[types.m.SWAP_CLIP_ORDER](state, { from: 0, to: 2 })
         expect(state.clipList[0].id).to.equal(2)
         expect(state.clipList[1].id).to.equal(3)
         expect(state.clipList[2].id).to.equal(1)
@@ -126,7 +126,7 @@ describe('store/modules/clips/mutations', () => {
           clipList: [{ id: 1 }, { id: 2 }, { id: 3 }, { id: 4 }],
           selectedId: 2
         }
-        clips.mutations[types.m.SWAP_ORDER](state, { from: 2, to: 0 })
+        clips.mutations[types.m.SWAP_CLIP_ORDER](state, { from: 2, to: 0 })
         expect(state.clipList[0].id).to.equal(3)
         expect(state.clipList[1].id).to.equal(1)
         expect(state.clipList[2].id).to.equal(2)

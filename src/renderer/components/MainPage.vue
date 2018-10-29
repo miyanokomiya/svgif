@@ -21,6 +21,7 @@
           :selectedId="SELECTED_CLIP ? SELECTED_CLIP.id : undefined"
           @removeClip="removeClip"
           @selectClip="selectClip"
+          @swapClipOrder="swapClipOrder"
         />
       </el-aside>
       <el-main>
@@ -51,7 +52,8 @@ export default {
     ...mapActions({
       _deleteClip: clipTypes.a.DELETE_CLIP,
       _deleteAllClip: clipTypes.a.DELETE_ALL_CLIP,
-      _selectClip: clipTypes.a.SELECT_CLIP
+      _selectClip: clipTypes.a.SELECT_CLIP,
+      _swapClipOrder: clipTypes.a.SWAP_CLIP_ORDER
     }),
     removeClip(id) {
       this._deleteClip(id)
@@ -61,6 +63,9 @@ export default {
     },
     selectClip(id) {
       this._selectClip(id)
+    },
+    swapClipOrder({ from, to }) {
+      this._swapClipOrder({ from, to })
     }
   }
 }

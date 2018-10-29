@@ -4,14 +4,14 @@ export const types = {
     REMOVE_CLIP: 'REMOVE_CLIP',
     REMOVE_ALL_CLIP: 'REMOVE_ALL_CLIP',
     SELECT_CLIP: 'SELECT_CLIP',
-    SWAP_ORDER: 'SWAP_ORDER'
+    SWAP_CLIP_ORDER: 'SWAP_CLIP_ORDER'
   },
   a: {
     CREATE_CLIP: 'CREATE_CLIP',
     DELETE_CLIP: 'DELETE_CLIP',
     DELETE_ALL_CLIP: 'DELETE_ALL_CLIP',
     SELECT_CLIP: 'SELECT_CLIP',
-    SWAP_ORDER: 'SWAP_ORDER'
+    SWAP_CLIP_ORDER: 'SWAP_CLIP_ORDER'
   },
   g: {
     CLIP_LIST: 'CLIP_LIST',
@@ -53,7 +53,7 @@ const mutations = {
     if (!state.clipList.find(c => c.id === id)) return
     state.selectedId = id
   },
-  [types.m.SWAP_ORDER](state, { from, to }) {
+  [types.m.SWAP_CLIP_ORDER](state, { from, to }) {
     const clip = state.clipList[from]
     state.clipList.splice(from, 1)
     state.clipList.splice(to, 0, clip)
@@ -84,8 +84,8 @@ const actions = {
     commit(types.m.SELECT_CLIP, id)
     return Promise.resolve()
   },
-  [types.a.SWAP_ORDER]({ commit }, { from, to }) {
-    commit(types.m.SWAP_ORDER, { from, to })
+  [types.a.SWAP_CLIP_ORDER]({ commit }, { from, to }) {
+    commit(types.m.SWAP_CLIP_ORDER, { from, to })
     return Promise.resolve()
   }
 }

@@ -1,10 +1,17 @@
 <template>
   <div>
-    <ul class="thumbnail-list">
-      <li v-for="(clip, i) in clipList" :key="clip.id" @click="selectClip(clip.id)">
+    <draggable
+      class="thumbnail-list"
+      :value="clipList"
+      @change="swapClipOrder"
+    >
+      <transition-group type="transition" name="flip-list">
         <div
+          v-for="(clip, i) in clipList"
+          :key="clip.id"
           class="thumbnail-item"
           :class="{selected: isSelected(clip)}"
+          @click="selectClip(clip.id)"
         >
           <div class="header">
             <span class="index">{{i + 1}}</span>
@@ -23,13 +30,18 @@
             <span class="date">{{clip.createdAt}}</span>
           </div>
         </div>
-      </li>
-    </ul>
+      </transition-group>
+    </draggable>
   </div>
 </template>
 
 <script>
+import draggable from 'vuedraggable'
+
 export default {
+  components: {
+    draggable
+  },
   props: {
     clipList: {
       type: Array,
@@ -49,6 +61,9 @@ export default {
     },
     selectClip(id) {
       this.$emit('selectClip', id)
+    },
+    swapClipOrder({ moved: { newIndex, oldIndex } }) {
+      this.$emit('swapClipOrder', { to: newIndex, from: oldIndex })
     }
   }
 }
@@ -56,7 +71,9 @@ export default {
 
 <style lang="scss" scoped>
 .thumbnail-list {
-  list-style: none;
+  .flip-list-move {
+    transition: transform 0.5s;
+  }
   .thumbnail-item {
     text-align: left;
     border: 0.1rem solid gray;
