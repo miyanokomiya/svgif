@@ -15,6 +15,7 @@
     <el-container>
       <el-aside width="200px">
         <el-button type="danger" size="mini" icon="el-icon-delete" @click="deleteAllClip">Delete All</el-button>
+        <el-button type="danger" size="mini" icon="el-icon-delete" @click="createGif">Create Gif</el-button>
         <ThumbnailList
           class="thumbnail-list"
           :clipList="CLIP_LIST"
@@ -22,10 +23,12 @@
           @removeClip="removeClip"
           @selectClip="selectClip"
           @swapClipOrder="swapClipOrder"
+          @updateDelay="updateDelay"
         />
       </el-aside>
       <el-main>
-        <ClipCanvas :clip="SELECTED_CLIP" />
+        <!-- <ClipCanvas :clip="SELECTED_CLIP" /> -->
+        <img ref="image" />
       </el-main>
     </el-container>
   </el-container>
@@ -36,6 +39,7 @@ import { mapActions, mapGetters } from 'vuex'
 import { types as clipTypes } from '@main/store/modules/clips'
 import ThumbnailList from '@/components/organisms/ThumbnailList'
 import ClipCanvas from '@/components/organisms/ClipCanvas'
+import { createGif } from '@/commons/utils/gif'
 
 export default {
   components: {
@@ -53,7 +57,8 @@ export default {
       _deleteClip: clipTypes.a.DELETE_CLIP,
       _deleteAllClip: clipTypes.a.DELETE_ALL_CLIP,
       _selectClip: clipTypes.a.SELECT_CLIP,
-      _swapClipOrder: clipTypes.a.SWAP_CLIP_ORDER
+      _swapClipOrder: clipTypes.a.SWAP_CLIP_ORDER,
+      _updateDelay: clipTypes.a.UPDATE_DELAY
     }),
     removeClip(id) {
       this._deleteClip(id)
@@ -66,6 +71,19 @@ export default {
     },
     swapClipOrder({ from, to }) {
       this._swapClipOrder({ from, to })
+    },
+    createGif() {
+      createGif({ clipList: this.CLIP_LIST }).then(blob => {
+        console.log(blob)
+        const fileReader = new FileReader()
+        fileReader.onload = () => {
+          this.$refs.image.src = fileReader.result
+        }
+        fileReader.readAsDataURL(blob)
+      })
+    },
+    updateDelay({ id, delay }) {
+      this._updateDelay({ id, delay })
     }
   }
 }
