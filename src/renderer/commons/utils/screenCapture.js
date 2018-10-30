@@ -34,7 +34,11 @@ function convertStreamToBase64({ stream, range, imageFormat = 'image/jpeg' }) {
       } catch (e) {
         reject(e)
       }
-      resolve({ base64: canvas.toDataURL(imageFormat) })
+      resolve({
+        base64: canvas.toDataURL(imageFormat),
+        width: canvas.width,
+        height: canvas.height
+      })
     }
     video.src = URL.createObjectURL(stream)
   })

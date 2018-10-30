@@ -45,13 +45,13 @@ export default {
       if (this.shooting) return
       this.shooting = true
       screenshot({ range: this.getScreenshotRange() })
-        .then(({ base64 }) => {
+        .then(({ base64, width, height }) => {
           this.shooting = false
           this.flash = true
           setTimeout(() => {
             this.flash = false
           }, 100)
-          this._createClip({ clip: { base64 } })
+          this._createClip({ clip: { base64, width, height } })
         })
         .catch(e => {
           this.shooting = false
