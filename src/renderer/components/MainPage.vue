@@ -1,34 +1,45 @@
 <template>
   <el-container class="main-page">
-    <el-header style="text-align: right; font-size: 12px">
-      <el-dropdown>
-        <i class="el-icon-setting" style="margin-right: 15px"></i>
-        <el-dropdown-menu slot="dropdown">
-          <el-dropdown-item>View</el-dropdown-item>
-          <el-dropdown-item>Add</el-dropdown-item>
-          <el-dropdown-item>Delete</el-dropdown-item>
-        </el-dropdown-menu>
-      </el-dropdown>
-      <span>Tom</span>
-    </el-header>
-    
+    <el-aside width="200px">
+      <ThumbnailList
+        class="side-menu"
+        :clipList="CLIP_LIST"
+        :selectedId="SELECTED_CLIP ? SELECTED_CLIP.id : undefined"
+        @removeClip="removeClip"
+        @selectClip="selectClip"
+        @swapClipOrder="swapClipOrder"
+        @updateDelay="updateDelay"
+        @deleteAllClip="deleteAllClip"
+      />
+    </el-aside>
     <el-container>
-      <el-aside width="200px">
-        <el-button type="danger" size="mini" icon="el-icon-delete" @click="deleteAllClip">Delete All</el-button>
-        <el-button type="danger" size="mini" icon="el-icon-delete" @click="createGif">Create Gif</el-button>
-        <ThumbnailList
-          class="thumbnail-list"
-          :clipList="CLIP_LIST"
-          :selectedId="SELECTED_CLIP ? SELECTED_CLIP.id : undefined"
-          @removeClip="removeClip"
-          @selectClip="selectClip"
-          @swapClipOrder="swapClipOrder"
-          @updateDelay="updateDelay"
-        />
-      </el-aside>
       <el-main>
-        <!-- <ClipCanvas :clip="SELECTED_CLIP" /> -->
-        <img ref="image" />
+        <el-tabs type="border-card">
+          <el-tab-pane label="Canvas">
+            <el-main>
+              <ClipCanvas :clip="SELECTED_CLIP" />
+            </el-main>
+            <el-footer>
+              <CanvasFooter
+                @createGif="createGif"
+              />
+            </el-footer>
+          </el-tab-pane>
+          <el-tab-pane label="Gif">
+            <el-main>
+              <GifCanvas
+                :gif="gif"
+                :clipList="CLIP_LIST"
+                @selectClip="selectClip"
+              />
+            </el-main>
+            <el-footer>
+              <GifFooter
+                @createGif="createGif"
+              />
+            </el-footer>
+          </el-tab-pane>
+        </el-tabs>
       </el-main>
     </el-container>
   </el-container>
@@ -39,13 +50,24 @@ import { mapActions, mapGetters } from 'vuex'
 import { types as clipTypes } from '@main/store/modules/clips'
 import ThumbnailList from '@/components/organisms/ThumbnailList'
 import ClipCanvas from '@/components/organisms/ClipCanvas'
+import GifCanvas from '@/components/organisms/GifCanvas'
+import CanvasFooter from '@/components/organisms/CanvasFooter'
+import GifFooter from '@/components/organisms/GifFooter'
+import ImagePanel from '@/components/atoms/ImagePanel'
 import { createGif } from '@/commons/utils/gif'
 
 export default {
   components: {
     ThumbnailList,
-    ClipCanvas
+    ClipCanvas,
+    GifCanvas,
+    CanvasFooter,
+    GifFooter,
+    ImagePanel
   },
+  data: () => ({
+    gif: ''
+  }),
   computed: {
     ...mapGetters({
       CLIP_LIST: clipTypes.g.CLIP_LIST,
@@ -74,10 +96,9 @@ export default {
     },
     createGif() {
       createGif({ clipList: this.CLIP_LIST }).then(blob => {
-        console.log(blob)
         const fileReader = new FileReader()
         fileReader.onload = () => {
-          this.$refs.image.src = fileReader.result
+          this.gif = fileReader.result
         }
         fileReader.readAsDataURL(blob)
       })
@@ -93,19 +114,41 @@ export default {
 .main-page {
   height: 100vh;
 }
-.el-header {
-  background-color: #b3c0d1;
-  color: #333;
-  line-height: 60px;
-}
-
 .el-aside {
   background-color: rgb(238, 241, 246);
   color: #333;
   text-align: center;
   padding: 0.4rem 0;
-  .thumbnail-list {
+  .side-menu {
     margin: 0.4rem 0;
   }
+}
+.el-main {
+  padding: 0;
+  .el-tabs {
+    height: 100%;
+    /deep/ .el-tabs__content {
+      height: calc(100% - 39px);
+      padding: 0;
+      .el-tab-pane {
+        height: 100%;
+        .el-main {
+          height: calc(100% - 60px);
+        }
+        .el-footer {
+          height: 60px;
+        }
+      }
+    }
+  }
+  .gif-image {
+    max-width: 100%;
+    max-height: 100%;
+    width: auto;
+    height: auto;
+  }
+}
+.el-footer {
+  padding: 0;
 }
 </style>

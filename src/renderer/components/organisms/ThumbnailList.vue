@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="thumbnail-list-wrapper" ref="wrapper">
     <draggable
       class="thumbnail-list"
       :value="clipList"
@@ -9,6 +9,7 @@
         <div
           v-for="(clip, i) in clipList"
           :key="clip.id"
+          :ref="`thumbnail-${clip.id}`"
           class="thumbnail-item"
           :class="{selected: isSelected(clip)}"
           @click="selectClip(clip.id)"
@@ -43,6 +44,14 @@
         </div>
       </transition-group>
     </draggable>
+    <el-button
+      type="danger"
+      size="mini"
+      icon="el-icon-delete"
+      @click="$emit('deleteAllClip')"
+    >
+      Delete All
+    </el-button>
   </div>
 </template>
 
@@ -61,6 +70,11 @@ export default {
     selectedId: {
       type: Number,
       default: -1
+    }
+  },
+  watch: {
+    selectedId() {
+      this.scrollToSelectedClip()
     }
   },
   methods: {
@@ -86,12 +100,23 @@ export default {
       } else {
         this.$emit('updateDelay', { id, delay: num })
       }
+    },
+    scrollToSelectedClip() {
+      if (this.selectedId === -1) return
+      const parentTop = this.$refs.wrapper.getBoundingClientRect().top
+      const child = this.$refs[`thumbnail-${this.selectedId}`][0]
+      const childTop = child.getBoundingClientRect().top
+      this.$refs.wrapper.scrollTop += childTop - parentTop - 30
     }
   }
 }
 </script>
 
 <style lang="scss" scoped>
+.thumbnail-list-wrapper {
+  height: 100%;
+  overflow: auto;
+}
 .thumbnail-list {
   .flip-list-move {
     transition: transform 0.5s;
