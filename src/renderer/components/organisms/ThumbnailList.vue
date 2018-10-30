@@ -103,6 +103,8 @@ export default {
     },
     scrollToSelectedClip() {
       if (this.selectedId === -1) return
+      if (!this.$refs.wrapper) return
+      if (!this.$refs[`thumbnail-${this.selectedId}`]) return
       const parentTop = this.$refs.wrapper.getBoundingClientRect().top
       const child = this.$refs[`thumbnail-${this.selectedId}`][0]
       const childTop = child.getBoundingClientRect().top
