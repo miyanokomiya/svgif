@@ -1,6 +1,6 @@
 <template>
   <div class="image-wrapper">
-    <img :src="src" />
+    <img :src="src" :style="style" />
   </div>
 </template>
 
@@ -10,6 +10,26 @@ export default {
     src: {
       type: String,
       default: ''
+    },
+    scale: {
+      type: Number,
+      default: 1
+    },
+    width: {
+      type: Number,
+      default: 1
+    },
+    height: {
+      type: Number,
+      default: 1
+    }
+  },
+  computed: {
+    style() {
+      return {
+        width: this.width ? `${this.width}px` : undefined,
+        height: this.height ? `${this.height}px` : undefined
+      }
     }
   }
 }

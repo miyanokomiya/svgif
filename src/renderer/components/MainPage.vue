@@ -17,7 +17,7 @@
         <el-tabs type="border-card">
           <el-tab-pane label="Canvas">
             <el-main>
-              <ClipCanvas :clip="SELECTED_CLIP" />
+              <ClipCanvas/>
             </el-main>
             <el-footer>
               <CanvasFooter
