@@ -1,4 +1,5 @@
-import clips, { types } from '@main/store/modules/clips'
+import types from '@main/store/modules/clips/types'
+import getters from '@main/store/modules/clips/getters'
 
 describe('store/modules/clips/getters', () => {
   describe('CLIP_LIST', () => {
@@ -6,7 +7,7 @@ describe('store/modules/clips/getters', () => {
       const state = {
         clipList: [1, 2]
       }
-      const clipList = clips.getters[types.g.CLIP_LIST](state)
+      const clipList = getters[types.g.CLIP_LIST](state)
       expect(clipList).to.have.lengthOf(2)
       expect(clipList[0]).to.equal(1)
       expect(clipList[1]).to.equal(2)
@@ -19,7 +20,7 @@ describe('store/modules/clips/getters', () => {
           clipList: [{ id: 1 }, { id: 2 }, { id: 3 }],
           selectedId: 2
         }
-        const clip = clips.getters[types.g.SELECTED_CLIP](state)
+        const clip = getters[types.g.SELECTED_CLIP](state)
         expect(clip.id).to.equal(2)
       })
     })
@@ -29,7 +30,7 @@ describe('store/modules/clips/getters', () => {
           clipList: [{ id: 1 }, { id: 2 }, { id: 3 }],
           selectedId: 4
         }
-        const clip = clips.getters[types.g.SELECTED_CLIP](state)
+        const clip = getters[types.g.SELECTED_CLIP](state)
         expect(clip).to.equal(null)
       })
     })
@@ -43,7 +44,7 @@ describe('store/modules/clips/getters', () => {
           { id: 3, width: 1, height: 5 }
         ]
       }
-      const size = clips.getters[types.g.WHOLE_SIZE](state)
+      const size = getters[types.g.WHOLE_SIZE](state)
       expect(size.width).to.equal(3)
       expect(size.height).to.equal(5)
     })

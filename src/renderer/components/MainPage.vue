@@ -47,7 +47,7 @@
 
 <script>
 import { mapActions, mapGetters } from 'vuex'
-import { types as clipTypes } from '@main/store/modules/clips'
+import clipTypes from '@main/store/modules/clips/types'
 import ThumbnailList from '@/components/organisms/ThumbnailList'
 import ClipCanvas from '@/components/organisms/ClipCanvas'
 import GifCanvas from '@/components/organisms/GifCanvas'

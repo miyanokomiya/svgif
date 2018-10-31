@@ -1,13 +1,14 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
-
 import { createPersistedState, createSharedMutations } from 'vuex-electron'
 
-import modules from './modules'
+import clips from './modules/clips'
 
 Vue.use(Vuex)
 export default new Vuex.Store({
-  modules,
+  modules: {
+    clips
+  },
   plugins: [createPersistedState(), createSharedMutations()],
   strict: process.env.NODE_ENV !== 'production'
 })

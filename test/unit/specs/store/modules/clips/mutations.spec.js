@@ -1,17 +1,18 @@
-import clips, { types } from '@main/store/modules/clips'
+import types from '@main/store/modules/clips/types'
+import mutations from '@main/store/modules/clips/mutations'
 
 describe('store/modules/clips/mutations', () => {
   describe('ADD_CLIP', () => {
     context('index省略の場合', () => {
       it('selectedId が -1 の場合、末尾に追加されること', () => {
         const state = { clipList: [{ id: 1 }, { id: 2 }], selectedId: -1 }
-        clips.mutations[types.m.ADD_CLIP](state, { clip: { id: 3 } })
+        mutations[types.m.ADD_CLIP](state, { clip: { id: 3 } })
         expect(state.clipList).to.have.lengthOf(3)
         expect(state.clipList[2].id).to.equal(3)
       })
       it('selectedId が -1 ではない場合、 selectedId の次に追加されること', () => {
         const state = { clipList: [{ id: 1 }, { id: 2 }], selectedId: 1 }
-        clips.mutations[types.m.ADD_CLIP](state, { clip: { id: 3 } })
+        mutations[types.m.ADD_CLIP](state, { clip: { id: 3 } })
         expect(state.clipList).to.have.lengthOf(3)
         expect(state.clipList[1].id).to.equal(3)
       })
@@ -19,7 +20,7 @@ describe('store/modules/clips/mutations', () => {
     context('index指定の場合', () => {
       it('index の位置に追加されること', () => {
         const state = { clipList: [{ id: 1 }, { id: 2 }], selectedId: -1 }
-        clips.mutations[types.m.ADD_CLIP](state, {
+        mutations[types.m.ADD_CLIP](state, {
           clip: { id: 3 },
           index: 1
         })
@@ -31,7 +32,7 @@ describe('store/modules/clips/mutations', () => {
   describe('REMOVE_CLIP', () => {
     context('selectedId が 削除対象ではないとき', () => {
       const state = { clipList: [{ id: 1 }, { id: 2 }], selectedId: 2 }
-      clips.mutations[types.m.REMOVE_CLIP](state, 1)
+      mutations[types.m.REMOVE_CLIP](state, 1)
       it('引数で指定した id の要素が削除されること', () => {
         expect(state.clipList).to.have.lengthOf(1)
         expect(state.clipList[0].id).to.equal(2)
@@ -46,7 +47,7 @@ describe('store/modules/clips/mutations', () => {
           clipList: [{ id: 1 }, { id: 2 }, { id: 3 }],
           selectedId: 2
         }
-        clips.mutations[types.m.REMOVE_CLIP](state, 2)
+        mutations[types.m.REMOVE_CLIP](state, 2)
         it('selectedId が 削除対象の前の要素の id になること', () => {
           expect(state.selectedId).to.equal(1)
         })
@@ -57,7 +58,7 @@ describe('store/modules/clips/mutations', () => {
             clipList: [{ id: 1 }, { id: 2 }, { id: 3 }],
             selectedId: 1
           }
-          clips.mutations[types.m.REMOVE_CLIP](state, 1)
+          mutations[types.m.REMOVE_CLIP](state, 1)
           it('selectedId が 先頭要素の id になること', () => {
             expect(state.selectedId).to.equal(2)
           })
@@ -67,7 +68,7 @@ describe('store/modules/clips/mutations', () => {
             clipList: [{ id: 1 }],
             selectedId: 1
           }
-          clips.mutations[types.m.REMOVE_CLIP](state, 1)
+          mutations[types.m.REMOVE_CLIP](state, 1)
           it('selectedId が -1 になること', () => {
             expect(state.selectedId).to.equal(-1)
           })
@@ -80,7 +81,7 @@ describe('store/modules/clips/mutations', () => {
       clipList: [{ id: 1 }, { id: 2 }, { id: 3 }],
       selectedId: 1
     }
-    clips.mutations[types.m.REMOVE_ALL_CLIP](state, 1)
+    mutations[types.m.REMOVE_ALL_CLIP](state, 1)
     it('clipList が 空になること', () => {
       expect(state.clipList).to.be.lengthOf(0)
     })
@@ -94,7 +95,7 @@ describe('store/modules/clips/mutations', () => {
         clipList: [{ id: 1 }, { id: 2 }, { id: 3 }],
         selectedId: 2
       }
-      clips.mutations[types.m.SELECT_CLIP](state, 1)
+      mutations[types.m.SELECT_CLIP](state, 1)
       expect(state.selectedId).to.equal(1)
     })
     it('選択対象が存在しない場合、 selectedId が変更されないこと', () => {
@@ -102,7 +103,7 @@ describe('store/modules/clips/mutations', () => {
         clipList: [{ id: 1 }, { id: 2 }, { id: 3 }],
         selectedId: 2
       }
-      clips.mutations[types.m.SELECT_CLIP](state, 4)
+      mutations[types.m.SELECT_CLIP](state, 4)
       expect(state.selectedId).to.equal(2)
     })
   })
@@ -113,7 +114,7 @@ describe('store/modules/clips/mutations', () => {
           clipList: [{ id: 1 }, { id: 2 }, { id: 3 }, { id: 4 }],
           selectedId: 2
         }
-        clips.mutations[types.m.SWAP_CLIP_ORDER](state, { from: 0, to: 2 })
+        mutations[types.m.SWAP_CLIP_ORDER](state, { from: 0, to: 2 })
         expect(state.clipList[0].id).to.equal(2)
         expect(state.clipList[1].id).to.equal(3)
         expect(state.clipList[2].id).to.equal(1)
@@ -126,7 +127,7 @@ describe('store/modules/clips/mutations', () => {
           clipList: [{ id: 1 }, { id: 2 }, { id: 3 }, { id: 4 }],
           selectedId: 2
         }
-        clips.mutations[types.m.SWAP_CLIP_ORDER](state, { from: 2, to: 0 })
+        mutations[types.m.SWAP_CLIP_ORDER](state, { from: 2, to: 0 })
         expect(state.clipList[0].id).to.equal(3)
         expect(state.clipList[1].id).to.equal(1)
         expect(state.clipList[2].id).to.equal(2)
@@ -139,7 +140,7 @@ describe('store/modules/clips/mutations', () => {
       const state = {
         clipList: [{ id: 1, delay: 0 }, { id: 2, delay: 0 }]
       }
-      clips.mutations[types.m.UPDATE_DELAY](state, { id: 2, delay: 1 })
+      mutations[types.m.UPDATE_DELAY](state, { id: 2, delay: 1 })
       expect(state.clipList[0].delay).to.equal(0)
       expect(state.clipList[1].delay).to.equal(1)
     })

@@ -21,7 +21,7 @@
 
 <script>
 import { mapGetters } from 'vuex'
-import { types as clipTypes } from '@main/store/modules/clips'
+import clipTypes from '@main/store/modules/clips/types'
 import ImagePanel from '@/components/atoms/ImagePanel'
 import SvgCanvas from '@/components/molecules/SvgCanvas'
 import SvgRectangle from '@/components/atoms/SvgRectangle'
