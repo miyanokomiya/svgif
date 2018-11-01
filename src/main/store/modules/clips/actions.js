@@ -3,12 +3,7 @@ import types from './types'
 const actions = {
   [types.a.CREATE_CLIP]({ commit }, { clip, index }) {
     commit(types.m.ADD_CLIP, {
-      clip: {
-        id: createId(),
-        createdAt: createDate(new Date()),
-        delay: 300,
-        ...clip
-      },
+      clip: createClip(clip),
       index
     })
     return Promise.resolve()
@@ -32,6 +27,30 @@ const actions = {
   [types.a.UPDATE_DELAY]({ commit }, { id, delay }) {
     commit(types.m.UPDATE_DELAY, { id, delay })
     return Promise.resolve()
+  },
+  [types.a.CLONE_CLIP]({ commit, state }, { id, index }) {
+    const original = state.clipList.find(c => c.id === id)
+    commit(types.m.ADD_CLIP, {
+      clip: createClip({
+        base64: original.base64,
+        width: original.width,
+        height: original.height
+      }),
+      index
+    })
+    return Promise.resolve()
+  }
+}
+
+function createClip(clip) {
+  return {
+    id: createId(),
+    createdAt: createDate(new Date()),
+    delay: 300,
+    base64: '',
+    width: 0,
+    height: 0,
+    ...clip
   }
 }
 
