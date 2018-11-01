@@ -71,7 +71,8 @@ export default {
   computed: {
     ...mapGetters({
       CLIP_LIST: clipTypes.g.CLIP_LIST,
-      SELECTED_CLIP: clipTypes.g.SELECTED_CLIP
+      SELECTED_CLIP: clipTypes.g.SELECTED_CLIP,
+      WHOLE_SIZE: clipTypes.g.WHOLE_SIZE
     })
   },
   methods: {
@@ -95,13 +96,15 @@ export default {
       this._swapClipOrder({ from, to })
     },
     createGif() {
-      createGif({ clipList: this.CLIP_LIST }).then(blob => {
-        const fileReader = new FileReader()
-        fileReader.onload = () => {
-          this.gif = fileReader.result
+      createGif({ clipList: this.CLIP_LIST, size: this.WHOLE_SIZE }).then(
+        blob => {
+          const fileReader = new FileReader()
+          fileReader.onload = () => {
+            this.gif = fileReader.result
+          }
+          fileReader.readAsDataURL(blob)
         }
-        fileReader.readAsDataURL(blob)
-      })
+      )
     },
     updateDelay({ id, delay }) {
       this._updateDelay({ id, delay })

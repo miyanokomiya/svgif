@@ -1,14 +1,27 @@
-export function createGif({ clipList }) {
+export function createGif({ clipList, size }) {
   return new Promise((resolve, reject) => {
     createImageList(clipList).then(imageList => {
       const gif = new window.GIF({
         workers: 2,
-        quality: 10
+        quality: 10,
+        width: size.width,
+        height: size.height
       })
+      const canvas = document.createElement('canvas')
+      canvas.width = size.width
+      canvas.height = size.height
+      const ctx = canvas.getContext('2d')
       clipList.forEach((clip, index) => {
-        gif.addFrame(imageList[index], { delay: clip.delay || 200 })
+        ctx.clearRect(0, 0, size.width, size.height)
+        const image = imageList[index]
+        ctx.drawImage(
+          imageList[index],
+          (size.width - image.width) / 2,
+          (size.height - image.height) / 2
+        )
+        gif.addFrame(ctx, { copy: true, delay: clip.delay || 200 })
       })
-      gif.on('finished', function(blob) {
+      gif.on('finished', blob => {
         resolve(blob)
       })
       gif.render()

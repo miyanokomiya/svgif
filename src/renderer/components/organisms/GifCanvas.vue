@@ -1,6 +1,10 @@
 <template>
   <div class="clip-canvas">
-    <ImagePanel :src="gif" />
+    <ImagePanel
+      :src="gif"
+      :width="WHOLE_SIZE.width"
+      :height="WHOLE_SIZE.height"
+    />
     <div class="clip-list">
       <div
         v-for="clip in clipList"
@@ -17,6 +21,8 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
+import clipTypes from '@main/store/modules/clips/types'
 import ImagePanel from '@/components/atoms/ImagePanel'
 
 export default {
@@ -34,6 +40,9 @@ export default {
     }
   },
   computed: {
+    ...mapGetters({
+      WHOLE_SIZE: clipTypes.g.WHOLE_SIZE
+    }),
     totalDelay() {
       return this.clipList.reduce((sum, clip) => {
         return sum + clip.delay
