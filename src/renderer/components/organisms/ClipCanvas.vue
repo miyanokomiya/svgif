@@ -43,7 +43,7 @@ export default {
     imageSize() {
       const wRate = this.WHOLE_SIZE.width / this.SELECTED_CLIP.width
       const hRate = this.WHOLE_SIZE.height / this.SELECTED_CLIP.height
-      const rate = Math.min(wRate, hRate)
+      const rate = Math.min(Math.min(wRate, hRate), 1)
       return {
         width: this.SELECTED_CLIP.width * this.scale * rate,
         height: this.SELECTED_CLIP.height * this.scale * rate
@@ -82,8 +82,6 @@ export default {
     bottom: 0;
     right: 0;
     margin: auto;
-    // height: 100%;
-    // width: 100%;
     border: 0.1rem solid black;
   }
 }
