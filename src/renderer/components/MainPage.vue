@@ -1,16 +1,7 @@
 <template>
   <el-container class="main-page">
     <el-aside width="200px">
-      <ThumbnailList
-        class="side-menu"
-        :clipList="CLIP_LIST"
-        :selectedId="SELECTED_CLIP ? SELECTED_CLIP.id : undefined"
-        @removeClip="removeClip"
-        @selectClip="selectClip"
-        @swapClipOrder="swapClipOrder"
-        @updateDelay="updateDelay"
-        @deleteAllClip="deleteAllClip"
-      />
+      <DrawTools/>
     </el-aside>
     <el-container>
       <el-main>
@@ -48,7 +39,7 @@
 <script>
 import { mapActions, mapGetters } from 'vuex'
 import clipTypes from '@main/store/modules/clips/types'
-import ThumbnailList from '@/components/organisms/ThumbnailList'
+import DrawTools from '@/components/organisms/sidebars/DrawTools'
 import ClipCanvas from '@/components/organisms/ClipCanvas'
 import GifCanvas from '@/components/organisms/GifCanvas'
 import CanvasFooter from '@/components/organisms/CanvasFooter'
@@ -58,7 +49,7 @@ import { createGif } from '@/commons/utils/gif'
 
 export default {
   components: {
-    ThumbnailList,
+    DrawTools,
     ClipCanvas,
     GifCanvas,
     CanvasFooter,
@@ -122,9 +113,6 @@ export default {
   color: #333;
   text-align: center;
   padding: 0.4rem 0;
-  .side-menu {
-    margin: 0.4rem 0;
-  }
 }
 .el-main {
   padding: 0;
