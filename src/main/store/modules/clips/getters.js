@@ -17,6 +17,11 @@ const getters = {
       },
       { width: 0, height: 0 }
     )
+  },
+  [types.g.WHOLE_DELAY](state) {
+    return state.clipList.reduce((sum, c) => {
+      return sum + c.delay
+    }, 0)
   }
 }
 

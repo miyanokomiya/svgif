@@ -19,6 +19,7 @@ export default {
   g: {
     CLIP_LIST: 'CLIP_LIST',
     SELECTED_CLIP: 'SELECTED_CLIP',
-    WHOLE_SIZE: 'WHOLE_SIZE'
+    WHOLE_SIZE: 'WHOLE_SIZE',
+    WHOLE_DELAY: 'WHOLE_DELAY'
   }
 }

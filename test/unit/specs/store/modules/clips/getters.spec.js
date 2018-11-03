@@ -49,4 +49,17 @@ describe('store/modules/clips/getters', () => {
       expect(size.height).to.equal(5)
     })
   })
+  describe('WHOLE_DELAY', () => {
+    it('delay の合計が取得されること', () => {
+      const state = {
+        clipList: [
+          { id: 1, delay: 1 },
+          { id: 2, delay: 20 },
+          { id: 3, delay: 30 }
+        ]
+      }
+      const val = getters[types.g.WHOLE_DELAY](state)
+      expect(val).to.equal(51)
+    })
+  })
 })

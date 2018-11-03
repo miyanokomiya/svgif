@@ -8,7 +8,7 @@
       <div
         v-for="clip in CLIP_LIST"
         :key="clip.id"
-        :style="{width: `${clip.delay / totalDelay * 100}%`}"
+        :style="{width: `${clip.delay / WHOLE_DELAY * 100}%`}"
         class="clip-item"
         :class="{ selected: isSelected(clip.id) }"
         @click="selectClip(clip.id)"
@@ -33,13 +33,9 @@ export default {
     ...mapGetters({
       CLIP_LIST: clipTypes.g.CLIP_LIST,
       SELECTED_CLIP: clipTypes.g.SELECTED_CLIP,
-      WHOLE_SIZE: clipTypes.g.WHOLE_SIZE
-    }),
-    totalDelay() {
-      return this.CLIP_LIST.reduce((sum, clip) => {
-        return sum + clip.delay
-      }, 0)
-    }
+      WHOLE_SIZE: clipTypes.g.WHOLE_SIZE,
+      WHOLE_DELAY: clipTypes.g.WHOLE_DELAY
+    })
   },
   methods: {
     ...mapActions({
