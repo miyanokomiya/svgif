@@ -2,24 +2,28 @@
   <div class="draw-tools">
     <el-button-group>
       <el-button
+        icon="el-icon-news"
+        :type="CANVAS_MODE === 'select' ? 'primary' : ''"
+        @click="setCanvasMode('select')"
+      />
+      <el-button
         disabled
         icon="el-icon-rank"
         :type="CANVAS_MODE === 'move' ? 'primary' : ''"
       />
       <el-button
-        disabled
         icon="el-icon-edit"
         :type="CANVAS_MODE === 'draw' ? 'primary' : ''"
+        @click="setCanvasMode('draw')"
       />
     </el-button-group>
-    <el-button-group>
+    <!-- <el-button-group>
       <el-button
         :type="ELEMENT_TYPE === 'rectangle' ? 'primary' : ''"
-        @click="setCanvasMode('rectangle')"
       >
         Rect
       </el-button>
-    </el-button-group>
+    </el-button-group> -->
   </div>
 </template>
 

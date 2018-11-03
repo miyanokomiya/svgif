@@ -166,7 +166,7 @@ export default {
         : this.selectElement(id)
     },
     mousedownSelf(e) {
-      this.setCanvasMode('draw')
+      if (this.CANVAS_MODE !== 'draw') return
       const p = getPoint(e)
       const rect = getRectangle({ ...p })
       this.svgElementList.push(rect)
@@ -196,7 +196,10 @@ export default {
       }
     },
     mouseup(e) {
-      this.setCanvasMode('select')
+      if (this.CANVAS_MODE === 'move') {
+        this.setCanvasMode('select')
+      }
+
       this.selectedElementList.forEach(elm => {
         this.updateElement({
           id: elm.id,

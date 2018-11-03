@@ -10,7 +10,7 @@ export function getRectangle(arg) {
     y: 0,
     width: 1,
     height: 1,
-    stroke: 'black',
+    stroke: 'tomato',
     strokeWidth: 5,
     radian: 0,
     ...arg
