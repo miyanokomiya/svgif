@@ -2,7 +2,19 @@
   <div class="draw-tools">
     <el-button-group>
       <el-button
-        :type="CANVAS_MODE === 'rectangle' ? 'primary' : ''"
+        disabled
+        icon="el-icon-rank"
+        :type="CANVAS_MODE === 'move' ? 'primary' : ''"
+      />
+      <el-button
+        disabled
+        icon="el-icon-edit"
+        :type="CANVAS_MODE === 'draw' ? 'primary' : ''"
+      />
+    </el-button-group>
+    <el-button-group>
+      <el-button
+        :type="ELEMENT_TYPE === 'rectangle' ? 'primary' : ''"
         @click="setCanvasMode('rectangle')"
       >
         Rect
@@ -20,7 +32,8 @@ export default {
   props: {},
   computed: {
     ...mapGetters({
-      CANVAS_MODE: clipTypes.g.CANVAS_MODE
+      CANVAS_MODE: clipTypes.g.CANVAS_MODE,
+      ELEMENT_TYPE: clipTypes.g.ELEMENT_TYPE
     })
   },
   methods: {

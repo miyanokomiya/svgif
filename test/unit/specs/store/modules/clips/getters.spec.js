@@ -63,9 +63,16 @@ describe('store/modules/clips/getters', () => {
     })
   })
   describe('CANVAS_MODE', () => {
-    it('delay の合計が取得されること', () => {
+    it('canvasMode が取得されること', () => {
       const state = { canvasMode: 'abc' }
       const val = getters[types.g.CANVAS_MODE](state)
+      expect(val).to.equal('abc')
+    })
+  })
+  describe('ELEMENT_TYPE', () => {
+    it('elementType が取得されること', () => {
+      const state = { elementType: 'abc' }
+      const val = getters[types.g.ELEMENT_TYPE](state)
       expect(val).to.equal('abc')
     })
   })

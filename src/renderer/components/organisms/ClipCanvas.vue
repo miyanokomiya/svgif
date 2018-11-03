@@ -43,7 +43,7 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
 import clipTypes from '@main/store/modules/clips/types'
 import { getPoint } from '@/commons/utils/canvas'
 import { getRectangle } from '@/commons/svgElements'
@@ -63,14 +63,15 @@ export default {
     scale: 1,
     svgElementList: [],
     selectedElementIdList: [],
-    mode: ['select', 'move', 'rectangle'][0],
     downStartPoint: null,
     moveVec: { x: 0, y: 0 }
   }),
   computed: {
     ...mapGetters({
       SELECTED_CLIP: clipTypes.g.SELECTED_CLIP,
-      WHOLE_SIZE: clipTypes.g.WHOLE_SIZE
+      WHOLE_SIZE: clipTypes.g.WHOLE_SIZE,
+      CANVAS_MODE: clipTypes.g.CANVAS_MODE,
+      ELEMENT_TYPE: clipTypes.g.ELEMENT_TYPE
     }),
     imageSize() {
       const wRate = this.WHOLE_SIZE.width / this.SELECTED_CLIP.width
@@ -121,6 +122,12 @@ export default {
     this.rescale()
   },
   methods: {
+    ...mapActions({
+      _setCanvasMode: clipTypes.a.SET_CANVAS_MODE
+    }),
+    setCanvasMode(mode) {
+      this._setCanvasMode(mode)
+    },
     rescale() {
       this.$nextTick(() => {
         if (!this.$refs.wrapper) return
@@ -159,7 +166,7 @@ export default {
         : this.selectElement(id)
     },
     mousedownSelf(e) {
-      this.mode = 'rectangle'
+      this.setCanvasMode('draw')
       const p = getPoint(e)
       const rect = getRectangle({ ...p })
       this.svgElementList.push(rect)
@@ -170,23 +177,26 @@ export default {
     },
     mousemove(e) {
       if (!this.selectedAny) return
+      if (!this.downStartPoint) return
       const p = getPoint(e)
-      if (this.mode === 'move') {
+      if (this.CANVAS_MODE === 'move') {
         this.moveVec = {
           x: p.x - this.downStartPoint.x,
           y: p.y - this.downStartPoint.y
         }
-      } else if (this.mode === 'rectangle') {
-        const rect = {
-          ...this.selectedElement,
-          width: p.x - this.selectedElement.x,
-          height: p.y - this.selectedElement.y
+      } else if (this.CANVAS_MODE === 'draw') {
+        if (this.ELEMENT_TYPE === 'rectangle') {
+          const rect = {
+            ...this.selectedElement,
+            width: p.x - this.selectedElement.x,
+            height: p.y - this.selectedElement.y
+          }
+          this.updateElement({ id: this.selectedElement.id, to: rect })
         }
-        this.updateElement({ id: this.selectedElement.id, to: rect })
       }
     },
     mouseup(e) {
-      this.mode = 'select'
+      this.setCanvasMode('select')
       this.selectedElementList.forEach(elm => {
         this.updateElement({
           id: elm.id,
@@ -217,7 +227,7 @@ export default {
       } else {
         this.selectElement(id, true)
       }
-      this.mode = 'move'
+      this.setCanvasMode('move')
     }
   }
 }

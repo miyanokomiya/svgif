@@ -25,6 +25,9 @@ const getters = {
   },
   [types.g.CANVAS_MODE](state) {
     return state.canvasMode
+  },
+  [types.g.ELEMENT_TYPE](state) {
+    return state.elementType
   }
 }
 
