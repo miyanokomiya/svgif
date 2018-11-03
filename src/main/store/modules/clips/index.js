@@ -4,7 +4,8 @@ import mutations from './mutations'
 
 const state = {
   clipList: [],
-  selectedId: -1
+  selectedId: -1,
+  canvasMode: ['select', 'move', 'rectangle'][0]
 }
 
 export default {

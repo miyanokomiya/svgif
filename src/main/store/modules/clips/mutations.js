@@ -38,6 +38,9 @@ const mutations = {
     const clip = state.clipList.find(c => c.id === id)
     if (!clip) return
     clip.delay = delay
+  },
+  [types.m.SET_CANVAS_MODE](state, mode) {
+    state.mode = mode
   }
 }
 

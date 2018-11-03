@@ -22,6 +22,9 @@ const getters = {
     return state.clipList.reduce((sum, c) => {
       return sum + c.delay
     }, 0)
+  },
+  [types.g.CANVAS_MODE](state) {
+    return state.canvasMode
   }
 }
 
