@@ -16,37 +16,16 @@
         @mousemove.native="mousemove"
         @mouseup.native="mouseup"
       >
-        <SvgRectangle
-          v-for="rect in selectedElementList"
-          :key="`select-${rect.id}`"
-          :x="elementPositionMap[rect.id].x"
-          :y="elementPositionMap[rect.id].y"
-          :width="rect.width"
-          :height="rect.height"
-          stroke="lime"
-          :strokeOpacity="0.7"
-          :strokeWidth="rect.strokeWidth + 10"
+        <SvgElement
+          v-for="svgElement in svgElementList"
+          class="svg-element"
+          :key="svgElement.id"
+          :svgElement="svgElement"
+          :moveVec="selectedIdMap[svgElement.id] ? moveVec : undefined"
+          :scale="scale"
+          :selected="selectedIdMap[svgElement.id]"
+          @mousedown.native="e => mousedownElement(e, svgElement.id)"
         />
-        <SvgRectangle
-          v-for="rect in svgElementList"
-          :key="rect.id"
-          :x="elementPositionMap[rect.id].x"
-          :y="elementPositionMap[rect.id].y"
-          :width="rect.width"
-          :height="rect.height"
-          :stroke="rect.stroke"
-          :strokeWidth="rect.strokeWidth"
-          @mousedown.native="e => mousedownElement(e, rect.id)"
-        />
-        <!-- <template v-if="selectedElement">
-          <SvgCircle
-            :cx="selectedElement.x"
-            :cy="selectedElement.y"
-            :r="htmlToSvg(10)"
-            stroke="black"
-            fill="white"
-          />
-        </template> -->
       </SvgCanvas>
     </div>
     <ClipTimeLine class="time-line" />
@@ -60,16 +39,14 @@ import { getPoint } from '@/commons/utils/canvas'
 import { getRectangle } from '@/commons/svgElements'
 import ImagePanel from '@/components/atoms/ImagePanel'
 import SvgCanvas from '@/components/molecules/SvgCanvas'
-import SvgRectangle from '@/components/atoms/SvgRectangle'
-import SvgCircle from '@/components/atoms/SvgCircle'
+import SvgElement from '@/components/molecules/SvgElement'
 import ClipTimeLine from '@/components/organisms/ClipTimeLine'
 
 export default {
   components: {
     ImagePanel,
     SvgCanvas,
-    SvgRectangle,
-    SvgCircle,
+    SvgElement,
     ClipTimeLine
   },
   data: () => ({
@@ -285,6 +262,9 @@ export default {
       margin: auto;
       border: 0.1rem solid black;
       user-select: none;
+      .svg-element {
+        cursor: pointer;
+      }
     }
   }
 }
