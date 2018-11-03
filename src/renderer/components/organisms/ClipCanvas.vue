@@ -24,7 +24,8 @@
           :moveVec="selectedIdMap[svgElement.id] ? moveVec : undefined"
           :scale="scale"
           :selected="selectedIdMap[svgElement.id]"
-          @mousedown.native="e => mousedownElement(e, svgElement.id)"
+          @startMove="startMoveElement"
+          @startResize="startResizeElement"
         />
       </SvgCanvas>
     </div>
@@ -232,7 +233,7 @@ export default {
       this.downStartPoint = null
       this.moveVec = { x: 0, y: 0 }
     },
-    mousedownElement(e, id) {
+    startMoveElement(id) {
       if (this.selectedIdMap[id]) {
         setTimeout(() => {
           if (this.downStartPoint) return
@@ -242,6 +243,10 @@ export default {
         this.selectElement(id, true)
       }
       this.setCanvasMode('move')
+    },
+    startResizeElement(id) {
+      this.selectElement(id)
+      this.setCanvasMode('draw')
     }
   }
 }

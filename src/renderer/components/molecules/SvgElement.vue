@@ -1,30 +1,42 @@
 <template>
   <g>
     <template v-if="rect">
-      <SvgRectangle
-        v-if="selected"
-        :x="rect.x"
-        :y="rect.y"
-        :width="rect.width"
-        :height="rect.height"
-        stroke="lime"
-        :strokeOpacity="0.7"
-        :strokeWidth="rect.strokeWidth + htmlToSvg(10)"
-      />
-      <SvgRectangle
-        :x="rect.x"
-        :y="rect.y"
-        :width="rect.width"
-        :height="rect.height"
-        :stroke="rect.stroke"
-        :strokeWidth="rect.strokeWidth"
-      />
+      <g
+        @mousedown="$emit('startMove', rect.id)"
+      >
+        <SvgRectangle
+          v-if="selected"
+          :x="rect.x"
+          :y="rect.y"
+          :width="rect.width"
+          :height="rect.height"
+          stroke="lime"
+          :strokeOpacity="0.7"
+          :strokeWidth="rect.strokeWidth + htmlToSvg(7)"
+        />
+        <SvgRectangle
+          :x="rect.x"
+          :y="rect.y"
+          :width="rect.width"
+          :height="rect.height"
+          :stroke="rect.stroke"
+          :strokeWidth="rect.strokeWidth"
+        />
+        <SvgCircle
+          :cx="rect.x - htmlToSvg(7)"
+          :cy="rect.y - htmlToSvg(7)"
+          :r="htmlToSvg(10)"
+          stroke="black"
+          fill="white"
+        />
+      </g>
       <SvgCircle
-        :cx="rect.x - htmlToSvg(7)"
-        :cy="rect.y - htmlToSvg(7)"
+        :cx="rect.x + rect.width"
+        :cy="rect.y + rect.height"
         :r="htmlToSvg(10)"
         stroke="black"
         fill="white"
+        @mousedown.native="$emit('startResize', rect.id)"
       />
     </template>
   </g>
