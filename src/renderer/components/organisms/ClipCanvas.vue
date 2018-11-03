@@ -7,14 +7,34 @@
         :height="imageSize.height"
       />
       <SvgCanvas
+        class="svg"
         :width="WHOLE_SIZE.width * scale"
         :height="WHOLE_SIZE.height * scale"
+        @mousedown.native.self="mousedownSelf"
+        @mousedown.native="mousedown"
+        @mousemove.native="mousemove"
+        @mouseup.native="mouseup"
       >
         <SvgRectangle
-          :x="100"
-          :y="100"
-          :width="100"
-          :height="100"
+          v-for="rect in selectedElementList"
+          :key="`select-${rect.id}`"
+          :x="elementPositionMap[rect.id].x"
+          :y="elementPositionMap[rect.id].y"
+          :width="rect.width"
+          :height="rect.height"
+          stroke="lime"
+          :strokeWidth="rect.strokeWidth + 10"
+        />
+        <SvgRectangle
+          v-for="rect in svgElementList"
+          :key="rect.id"
+          :x="elementPositionMap[rect.id].x"
+          :y="elementPositionMap[rect.id].y"
+          :width="rect.width"
+          :height="rect.height"
+          :stroke="rect.stroke"
+          :strokeWidth="rect.strokeWidth"
+          @mousedown.native="e => mousedownElement(e, rect.id)"
         />
       </SvgCanvas>
     </div>
@@ -25,6 +45,8 @@
 <script>
 import { mapGetters } from 'vuex'
 import clipTypes from '@main/store/modules/clips/types'
+import { getPoint } from '@/commons/utils/canvas'
+import { getRectangle } from '@/commons/svgElements'
 import ImagePanel from '@/components/atoms/ImagePanel'
 import SvgCanvas from '@/components/molecules/SvgCanvas'
 import SvgRectangle from '@/components/atoms/SvgRectangle'
@@ -38,7 +60,12 @@ export default {
     ClipTimeLine
   },
   data: () => ({
-    scale: 1
+    scale: 1,
+    svgElementList: [],
+    selectedElementIdList: [],
+    mode: ['select', 'move', 'rectangle'][0],
+    downStartPoint: null,
+    moveVec: { x: 0, y: 0 }
   }),
   computed: {
     ...mapGetters({
@@ -53,6 +80,38 @@ export default {
         width: this.SELECTED_CLIP.width * this.scale * rate,
         height: this.SELECTED_CLIP.height * this.scale * rate
       }
+    },
+    selectedElementList() {
+      return this.selectedElementIdList
+        .map(id => this.svgElementList.find(e => e.id === id))
+        .filter(e => !!e)
+    },
+    selectedElement() {
+      return this.selectedElementList.length === 1
+        ? this.selectedElementList[0]
+        : null
+    },
+    selectedIdMap() {
+      return this.selectedElementIdList.reduce((map, id) => {
+        map[id] = true
+        return map
+      }, {})
+    },
+    elementPositionMap() {
+      return this.svgElementList.reduce((map, elm) => {
+        map[elm.id] = {
+          x: elm.x,
+          y: elm.y
+        }
+        if (this.selectedIdMap[elm.id]) {
+          map[elm.id].x += this.moveVec.x
+          map[elm.id].y += this.moveVec.y
+        }
+        return map
+      }, {})
+    },
+    selectedAny() {
+      return this.selectedElementList.length > 0
     }
   },
   mounted() {
@@ -71,6 +130,94 @@ export default {
         const rate = Math.min(wRate, hRate)
         this.scale = Math.min(rate, 1)
       })
+    },
+    // オブジェクト参照を変更せずにプロパティを更新する
+    updateElement({ id, to }) {
+      const selected = this.svgElementList.find(e => e.id === id)
+      if (!selected) return
+      Object.keys(to).forEach(key => {
+        selected[key] = to[key]
+      })
+    },
+    selectElement(id, multi) {
+      if (!multi) this.clearSelectElement()
+      if (this.selectedIdMap[id]) return
+      this.selectedElementIdList.push(id)
+    },
+    clearSelectElement(id) {
+      if (id) {
+        this.selectedElementIdList = this.selectedElementIdList.filter(
+          selectedId => selectedId !== id
+        )
+      } else {
+        this.selectedElementIdList = []
+      }
+    },
+    toggleSelectElement(id) {
+      this.selectedIdMap[id]
+        ? this.clearSelectElement(id)
+        : this.selectElement(id)
+    },
+    mousedownSelf(e) {
+      this.mode = 'rectangle'
+      const p = getPoint(e)
+      const rect = getRectangle({ ...p })
+      this.svgElementList.push(rect)
+      this.selectElement(rect.id)
+    },
+    mousedown(e) {
+      this.downStartPoint = getPoint(e)
+    },
+    mousemove(e) {
+      if (!this.selectedAny) return
+      const p = getPoint(e)
+      if (this.mode === 'move') {
+        this.moveVec = {
+          x: p.x - this.downStartPoint.x,
+          y: p.y - this.downStartPoint.y
+        }
+      } else if (this.mode === 'rectangle') {
+        const rect = {
+          ...this.selectedElement,
+          width: p.x - this.selectedElement.x,
+          height: p.y - this.selectedElement.y
+        }
+        this.updateElement({ id: this.selectedElement.id, to: rect })
+      }
+    },
+    mouseup(e) {
+      this.mode = 'select'
+      this.selectedElementList.forEach(elm => {
+        this.updateElement({
+          id: elm.id,
+          to: { x: elm.x + this.moveVec.x, y: elm.y + this.moveVec.y }
+        })
+      })
+      if (this.selectedElement) {
+        const rect = { ...this.selectedElement }
+        if (rect.width < 0) {
+          rect.width *= -1
+          rect.x -= rect.width
+        }
+        if (rect.height < 0) {
+          rect.height *= -1
+          rect.y -= rect.height
+        }
+        this.updateElement({ id: this.selectedElement.id, to: rect })
+      }
+      this.downStartPoint = null
+      this.moveVec = { x: 0, y: 0 }
+    },
+    mousedownElement(e, id) {
+      if (this.selectedIdMap[id]) {
+        setTimeout(() => {
+          if (this.downStartPoint) return
+          this.clearSelectElement(id)
+        }, 200)
+      } else {
+        this.selectElement(id, true)
+      }
+      this.mode = 'move'
     }
   }
 }
@@ -82,7 +229,7 @@ export default {
   .canvas {
     height: calc(100% - 8rem);
     position: relative;
-    svg {
+    .svg {
       position: absolute;
       top: 0;
       left: 0;
@@ -90,6 +237,7 @@ export default {
       right: 0;
       margin: auto;
       border: 0.1rem solid black;
+      user-select: none;
     }
   }
 }

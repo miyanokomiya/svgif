@@ -1,11 +1,11 @@
 <template>
 <rect
-  :x="x"
-  :y="y"
+  :x="adjustedX"
+  :y="adjustedY"
   :rx="rx"
   :ry="ry"
-  :width="width"
-  :height="height"
+  :width="absWidth"
+  :height="absHeight"
   :stroke="stroke"
   :stroke-width="strokeWidth"
   :fill="fill"
@@ -65,6 +65,20 @@ export default {
     strokeDashoffset: {
       type: Number,
       default: 0
+    }
+  },
+  computed: {
+    adjustedX() {
+      return this.width < 0 ? this.x - this.absWidth : this.x
+    },
+    adjustedY() {
+      return this.height < 0 ? this.y - this.absHeight : this.y
+    },
+    absWidth() {
+      return Math.abs(this.width) || 1
+    },
+    absHeight() {
+      return Math.abs(this.height) || 1
     }
   }
 }
