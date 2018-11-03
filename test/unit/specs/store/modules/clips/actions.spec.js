@@ -162,4 +162,21 @@ describe('store/modules/clips/actions', () => {
       })
     })
   })
+  describe('SET_CANVAS_MODE', () => {
+    it('mutationが正しく実行されること', done => {
+      testAction({
+        done,
+        action: actions[types.a.SET_CANVAS_MODE],
+        payload: 'abc',
+        mutations: [
+          {
+            type: types.m.SET_CANVAS_MODE,
+            test: mode => {
+              expect(mode).to.equal('abc')
+            }
+          }
+        ]
+      })
+    })
+  })
 })

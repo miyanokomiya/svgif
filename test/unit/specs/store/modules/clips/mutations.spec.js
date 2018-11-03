@@ -145,4 +145,13 @@ describe('store/modules/clips/mutations', () => {
       expect(state.clipList[1].delay).to.equal(1)
     })
   })
+  describe('SET_CANVAS_MODE', () => {
+    it('mode が変更されること', () => {
+      const state = {
+        mode: 'abc'
+      }
+      mutations[types.m.SET_CANVAS_MODE](state, 'cba')
+      expect(state.mode).to.equal('cba')
+    })
+  })
 })
