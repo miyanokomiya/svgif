@@ -1,11 +1,8 @@
 <template>
-<rect
-  :x="adjustedX"
-  :y="adjustedY"
-  :rx="rx"
-  :ry="ry"
-  :width="absWidth"
-  :height="absHeight"
+<circle
+  :cx="cx"
+  :cy="cy"
+  :r="absR"
   :stroke="stroke"
   :stroke-width="strokeWidth"
   :stroke-opacity="strokeOpacity"
@@ -19,29 +16,17 @@
 <script>
 export default {
   props: {
-    x: {
+    cx: {
       type: Number,
       default: 0
     },
-    y: {
+    cy: {
       type: Number,
       default: 0
     },
-    rx: {
+    r: {
       type: Number,
-      default: 0
-    },
-    ry: {
-      type: Number,
-      default: 0
-    },
-    width: {
-      type: Number,
-      default: 50
-    },
-    height: {
-      type: Number,
-      default: 50
+      default: 1
     },
     strokeWidth: {
       type: Number,
@@ -73,17 +58,8 @@ export default {
     }
   },
   computed: {
-    adjustedX() {
-      return this.width < 0 ? this.x - this.absWidth : this.x
-    },
-    adjustedY() {
-      return this.height < 0 ? this.y - this.absHeight : this.y
-    },
-    absWidth() {
-      return Math.abs(this.width) || 1
-    },
-    absHeight() {
-      return Math.abs(this.height) || 1
+    absR() {
+      return Math.abs(this.r) || 1
     }
   }
 }
