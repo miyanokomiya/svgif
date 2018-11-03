@@ -8,8 +8,9 @@
       />
       <SvgCanvas
         class="svg"
-        :width="WHOLE_SIZE.width * scale"
-        :height="WHOLE_SIZE.height * scale"
+        :style="{ width: `${WHOLE_SIZE.width * scale}px`, height: `${WHOLE_SIZE.height * scale}px` }"
+        :width="WHOLE_SIZE.width"
+        :height="WHOLE_SIZE.height"
         @mousedown.native.self="mousedownSelf"
         @mousedown.native="mousedown"
         @mousemove.native="mousemove"
@@ -23,6 +24,7 @@
           :width="rect.width"
           :height="rect.height"
           stroke="lime"
+          :strokeOpacity="0.7"
           :strokeWidth="rect.strokeWidth + 10"
         />
         <SvgRectangle
@@ -36,6 +38,15 @@
           :strokeWidth="rect.strokeWidth"
           @mousedown.native="e => mousedownElement(e, rect.id)"
         />
+        <!-- <template v-if="selectedElement">
+          <SvgCircle
+            :cx="selectedElement.x"
+            :cy="selectedElement.y"
+            :r="htmlToSvg(10)"
+            stroke="black"
+            fill="white"
+          />
+        </template> -->
       </SvgCanvas>
     </div>
     <ClipTimeLine class="time-line" />
@@ -50,6 +61,7 @@ import { getRectangle } from '@/commons/svgElements'
 import ImagePanel from '@/components/atoms/ImagePanel'
 import SvgCanvas from '@/components/molecules/SvgCanvas'
 import SvgRectangle from '@/components/atoms/SvgRectangle'
+import SvgCircle from '@/components/atoms/SvgCircle'
 import ClipTimeLine from '@/components/organisms/ClipTimeLine'
 
 export default {
@@ -57,6 +69,7 @@ export default {
     ImagePanel,
     SvgCanvas,
     SvgRectangle,
+    SvgCircle,
     ClipTimeLine
   },
   data: () => ({
@@ -73,6 +86,9 @@ export default {
       CANVAS_MODE: clipTypes.g.CANVAS_MODE,
       ELEMENT_TYPE: clipTypes.g.ELEMENT_TYPE
     }),
+    windowInfo() {
+      return this.$svgif.windowInfo
+    },
     imageSize() {
       const wRate = this.WHOLE_SIZE.width / this.SELECTED_CLIP.width
       const hRate = this.WHOLE_SIZE.height / this.SELECTED_CLIP.height
@@ -121,10 +137,28 @@ export default {
   updated() {
     this.rescale()
   },
+  watch: {
+    windowInfo() {
+      this.rescale()
+    }
+  },
   methods: {
     ...mapActions({
       _setCanvasMode: clipTypes.a.SET_CANVAS_MODE
     }),
+    htmlToSvg(val) {
+      return val / this.scale
+    },
+    svgToHtml(val) {
+      return val * this.scale
+    },
+    getSvgPoint(e) {
+      const p = getPoint(e)
+      return {
+        x: this.htmlToSvg(p.x),
+        y: this.htmlToSvg(p.y)
+      }
+    },
     setCanvasMode(mode) {
       this._setCanvasMode(mode)
     },
@@ -167,18 +201,18 @@ export default {
     },
     mousedownSelf(e) {
       if (this.CANVAS_MODE !== 'draw') return
-      const p = getPoint(e)
+      const p = this.getSvgPoint(e)
       const rect = getRectangle({ ...p })
       this.svgElementList.push(rect)
       this.selectElement(rect.id)
     },
     mousedown(e) {
-      this.downStartPoint = getPoint(e)
+      this.downStartPoint = this.getSvgPoint(e)
     },
     mousemove(e) {
       if (!this.selectedAny) return
       if (!this.downStartPoint) return
-      const p = getPoint(e)
+      const p = this.getSvgPoint(e)
       if (this.CANVAS_MODE === 'move') {
         this.moveVec = {
           x: p.x - this.downStartPoint.x,
