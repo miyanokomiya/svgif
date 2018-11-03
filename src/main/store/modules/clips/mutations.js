@@ -39,8 +39,8 @@ const mutations = {
     if (!clip) return
     clip.delay = delay
   },
-  [types.m.SET_CANVAS_MODE](state, mode) {
-    state.mode = mode
+  [types.m.SET_CANVAS_MODE](state, canvasMode) {
+    state.canvasMode = canvasMode
   }
 }
 

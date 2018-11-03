@@ -146,12 +146,12 @@ describe('store/modules/clips/mutations', () => {
     })
   })
   describe('SET_CANVAS_MODE', () => {
-    it('mode が変更されること', () => {
+    it('canvasMode が変更されること', () => {
       const state = {
-        mode: 'abc'
+        canvasMode: 'abc'
       }
       mutations[types.m.SET_CANVAS_MODE](state, 'cba')
-      expect(state.mode).to.equal('cba')
+      expect(state.canvasMode).to.equal('cba')
     })
   })
 })

@@ -40,8 +40,8 @@ const actions = {
     })
     return Promise.resolve()
   },
-  [types.a.SET_CANVAS_MODE]({ commit }, mode) {
-    commit(types.m.SET_CANVAS_MODE, mode)
+  [types.a.SET_CANVAS_MODE]({ commit }, canvasMode) {
+    commit(types.m.SET_CANVAS_MODE, canvasMode)
     return Promise.resolve()
   }
 }
