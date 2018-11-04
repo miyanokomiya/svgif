@@ -1,32 +1,30 @@
 <template>
-  <div class="canvas-footer">
-    <template v-if="SELECTED_CLIP">
-      <el-button
-        class="delete-button"
-        type="danger" size="mini" round
-        icon="el-icon-delete"
-        @click="deleteClip"
+  <div class="canvas-footer" v-if="SELECTED_CLIP">
+    <el-dropdown size="mini" split-button type="danger" trigger="click" @click="deleteClip" @command="deleteCommand">
+      <i class="el-icon-delete" />
+      <el-dropdown-menu slot="dropdown">
+        <el-dropdown-item command="all">Delete All</el-dropdown-item>
+      </el-dropdown-menu>
+    </el-dropdown>
+    <div>
+      <span>Time(s): </span>
+      <el-input
+        class="delay-input"
+        size="mini"
+        placeholder="Delay"
+        type="number"
+        step="0.1"
+        :value="SELECTED_CLIP.delay / 1000"
+        @input="updateDelay"
       />
-      <div>
-        <span>Time(s): </span>
-        <el-input
-          class="delay-input"
-          size="mini"
-          placeholder="Delay"
-          type="number"
-          step="0.1"
-          :value="SELECTED_CLIP.delay / 1000"
-          @input="updateDelay"
-        />
-      </div>
-      <el-button
-        class="clone-button"
-        type="primary" size="mini"
-        @click="cloneClip"
-      >
-        Clone
-      </el-button>
-    </template>
+    </div>
+    <el-button
+      class="clone-button"
+      type="primary" size="mini"
+      @click="cloneClip"
+    >
+      Clone
+    </el-button>
     <span class="total-delay">Total Time(s): {{WHOLE_DELAY / 1000}}</span>
     <el-button
       type="primary"
@@ -54,6 +52,7 @@ export default {
   methods: {
     ...mapActions({
       _deleteClip: clipTypes.a.DELETE_CLIP,
+      _deleteAllClip: clipTypes.a.DELETE_ALL_CLIP,
       _updateDelay: clipTypes.a.UPDATE_DELAY,
       _cloneClip: clipTypes.a.CLONE_CLIP
     }),
@@ -70,6 +69,9 @@ export default {
       } else {
         this._updateDelay({ id: this.SELECTED_CLIP.id, delay })
       }
+    },
+    cloneClip() {
+      this._cloneClip({ id: this.SELECTED_CLIP.id })
     },
     deleteClip() {
       this.$confirm(
@@ -88,8 +90,27 @@ export default {
         })
       })
     },
-    cloneClip() {
-      this._cloneClip({ id: this.SELECTED_CLIP.id })
+    deleteAllClip() {
+      this.$confirm(
+        'This will permanently delete all clips. Continue?',
+        'Warning',
+        {
+          confirmButtonText: 'OK',
+          cancelButtonText: 'Cancel',
+          type: 'warning'
+        }
+      ).then(() => {
+        this._deleteAllClip()
+        this.$message({
+          type: 'success',
+          message: 'Delete completed'
+        })
+      })
+    },
+    deleteCommand(command) {
+      if (command === 'all') {
+        this.deleteAllClip()
+      }
     }
   }
 }
