@@ -1,3 +1,6 @@
+import Vue from 'vue'
+import SvgRender from '@/components/organisms/SvgRender'
+
 export function createGif({ clipList, size }) {
   return new Promise((resolve, reject) => {
     createImageList(clipList).then(imageList => {
@@ -11,20 +14,19 @@ export function createGif({ clipList, size }) {
       canvas.width = size.width
       canvas.height = size.height
       const ctx = canvas.getContext('2d')
-      clipList.forEach((clip, index) => {
-        ctx.clearRect(0, 0, size.width, size.height)
-        const image = imageList[index]
-        ctx.drawImage(
-          imageList[index],
-          (size.width - image.width) / 2,
-          (size.height - image.height) / 2
-        )
-        gif.addFrame(ctx, { copy: true, delay: clip.delay || 200 })
-      })
-      gif.on('finished', blob => {
-        resolve(blob)
-      })
-      gif.render()
+
+      const promiseList = clipList.map((clip, index) => () =>
+        addGifFrame({ ctx, size, image: imageList[index], clip, gif })
+      )
+      promiseList
+        .reduce((m, p) => m.then(p), Promise.resolve())
+        .then(() => {
+          gif.on('finished', blob => {
+            resolve(blob)
+          })
+          gif.render()
+        })
+        .catch(reject)
     })
   })
 }
@@ -48,5 +50,45 @@ function createImageList(clipList) {
         return parseInt(a) - parseInt(b)
       })
       .map(key => imageMap[key])
+  })
+}
+
+function addGifFrame({ ctx, size, image, clip, gif }) {
+  return new Promise((resolve, reject) => {
+    ctx.clearRect(0, 0, size.width, size.height)
+    ctx.drawImage(
+      image,
+      (size.width - image.width) / 2,
+      (size.height - image.height) / 2
+    )
+
+    if (clip.svgElementList.length === 0) {
+      gif.addFrame(ctx, { copy: true, delay: clip.delay || 200 })
+      resolve()
+    } else {
+      const vm = new Vue({
+        components: { SvgRender },
+        template: '<SvgRender :svgElementList="svgElementList" :size="size" />',
+        data: () => ({
+          svgElementList: clip.svgElementList,
+          size
+        })
+      })
+      vm.$mount()
+      const DOMURL = self.URL || self.webkitURL || self
+      const img = new Image()
+      const svg = new Blob([vm.$el.outerHTML], {
+        type: 'image/svg+xml;charset=utf-8'
+      })
+      const url = DOMURL.createObjectURL(svg)
+      img.onload = () => {
+        ctx.drawImage(img, 0, 0, size.width, size.height)
+        gif.addFrame(ctx, { copy: true, delay: clip.delay || 200 })
+        DOMURL.revokeObjectURL(url)
+        resolve()
+      }
+      img.src = url
+      img.onerror = reject
+    }
   })
 }

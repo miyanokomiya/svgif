@@ -5,6 +5,7 @@
     :moveVec="moveVec"
     :selected="selected"
     :scale="scale"
+    :plain="plain"
     @startMove="startMove"
     @deleteElement="deleteElement"
     @startResize="startResize"
@@ -34,6 +35,10 @@ export default {
     scale: {
       type: Number,
       default: 1
+    },
+    plain: {
+      type: Boolean,
+      default: false
     }
   },
   methods: {

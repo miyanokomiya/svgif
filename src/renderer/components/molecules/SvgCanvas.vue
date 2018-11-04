@@ -1,5 +1,6 @@
 <template>
   <svg
+    xmlns="http://www.w3.org/2000/svg"
     font-family="sans-serif"
     :viewBox="`0 0 ${width} ${height}`"
     :width="width"

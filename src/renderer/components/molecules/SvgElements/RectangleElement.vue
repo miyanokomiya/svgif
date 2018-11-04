@@ -2,7 +2,7 @@
   <g>
     <g @mousedown="$emit('startMove', rect.id)">
       <SvgRectangle
-        v-if="selected"
+        v-if="selected && !plain"
         :x="rect.x"
         :y="rect.y"
         :width="rect.width"
@@ -20,6 +20,7 @@
         :strokeWidth="rect.strokeWidth"
       />
       <SvgCircle
+        v-if="!plain"
         :cx="rect.x"
         :cy="rect.y"
         :r="htmlToSvg(7)"
@@ -27,7 +28,7 @@
         fill="white"
       />
     </g>
-    <template v-if="selected">
+    <template v-if="selected && !plain">
       <g @mousedown="$emit('deleteElement', rect.id)">
         <SvgCircle
           :cx="rect.x"
@@ -86,6 +87,10 @@ export default {
     scale: {
       type: Number,
       default: 1
+    },
+    plain: {
+      type: Boolean,
+      default: false
     }
   },
   computed: {
