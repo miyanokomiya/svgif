@@ -179,4 +179,58 @@ describe('store/modules/clips/actions', () => {
       })
     })
   })
+  describe('CREATE_SVG_ELEMENT', () => {
+    it('mutationが正しく実行されること', done => {
+      testAction({
+        done,
+        action: actions[types.a.CREATE_SVG_ELEMENT],
+        payload: { clipId: 1, svgElement: 'abc' },
+        mutations: [
+          {
+            type: types.m.ADD_SVG_ELEMENT,
+            test: ({ clipId, svgElement }) => {
+              expect(clipId).to.equal(1)
+              expect(svgElement).to.equal('abc')
+            }
+          }
+        ]
+      })
+    })
+  })
+  describe('UPDATE_SVG_ELEMENT', () => {
+    it('mutationが正しく実行されること', done => {
+      testAction({
+        done,
+        action: actions[types.a.UPDATE_SVG_ELEMENT],
+        payload: { clipId: 1, svgElement: 'abc' },
+        mutations: [
+          {
+            type: types.m.UPDATE_SVG_ELEMENT,
+            test: ({ clipId, svgElement }) => {
+              expect(clipId).to.equal(1)
+              expect(svgElement).to.equal('abc')
+            }
+          }
+        ]
+      })
+    })
+  })
+  describe('DELETE_SVG_ELEMENT', () => {
+    it('mutationが正しく実行されること', done => {
+      testAction({
+        done,
+        action: actions[types.a.DELETE_SVG_ELEMENT],
+        payload: { clipId: 1, svgElementId: 'abc' },
+        mutations: [
+          {
+            type: types.m.REMOVE_SVG_ELEMENT,
+            test: ({ clipId, svgElementId }) => {
+              expect(clipId).to.equal(1)
+              expect(svgElementId).to.equal('abc')
+            }
+          }
+        ]
+      })
+    })
+  })
 })

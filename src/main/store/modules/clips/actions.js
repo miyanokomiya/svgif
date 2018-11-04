@@ -43,6 +43,18 @@ const actions = {
   [types.a.SET_CANVAS_MODE]({ commit }, canvasMode) {
     commit(types.m.SET_CANVAS_MODE, canvasMode)
     return Promise.resolve()
+  },
+  [types.a.CREATE_SVG_ELEMENT]({ commit }, { clipId, svgElement }) {
+    commit(types.m.ADD_SVG_ELEMENT, { clipId, svgElement })
+    return Promise.resolve()
+  },
+  [types.a.UPDATE_SVG_ELEMENT]({ commit }, { clipId, svgElement }) {
+    commit(types.m.UPDATE_SVG_ELEMENT, { clipId, svgElement })
+    return Promise.resolve()
+  },
+  [types.a.DELETE_SVG_ELEMENT]({ commit }, { clipId, svgElementId }) {
+    commit(types.m.REMOVE_SVG_ELEMENT, { clipId, svgElementId })
+    return Promise.resolve()
   }
 }
 
@@ -54,6 +66,7 @@ function createClip(clip) {
     base64: '',
     width: 0,
     height: 0,
+    svgElementList: [],
     ...clip
   }
 }

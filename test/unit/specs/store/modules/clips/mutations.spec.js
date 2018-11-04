@@ -154,4 +154,52 @@ describe('store/modules/clips/mutations', () => {
       expect(state.canvasMode).to.equal('cba')
     })
   })
+  describe('ADD_SVG_ELEMENT', () => {
+    it('指定 clipId の clip に svgElement が追加されること', () => {
+      const state = {
+        clipList: [{ id: 1, svgElementList: [] }]
+      }
+      mutations[types.m.ADD_SVG_ELEMENT](state, {
+        clipId: 1,
+        svgElement: 'abc'
+      })
+      expect(state.clipList[0].svgElementList[0]).to.equal('abc')
+      expect(state.clipList[0].svgElementList).to.have.lengthOf(1)
+    })
+  })
+  describe('UPDATE_SVG_ELEMENT', () => {
+    it('指定 clipId の clip の svgElement が更新されること', () => {
+      const state = {
+        clipList: [
+          {
+            id: 1,
+            svgElementList: [{ id: 2, name: 'a' }, { id: 3, name: 'c' }]
+          }
+        ]
+      }
+      mutations[types.m.UPDATE_SVG_ELEMENT](state, {
+        clipId: 1,
+        svgElement: { id: 2, name: 'b' }
+      })
+      const elmList = state.clipList[0].svgElementList
+      expect(elmList[0].id).to.equal(2)
+      expect(elmList[0].name).to.equal('b')
+      expect(elmList[1].name).to.equal('c')
+      expect(elmList).to.have.lengthOf(2)
+    })
+  })
+  describe('REMOVE_SVG_ELEMENT', () => {
+    it('指定 clipId の clip の svgElement が削除されること', () => {
+      const state = {
+        clipList: [{ id: 1, svgElementList: [{ id: 2 }, { id: 3 }] }]
+      }
+      mutations[types.m.REMOVE_SVG_ELEMENT](state, {
+        clipId: 1,
+        svgElementId: 2
+      })
+      const elm = state.clipList[0].svgElementList[0]
+      expect(elm.id).to.equal(3)
+      expect(state.clipList).to.have.lengthOf(1)
+    })
+  })
 })

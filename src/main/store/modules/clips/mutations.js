@@ -41,6 +41,23 @@ const mutations = {
   },
   [types.m.SET_CANVAS_MODE](state, canvasMode) {
     state.canvasMode = canvasMode
+  },
+  [types.m.ADD_SVG_ELEMENT](state, { clipId, svgElement }) {
+    const clip = state.clipList.find(c => c.id === clipId)
+    clip.svgElementList.push(svgElement)
+  },
+  [types.m.UPDATE_SVG_ELEMENT](state, { clipId, svgElement }) {
+    const clip = state.clipList.find(c => c.id === clipId)
+    const index = clip.svgElementList.findIndex(elm => elm.id === svgElement.id)
+    clip.svgElementList.splice(index, 1, {
+      ...clip.svgElementList[index],
+      ...svgElement
+    })
+  },
+  [types.m.REMOVE_SVG_ELEMENT](state, { clipId, svgElementId }) {
+    const clip = state.clipList.find(c => c.id === clipId)
+    const index = clip.svgElementList.findIndex(elm => elm.id === svgElementId)
+    clip.svgElementList.splice(index, 1)
   }
 }
 
