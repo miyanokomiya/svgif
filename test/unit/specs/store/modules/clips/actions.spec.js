@@ -179,6 +179,23 @@ describe('store/modules/clips/actions', () => {
       })
     })
   })
+  describe('SET_ELEMENT_TYPE', () => {
+    it('mutationが正しく実行されること', done => {
+      testAction({
+        done,
+        action: actions[types.a.SET_ELEMENT_TYPE],
+        payload: 'abc',
+        mutations: [
+          {
+            type: types.m.SET_ELEMENT_TYPE,
+            test: mode => {
+              expect(mode).to.equal('abc')
+            }
+          }
+        ]
+      })
+    })
+  })
   describe('CREATE_SVG_ELEMENT', () => {
     it('mutationが正しく実行されること', done => {
       testAction({

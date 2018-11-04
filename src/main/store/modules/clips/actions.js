@@ -45,6 +45,10 @@ const actions = {
     commit(types.m.SET_CANVAS_MODE, canvasMode)
     return Promise.resolve()
   },
+  [types.a.SET_ELEMENT_TYPE]({ commit }, elementType) {
+    commit(types.m.SET_ELEMENT_TYPE, elementType)
+    return Promise.resolve()
+  },
   [types.a.CREATE_SVG_ELEMENT]({ commit }, { clipId, svgElement }) {
     commit(types.m.ADD_SVG_ELEMENT, { clipId, svgElement })
     return Promise.resolve()

@@ -154,6 +154,15 @@ describe('store/modules/clips/mutations', () => {
       expect(state.canvasMode).to.equal('cba')
     })
   })
+  describe('SET_ELEMENT_TYPE', () => {
+    it('elementType が変更されること', () => {
+      const state = {
+        elementType: 'abc'
+      }
+      mutations[types.m.SET_ELEMENT_TYPE](state, 'cba')
+      expect(state.elementType).to.equal('cba')
+    })
+  })
   describe('ADD_SVG_ELEMENT', () => {
     it('指定 clipId の clip に svgElement が追加されること', () => {
       const state = {
