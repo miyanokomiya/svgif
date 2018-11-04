@@ -7,6 +7,7 @@
   @startMove="$emit('startMove', rect.id)"
   @startResize="$emit('startResize', rect.id)"
   @deleteElement="$emit('deleteElement', rect.id)"
+  @startResizeWidth="$emit('startResizeWidth', rect.id)"
 >
   <SvgRectangle
     v-if="selected && !plain"

@@ -9,6 +9,7 @@
     @startMove="startMove"
     @deleteElement="deleteElement"
     @startResize="startResize"
+    @startResizeWidth="startResizeWidth"
   />
   <CircleElement
     v-else-if="svgElement.name === 'circle'"
@@ -20,6 +21,7 @@
     @startMove="startMove"
     @deleteElement="deleteElement"
     @startResize="startResize"
+    @startResizeWidth="startResizeWidth"
   />
 </template>
 
@@ -63,6 +65,9 @@ export default {
     },
     startResize(id) {
       this.$emit('startResize', id)
+    },
+    startResizeWidth(id) {
+      this.$emit('startResizeWidth', id)
     }
   }
 }

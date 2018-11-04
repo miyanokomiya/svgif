@@ -62,6 +62,22 @@
           stroke="black"
         />
       </g>
+      <g @mousedown="$emit('startResizeWidth', svgElement.id)">
+        <path
+          :d="`M ${svgElement.x + svgElement.width / 2} ${svgElement.y + svgElement.height} v ${htmlToSvg(15) + svgElement.strokeWidth / 2}`"
+          stroke="black"
+          :stroke-width="htmlToSvg(1)"
+          :stroke-dasharray="`${htmlToSvg(1)}, ${htmlToSvg(5)}`"
+          fill="none"
+        />
+        <SvgCircle
+          :cx="svgElement.x + svgElement.width / 2"
+          :cy="svgElement.y + svgElement.height + htmlToSvg(15) + svgElement.strokeWidth / 2"
+          :r="htmlToSvg(7)"
+          stroke="black"
+          fill="white"
+        />
+      </g>
     </template>
   </g>
 </template>

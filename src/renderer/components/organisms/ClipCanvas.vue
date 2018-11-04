@@ -32,6 +32,7 @@
             :selected="selectedIdMap[svgElement.id]"
             @startMove="startMoveElement"
             @startResize="startResizeElement"
+            @startResizeWidth="startResizeWidth"
             @deleteElement="id => deleteSvgElement(id, true)"
           />
         </SvgCanvas>
@@ -64,7 +65,8 @@ export default {
     selectedElementIdList: [],
     downStartPoint: null,
     moveVec: { x: 0, y: 0 },
-    localSvgElementList: []
+    localSvgElementList: [],
+    drawMode: ['resize, resizeWidth'][0]
   }),
   computed: {
     ...mapGetters({
@@ -231,25 +233,33 @@ export default {
       switch (element.name) {
         case 'rectangle':
         case 'circle':
-          const to = {
-            id: element.id,
-            width: x - element.x,
-            height: y - element.y
-          }
+          const to =
+            this.drawMode === 'resize'
+              ? {
+                  id: element.id,
+                  width: x - element.x,
+                  height: y - element.y
+                }
+              : {
+                  id: element.id,
+                  strokeWidth: Math.max(
+                    (y - (element.y + element.height)) * 2 -
+                      this.htmlToSvg(15 + 7),
+                    1
+                  )
+                }
           this.updateSvgElementList([to])
       }
     },
     commitMoveElementList({ elementList, x, y }) {
       const toList = elementList.map(element => {
+        // TODO localSvgElementList と moveVec の扱いが微妙
+        const to = this.localSvgElementList.find(elm => elm.id === element.id)
         switch (element.name) {
           case 'rectangle':
           case 'circle':
-            const to = {
-              x: element.x + this.moveVec.x,
-              y: element.y + this.moveVec.y,
-              width: element.width,
-              height: element.height
-            }
+            to.x += this.moveVec.x
+            to.y += this.moveVec.y
             if (to.width < 0) {
               to.width *= -1
               to.x -= to.width
@@ -258,10 +268,7 @@ export default {
               to.height *= -1
               to.y -= to.height
             }
-            return {
-              id: element.id,
-              ...to
-            }
+            return to
         }
       })
       this.updateSvgElementList(toList, true)
@@ -298,8 +305,6 @@ export default {
     mouseup(e) {
       if (this.CANVAS_MODE === 'move') {
         this.setCanvasMode('select')
-        // } else if (this.CANVAS_MODE === 'select') {
-        //   this.clearSelectElement()
       }
       this.commitMoveElementList({
         elementList: this.selectedElementList,
@@ -307,6 +312,7 @@ export default {
       })
       this.downStartPoint = null
       this.moveVec = { x: 0, y: 0 }
+      this.drawMode = 'resize'
     },
     startMoveElement(id) {
       if (this.selectedIdMap[id]) {
@@ -322,6 +328,12 @@ export default {
     startResizeElement(id) {
       this.selectElement(id)
       this.setCanvasMode('draw')
+      this.drawMode = 'resize'
+    },
+    startResizeWidth(id) {
+      this.selectElement(id)
+      this.setCanvasMode('draw')
+      this.drawMode = 'resizeWidth'
     },
     dropFile(e) {
       const files = e.target.files
