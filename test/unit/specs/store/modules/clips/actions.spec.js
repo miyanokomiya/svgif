@@ -219,13 +219,14 @@ describe('store/modules/clips/actions', () => {
       testAction({
         done,
         action: actions[types.a.UPDATE_SVG_ELEMENT],
-        payload: { clipId: 1, svgElement: 'abc' },
+        payload: { clipId: 1, svgElement: 'abc', svgElementList: 'bbb' },
         mutations: [
           {
             type: types.m.UPDATE_SVG_ELEMENT,
-            test: ({ clipId, svgElement }) => {
+            test: ({ clipId, svgElement, svgElementList }) => {
               expect(clipId).to.equal(1)
               expect(svgElement).to.equal('abc')
+              expect(svgElementList).to.equal('bbb')
             }
           }
         ]

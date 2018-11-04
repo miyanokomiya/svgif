@@ -197,6 +197,26 @@ describe('store/modules/clips/mutations', () => {
       expect(elmList[1].name).to.equal('c')
       expect(elmList).to.have.lengthOf(2)
     })
+    it('svgElementList を渡すと複数要素が更新されること', () => {
+      const state = {
+        clipList: [
+          {
+            id: 1,
+            svgElementList: [{ id: 2, name: 'a', x: 10 }, { id: 3, name: 'c' }]
+          }
+        ]
+      }
+      mutations[types.m.UPDATE_SVG_ELEMENT](state, {
+        clipId: 1,
+        svgElementList: [{ id: 2, name: 'b' }, { id: 3, name: 'bb' }]
+      })
+      const elmList = state.clipList[0].svgElementList
+      expect(elmList[0].id).to.equal(2)
+      expect(elmList[0].name).to.equal('b')
+      expect(elmList[0].x).to.equal(10)
+      expect(elmList[1].name).to.equal('bb')
+      expect(elmList).to.have.lengthOf(2)
+    })
   })
   describe('REMOVE_SVG_ELEMENT', () => {
     it('指定 clipId の clip の svgElement が削除されること', () => {

@@ -53,8 +53,11 @@ const actions = {
     commit(types.m.ADD_SVG_ELEMENT, { clipId, svgElement })
     return Promise.resolve()
   },
-  [types.a.UPDATE_SVG_ELEMENT]({ commit }, { clipId, svgElement }) {
-    commit(types.m.UPDATE_SVG_ELEMENT, { clipId, svgElement })
+  [types.a.UPDATE_SVG_ELEMENT](
+    { commit },
+    { clipId, svgElement, svgElementList }
+  ) {
+    commit(types.m.UPDATE_SVG_ELEMENT, { clipId, svgElement, svgElementList })
     return Promise.resolve()
   },
   [types.a.DELETE_SVG_ELEMENT]({ commit }, { clipId, svgElementId }) {

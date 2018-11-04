@@ -49,12 +49,17 @@ const mutations = {
     const clip = state.clipList.find(c => c.id === clipId)
     clip.svgElementList.push(svgElement)
   },
-  [types.m.UPDATE_SVG_ELEMENT](state, { clipId, svgElement }) {
+  [types.m.UPDATE_SVG_ELEMENT](state, { clipId, svgElement, svgElementList }) {
     const clip = state.clipList.find(c => c.id === clipId)
-    const index = clip.svgElementList.findIndex(elm => elm.id === svgElement.id)
-    clip.svgElementList.splice(index, 1, {
-      ...clip.svgElementList[index],
-      ...svgElement
+    svgElementList = svgElementList || [svgElement]
+    svgElementList.forEach(svgElement => {
+      const index = clip.svgElementList.findIndex(
+        elm => elm.id === svgElement.id
+      )
+      clip.svgElementList.splice(index, 1, {
+        ...clip.svgElementList[index],
+        ...svgElement
+      })
     })
   },
   [types.m.REMOVE_SVG_ELEMENT](state, { clipId, svgElementId }) {
