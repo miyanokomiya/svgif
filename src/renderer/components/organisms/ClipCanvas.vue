@@ -26,7 +26,7 @@
           :selected="selectedIdMap[svgElement.id]"
           @startMove="startMoveElement"
           @startResize="startResizeElement"
-          @delete="id => deleteSvgElement(id, true)"
+          @deleteElement="id => deleteSvgElement(id, true)"
         />
       </SvgCanvas>
     </div>
@@ -177,6 +177,7 @@ export default {
       }
     },
     deleteSvgElement(svgElementId, commit = false) {
+      this.clearSelectElement(svgElementId)
       const index = this.localSvgElementList.findIndex(
         elm => elm.id === svgElementId
       )

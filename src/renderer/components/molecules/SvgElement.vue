@@ -6,7 +6,7 @@
     :selected="selected"
     :scale="scale"
     @startMove="startMove"
-    @delete="deleteElement"
+    @deleteElement="deleteElement"
     @startResize="startResize"
   />
 </template>
@@ -41,7 +41,7 @@ export default {
       this.$emit('startMove', id)
     },
     deleteElement(id) {
-      this.$emit('delete', id)
+      this.$emit('deleteElement', id)
     },
     startResize(id) {
       this.$emit('startResize', id)
