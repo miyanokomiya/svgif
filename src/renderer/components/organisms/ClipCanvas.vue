@@ -77,7 +77,7 @@ export default {
       }
     },
     svgElementList() {
-      return this.SELECTED_CLIP.svgElementList
+      return this.SELECTED_CLIP ? this.SELECTED_CLIP.svgElementList : []
     },
     selectedElementList() {
       return this.selectedElementIdList
