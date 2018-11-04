@@ -13,7 +13,17 @@
         :class="{ selected: isSelected(clip.id) }"
         @click="selectClip(clip.id)"
       >
-        <img class="image" :src="clip.base64" />
+        <div class="image">
+          <img
+            :src="clip.base64"
+            :style="{ width: `${clip.width / WHOLE_SIZE.width * 100}%`, height: `${clip.height / WHOLE_SIZE.height * 100}%` }"
+          />
+          <SvgRender
+            class="svg"
+            :svgElementList="clip.svgElementList"
+            :size="WHOLE_SIZE"
+          />
+        </div>
         <div class="split" />
       </div>
     </transition-group>
@@ -24,10 +34,14 @@
 import { mapGetters, mapActions } from 'vuex'
 import clipTypes from '@main/store/modules/clips/types'
 import draggable from 'vuedraggable'
+import SvgRender from '@/components/organisms/SvgRender'
+import ImagePanel from '@/components/atoms/ImagePanel'
 
 export default {
   components: {
-    draggable
+    draggable,
+    SvgRender,
+    ImagePanel
   },
   computed: {
     ...mapGetters({
@@ -73,9 +87,24 @@ export default {
       border: 0.4rem solid tomato;
     }
     .image {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
       width: calc(100% - 0.6rem);
       height: 100%;
       border: 0.1rem solid black;
+      img {
+        width: 100%;
+        height: 100%;
+      }
+      .svg {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+      }
     }
     .split {
       width: 0.6rem;

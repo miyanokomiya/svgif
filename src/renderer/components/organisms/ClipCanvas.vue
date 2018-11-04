@@ -293,6 +293,7 @@ export default {
   .canvas {
     height: calc(100% - 8rem);
     position: relative;
+    user-select: none;
     .svg {
       position: absolute;
       top: 0;
