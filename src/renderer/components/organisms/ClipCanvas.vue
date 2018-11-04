@@ -1,36 +1,43 @@
 <template>
-  <div v-if="SELECTED_CLIP" class="clip-canvas">
-    <div class="canvas" ref="wrapper">
-      <ImagePanel
-        :src="SELECTED_CLIP.base64"
-        :width="imageSize.width"
-        :height="imageSize.height"
-      />
-      <SvgCanvas
-        class="svg"
-        :style="{ width: `${WHOLE_SIZE.width * scale}px`, height: `${WHOLE_SIZE.height * scale}px` }"
-        :width="WHOLE_SIZE.width"
-        :height="WHOLE_SIZE.height"
-        @mousedown.native.self="mousedownSelf"
-        @mousedown.native="mousedown"
-        @mousemove.native="mousemove"
-        @mouseup.native="mouseup"
-      >
-        <SvgElement
-          v-for="svgElement in localSvgElementList"
-          class="svg-element"
-          :key="svgElement.id"
-          :svgElement="svgElement"
-          :moveVec="selectedIdMap[svgElement.id] ? moveVec : undefined"
-          :scale="scale"
-          :selected="selectedIdMap[svgElement.id]"
-          @startMove="startMoveElement"
-          @startResize="startResizeElement"
-          @deleteElement="id => deleteSvgElement(id, true)"
+  <div
+    class="clip-canvas"
+    @dragover.prevent="e => e.dataTransfer.dropEffect = 'copy'"
+    @dragleave.prevent
+    @drop.prevent="dropFile"
+  >
+    <template v-if="SELECTED_CLIP">
+      <div class="canvas" ref="wrapper">
+        <ImagePanel
+          :src="SELECTED_CLIP.base64"
+          :width="imageSize.width"
+          :height="imageSize.height"
         />
-      </SvgCanvas>
-    </div>
-    <ClipTimeLine class="time-line" />
+        <SvgCanvas
+          class="svg"
+          :style="{ width: `${WHOLE_SIZE.width * scale}px`, height: `${WHOLE_SIZE.height * scale}px` }"
+          :width="WHOLE_SIZE.width"
+          :height="WHOLE_SIZE.height"
+          @mousedown.native.self="mousedownSelf"
+          @mousedown.native="mousedown"
+          @mousemove.native="mousemove"
+          @mouseup.native="mouseup"
+        >
+          <SvgElement
+            v-for="svgElement in localSvgElementList"
+            class="svg-element"
+            :key="svgElement.id"
+            :svgElement="svgElement"
+            :moveVec="selectedIdMap[svgElement.id] ? moveVec : undefined"
+            :scale="scale"
+            :selected="selectedIdMap[svgElement.id]"
+            @startMove="startMoveElement"
+            @startResize="startResizeElement"
+            @deleteElement="id => deleteSvgElement(id, true)"
+          />
+        </SvgCanvas>
+      </div>
+      <ClipTimeLine class="time-line" />
+    </template>
   </div>
 </template>
 
@@ -39,6 +46,7 @@ import { mapGetters, mapActions } from 'vuex'
 import clipTypes from '@main/store/modules/clips/types'
 import { getPoint } from '@/commons/utils/canvas'
 import { getRectangle, getCircle } from '@/commons/models/svgElements'
+import { readImageFile } from '@/commons/utils/file'
 import ImagePanel from '@/components/atoms/ImagePanel'
 import SvgCanvas from '@/components/molecules/SvgCanvas'
 import SvgElement from '@/components/molecules/SvgElement'
@@ -124,7 +132,8 @@ export default {
       _setCanvasMode: clipTypes.a.SET_CANVAS_MODE,
       _createSvgElement: clipTypes.a.CREATE_SVG_ELEMENT,
       _updateSvgElement: clipTypes.a.UPDATE_SVG_ELEMENT,
-      _deleteSvgElement: clipTypes.a.DELETE_SVG_ELEMENT
+      _deleteSvgElement: clipTypes.a.DELETE_SVG_ELEMENT,
+      _createClip: clipTypes.a.CREATE_CLIP
     }),
     htmlToSvg(val) {
       return val / this.scale
@@ -313,6 +322,30 @@ export default {
     startResizeElement(id) {
       this.selectElement(id)
       this.setCanvasMode('draw')
+    },
+    dropFile(e) {
+      const files = e.target.files
+        ? [...e.target.files]
+        : [...e.dataTransfer.files]
+      // 順不同でロードが済んだ順にclip化
+      files.forEach(file => {
+        readImageFile(file)
+          .then(({ base64, width, height }) => {
+            this._createClip({
+              clip: {
+                base64,
+                width,
+                height
+              }
+            })
+          })
+          .catch(e => {
+            this.$notify.error({
+              title: 'Error',
+              message: e.message
+            })
+          })
+      })
     }
   }
 }
