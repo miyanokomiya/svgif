@@ -26,6 +26,7 @@
           :selected="selectedIdMap[svgElement.id]"
           @startMove="startMoveElement"
           @startResize="startResizeElement"
+          @delete="id => deleteSvgElement(id, true)"
         />
       </SvgCanvas>
     </div>
