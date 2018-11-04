@@ -19,6 +19,13 @@
           @input="updateDelay"
         />
       </div>
+      <el-button
+        class="clone-button"
+        type="primary" size="mini"
+        @click="cloneClip"
+      >
+        Clone
+      </el-button>
     </template>
     <span class="total-delay">Total Time(s): {{WHOLE_DELAY / 1000}}</span>
     <el-button
@@ -47,7 +54,8 @@ export default {
   methods: {
     ...mapActions({
       _deleteClip: clipTypes.a.DELETE_CLIP,
-      _updateDelay: clipTypes.a.UPDATE_DELAY
+      _updateDelay: clipTypes.a.UPDATE_DELAY,
+      _cloneClip: clipTypes.a.CLONE_CLIP
     }),
     createGif() {
       this.$emit('createGif')
@@ -79,6 +87,9 @@ export default {
           message: 'Delete completed'
         })
       })
+    },
+    cloneClip() {
+      this._cloneClip({ id: this.SELECTED_CLIP.id })
     }
   }
 }

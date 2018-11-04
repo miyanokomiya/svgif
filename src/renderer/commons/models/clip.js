@@ -8,7 +8,9 @@ export function getClip(clip) {
     base64: '',
     width: 0,
     height: 0,
-    svgElementList: [],
-    ...clip
+    ...clip,
+    svgElementList: clip.svgElementList
+      ? clip.svgElementList.map(elm => ({ id: createId(), ...elm }))
+      : []
   }
 }

@@ -30,14 +30,17 @@ const actions = {
     return Promise.resolve()
   },
   [types.a.CLONE_CLIP]({ commit, state }, { id, index }) {
-    const original = state.clipList.find(c => c.id === id)
+    const originalIndex = state.clipList.findIndex(c => c.id === id)
+    const original = state.clipList[originalIndex]
     commit(types.m.ADD_CLIP, {
       clip: getClip({
+        delay: original.delay,
         base64: original.base64,
         width: original.width,
-        height: original.height
+        height: original.height,
+        svgElementList: original.svgElementList
       }),
-      index
+      index: index >= 0 ? index : originalIndex + 1
     })
     return Promise.resolve()
   },

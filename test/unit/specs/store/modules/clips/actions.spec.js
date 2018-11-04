@@ -161,6 +161,33 @@ describe('store/modules/clips/actions', () => {
         ]
       })
     })
+    it('index を省略すると、複製対象の直後に挿入されること', done => {
+      const state = {
+        clipList: [
+          { id: 1, base64: 'a', width: 1, height: 2 },
+          { id: 2, base64: 'b', width: 10, height: 20 }
+        ],
+        selectedId: -1
+      }
+      testAction({
+        done,
+        action: actions[types.a.CLONE_CLIP],
+        state,
+        payload: { id: 1 },
+        mutations: [
+          {
+            type: types.m.ADD_CLIP,
+            test: ({ clip, index }) => {
+              expect(clip.id).not.to.equal(1)
+              expect(clip.base64).to.equal('a')
+              expect(clip.width).to.equal(1)
+              expect(clip.height).to.equal(2)
+              expect(index).to.equal(1)
+            }
+          }
+        ]
+      })
+    })
   })
   describe('SET_CANVAS_MODE', () => {
     it('mutationが正しく実行されること', done => {
