@@ -1,6 +1,6 @@
 <template>
   <RectangleElement
-    v-if="svgElement.name === 'rect'"
+    v-if="svgElement.name === 'rectangle'"
     :svgElement="svgElement"
     :moveVec="moveVec"
     :selected="selected"

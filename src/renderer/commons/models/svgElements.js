@@ -10,7 +10,7 @@ function getBaseProps() {
 
 export function getRectangle(arg) {
   return {
-    name: 'rect',
+    name: 'rectangle',
     x: 0,
     y: 0,
     width: 1,

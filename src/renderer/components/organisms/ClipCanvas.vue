@@ -220,7 +220,7 @@ export default {
     },
     resizeElement({ element, x, y }) {
       switch (element.name) {
-        case 'rect':
+        case 'rectangle':
         case 'circle':
           const to = {
             id: element.id,
@@ -233,7 +233,7 @@ export default {
     commitMoveElementList({ elementList, x, y }) {
       const toList = elementList.map(element => {
         switch (element.name) {
-          case 'rect':
+          case 'rectangle':
           case 'circle':
             const to = {
               x: element.x + this.moveVec.x,
