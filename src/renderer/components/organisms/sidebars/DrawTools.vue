@@ -17,13 +17,20 @@
         @click="setCanvasMode('draw')"
       />
     </el-button-group>
-    <!-- <el-button-group>
+    <el-button-group>
       <el-button
         :type="ELEMENT_TYPE === 'rectangle' ? 'primary' : ''"
+        @click="setElementType('rectangle')"
       >
         Rect
       </el-button>
-    </el-button-group> -->
+      <el-button
+        :type="ELEMENT_TYPE === 'circle' ? 'primary' : ''"
+        @click="setElementType('circle')"
+      >
+        Circle
+      </el-button>
+    </el-button-group>
   </div>
 </template>
 
@@ -42,7 +49,8 @@ export default {
   },
   methods: {
     ...mapActions({
-      _setCanvasMode: clipTypes.a.SET_CANVAS_MODE
+      _setCanvasMode: clipTypes.a.SET_CANVAS_MODE,
+      _setElementType: clipTypes.a.SET_ELEMENT_TYPE
     }),
     setCanvasMode(mode) {
       if (this.CANVAS_MODE === mode) {
@@ -50,6 +58,10 @@ export default {
       } else {
         this._setCanvasMode(mode)
       }
+    },
+    setElementType(type) {
+      this._setElementType(type)
+      this._setCanvasMode('draw')
     }
   }
 }

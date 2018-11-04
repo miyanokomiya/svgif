@@ -38,7 +38,7 @@
 import { mapGetters, mapActions } from 'vuex'
 import clipTypes from '@main/store/modules/clips/types'
 import { getPoint } from '@/commons/utils/canvas'
-import { getRectangle } from '@/commons/models/svgElements'
+import { getRectangle, getCircle } from '@/commons/models/svgElements'
 import ImagePanel from '@/components/atoms/ImagePanel'
 import SvgCanvas from '@/components/molecules/SvgCanvas'
 import SvgElement from '@/components/molecules/SvgElement'
@@ -164,15 +164,17 @@ export default {
         })
       }
     },
-    updateSvgElement({ id, to }, commit = false) {
-      const elm = this.localSvgElementList.find(elm => elm.id === id)
-      Object.keys(to).forEach(key => {
-        elm[key] = to[key]
+    updateSvgElementList(toList, commit = false) {
+      toList.forEach(({ id, ...to }) => {
+        const elm = this.localSvgElementList.find(elm => elm.id === id)
+        Object.keys(to).forEach(key => {
+          elm[key] = to[key]
+        })
       })
       if (commit) {
         this._updateSvgElement({
           clipId: this.SELECTED_CLIP.id,
-          svgElement: { id, ...to }
+          svgElementList: toList
         })
       }
     },
@@ -208,12 +210,59 @@ export default {
         ? this.clearSelectElement(id)
         : this.selectElement(id)
     },
+    createElement({ x, y }) {
+      switch (this.ELEMENT_TYPE) {
+        case 'rectangle':
+          return getRectangle({ x, y })
+        case 'circle':
+          return getCircle({ x, y })
+      }
+    },
+    resizeElement({ element, x, y }) {
+      switch (element.name) {
+        case 'rect':
+        case 'circle':
+          const to = {
+            id: element.id,
+            width: x - element.x,
+            height: y - element.y
+          }
+          this.updateSvgElementList([to])
+      }
+    },
+    commitMoveElementList({ elementList, x, y }) {
+      const toList = elementList.map(element => {
+        switch (element.name) {
+          case 'rect':
+          case 'circle':
+            const to = {
+              x: element.x + this.moveVec.x,
+              y: element.y + this.moveVec.y,
+              width: element.width,
+              height: element.height
+            }
+            if (to.width < 0) {
+              to.width *= -1
+              to.x -= to.width
+            }
+            if (to.height < 0) {
+              to.height *= -1
+              to.y -= to.height
+            }
+            return {
+              id: element.id,
+              ...to
+            }
+        }
+      })
+      this.updateSvgElementList(toList, true)
+    },
     mousedownSelf(e) {
       if (this.CANVAS_MODE !== 'draw') return
       const p = this.getSvgPoint(e)
-      const rect = getRectangle({ ...p })
-      this.createSvgElement(rect, true)
-      this.selectElement(rect.id)
+      const elm = this.createElement({ ...p })
+      this.createSvgElement(elm, true)
+      this.selectElement(elm.id)
     },
     mousedown(e) {
       this.downStartPoint = this.getSvgPoint(e)
@@ -228,42 +277,16 @@ export default {
           y: p.y - this.downStartPoint.y
         }
       } else if (this.CANVAS_MODE === 'draw') {
-        if (this.ELEMENT_TYPE === 'rectangle') {
-          const rect = {
-            ...this.selectedElement,
-            width: p.x - this.selectedElement.x,
-            height: p.y - this.selectedElement.y
-          }
-          this.updateSvgElement({ id: this.selectedElement.id, to: rect })
-        }
+        this.resizeElement({ element: this.selectedElement, ...p })
       }
     },
     mouseup(e) {
       if (this.CANVAS_MODE === 'move') {
         this.setCanvasMode('select')
       }
-      this.selectedElementList.forEach(elm => {
-        const rect = {
-          x: elm.x + this.moveVec.x,
-          y: elm.y + this.moveVec.y,
-          width: elm.width,
-          height: elm.height
-        }
-        if (rect.width < 0) {
-          rect.width *= -1
-          rect.x -= rect.width
-        }
-        if (rect.height < 0) {
-          rect.height *= -1
-          rect.y -= rect.height
-        }
-        this.updateSvgElement(
-          {
-            id: elm.id,
-            to: rect
-          },
-          true
-        )
+      this.commitMoveElementList({
+        elementList: this.selectedElementList,
+        ...this.moveVec
       })
       this.downStartPoint = null
       this.moveVec = { x: 0, y: 0 }
