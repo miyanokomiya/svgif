@@ -1,8 +1,9 @@
 <template>
-<circle
+<ellipse
   :cx="cx"
   :cy="cy"
-  :r="absR"
+  :rx="absRx"
+  :ry="absRy"
   :stroke="stroke"
   :stroke-width="strokeWidth"
   :stroke-opacity="strokeOpacity"
@@ -27,6 +28,14 @@ export default {
     r: {
       type: Number,
       default: 1
+    },
+    rx: {
+      type: Number,
+      default: 0
+    },
+    ry: {
+      type: Number,
+      default: 0
     },
     strokeWidth: {
       type: Number,
@@ -60,6 +69,14 @@ export default {
   computed: {
     absR() {
       return Math.abs(this.r) || 1
+    },
+    absRx() {
+      if (this.rx === 0) return this.absR
+      return Math.abs(this.rx) || 1
+    },
+    absRy() {
+      if (this.ry === 0) return this.absR
+      return Math.abs(this.ry) || 1
     }
   }
 }

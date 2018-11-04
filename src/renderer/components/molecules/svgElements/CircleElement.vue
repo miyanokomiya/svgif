@@ -1,58 +1,58 @@
 <template>
   <g>
-    <g @mousedown="$emit('startMove', rect.id)">
-      <SvgRectangle
+    <g @mousedown="$emit('startMove', circle.id)">
+      <SvgCircle
         v-if="selected && !plain"
-        :x="rect.x"
-        :y="rect.y"
-        :width="rect.width"
-        :height="rect.height"
+        :cx="cx"
+        :cy="cy"
+        :rx="rx"
+        :ry="ry"
         :stroke="selectedStroke"
         :strokeOpacity="selectedStrokeOpacity"
         :strokeWidth="selectedStrokeWidth"
       />
-      <SvgRectangle
-        :x="rect.x"
-        :y="rect.y"
-        :width="rect.width"
-        :height="rect.height"
-        :stroke="rect.stroke"
-        :strokeWidth="rect.strokeWidth"
+      <SvgCircle
+        :cx="cx"
+        :cy="cy"
+        :rx="rx"
+        :ry="ry"
+        :stroke="circle.stroke"
+        :strokeWidth="circle.strokeWidth"
       />
       <SvgCircle
         v-if="!plain"
-        :cx="rect.x"
-        :cy="rect.y"
+        :cx="circle.x"
+        :cy="circle.y"
         :r="htmlToSvg(7)"
         stroke="black"
         fill="white"
       />
     </g>
     <template v-if="selected && !plain">
-      <g @mousedown="$emit('deleteElement', rect.id)">
+      <g @mousedown="$emit('deleteElement', circle.id)">
         <SvgCircle
-          :cx="rect.x"
-          :cy="rect.y + rect.height"
+          :cx="circle.x"
+          :cy="circle.y + circle.height"
           :r="htmlToSvg(10)"
           stroke="black"
           fill="white"
         />
         <path
-          :d="`M ${rect.x - htmlToSvg(5)} ${rect.y + rect.height - htmlToSvg(5)} l ${htmlToSvg(10)} ${htmlToSvg(10)} m 0 ${htmlToSvg(-10)} l ${htmlToSvg(-10)} ${htmlToSvg(10)}`"
+          :d="`M ${circle.x - htmlToSvg(5)} ${circle.y + circle.height - htmlToSvg(5)} l ${htmlToSvg(10)} ${htmlToSvg(10)} m 0 ${htmlToSvg(-10)} l ${htmlToSvg(-10)} ${htmlToSvg(10)}`"
           stroke="black"
           :stroke-width="htmlToSvg(2)"
         />
       </g>
-      <g @mousedown="$emit('startResize', rect.id)">
+      <g @mousedown="$emit('startResize', circle.id)">
         <SvgCircle
-          :cx="rect.x + rect.width"
-          :cy="rect.y + rect.height"
+          :cx="circle.x + circle.width"
+          :cy="circle.y + circle.height"
           :r="htmlToSvg(10)"
           stroke="black"
           fill="white"
         />
         <path
-          :d="`M ${rect.x + rect.width + htmlToSvg(5)} ${rect.y + rect.height - htmlToSvg(5)} v ${htmlToSvg(10)} h ${htmlToSvg(-10)} z`"
+          :d="`M ${circle.x + circle.width + htmlToSvg(5)} ${circle.y + circle.height - htmlToSvg(5)} v ${htmlToSvg(10)} h ${htmlToSvg(-10)} z`"
           stroke="black"
         />
       </g>
@@ -72,12 +72,24 @@ export default {
     SvgCircle
   },
   computed: {
-    rect() {
+    circle() {
       return {
         ...this.svgElement,
         x: this.svgElement.x + this.moveVec.x,
         y: this.svgElement.y + this.moveVec.y
       }
+    },
+    cx() {
+      return this.circle.x + this.rx
+    },
+    cy() {
+      return this.circle.y + this.ry
+    },
+    rx() {
+      return this.circle.width / 2
+    },
+    ry() {
+      return this.circle.height / 2
     }
   }
 }

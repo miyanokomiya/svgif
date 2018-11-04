@@ -10,14 +10,27 @@
     @deleteElement="deleteElement"
     @startResize="startResize"
   />
+  <CircleElement
+    v-else-if="svgElement.name === 'circle'"
+    :svgElement="svgElement"
+    :moveVec="moveVec"
+    :selected="selected"
+    :scale="scale"
+    :plain="plain"
+    @startMove="startMove"
+    @deleteElement="deleteElement"
+    @startResize="startResize"
+  />
 </template>
 
 <script>
 import RectangleElement from './svgElements/RectangleElement'
+import CircleElement from './svgElements/CircleElement'
 
 export default {
   components: {
-    RectangleElement
+    RectangleElement,
+    CircleElement
   },
   props: {
     svgElement: {
