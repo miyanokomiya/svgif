@@ -168,12 +168,12 @@ describe('store/modules/clips/mutations', () => {
     })
   })
   describe('UPDATE_SVG_ELEMENT', () => {
-    it('指定 clipId の clip の svgElement が更新されること', () => {
+    it('指定 clipId の clip の svgElement が差分更新されること', () => {
       const state = {
         clipList: [
           {
             id: 1,
-            svgElementList: [{ id: 2, name: 'a' }, { id: 3, name: 'c' }]
+            svgElementList: [{ id: 2, name: 'a', x: 10 }, { id: 3, name: 'c' }]
           }
         ]
       }
@@ -184,6 +184,7 @@ describe('store/modules/clips/mutations', () => {
       const elmList = state.clipList[0].svgElementList
       expect(elmList[0].id).to.equal(2)
       expect(elmList[0].name).to.equal('b')
+      expect(elmList[0].x).to.equal(10)
       expect(elmList[1].name).to.equal('c')
       expect(elmList).to.have.lengthOf(2)
     })

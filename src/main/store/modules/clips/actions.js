@@ -1,9 +1,10 @@
+import { getClip } from '@/commons/models/clip'
 import types from './types'
 
 const actions = {
   [types.a.CREATE_CLIP]({ commit }, { clip, index }) {
     commit(types.m.ADD_CLIP, {
-      clip: createClip(clip),
+      clip: getClip(clip),
       index
     })
     return Promise.resolve()
@@ -31,7 +32,7 @@ const actions = {
   [types.a.CLONE_CLIP]({ commit, state }, { id, index }) {
     const original = state.clipList.find(c => c.id === id)
     commit(types.m.ADD_CLIP, {
-      clip: createClip({
+      clip: getClip({
         base64: original.base64,
         width: original.width,
         height: original.height
@@ -56,33 +57,6 @@ const actions = {
     commit(types.m.REMOVE_SVG_ELEMENT, { clipId, svgElementId })
     return Promise.resolve()
   }
-}
-
-function createClip(clip) {
-  return {
-    id: createId(),
-    createdAt: createDate(new Date()),
-    delay: 300,
-    base64: '',
-    width: 0,
-    height: 0,
-    svgElementList: [],
-    ...clip
-  }
-}
-
-function createId() {
-  return Math.random() + 1
-}
-
-function createDate(dt) {
-  const y = dt.getFullYear()
-  const m = ('0' + (dt.getMonth() + 1)).slice(-2)
-  const d = ('0' + dt.getDate()).slice(-2)
-  const hh = ('0' + dt.getHours()).slice(-2)
-  const mm = ('0' + dt.getMinutes()).slice(-2)
-  const ss = ('0' + dt.getSeconds()).slice(-2)
-  return `${y}/${m}/${d} ${hh}:${mm}:${ss}`
 }
 
 export default actions
