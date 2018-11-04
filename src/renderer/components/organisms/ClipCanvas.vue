@@ -17,7 +17,7 @@
         @mouseup.native="mouseup"
       >
         <SvgElement
-          v-for="svgElement in svgElementList"
+          v-for="svgElement in localSvgElementList"
           class="svg-element"
           :key="svgElement.id"
           :svgElement="svgElement"
@@ -37,7 +37,7 @@
 import { mapGetters, mapActions } from 'vuex'
 import clipTypes from '@main/store/modules/clips/types'
 import { getPoint } from '@/commons/utils/canvas'
-import { getRectangle } from '@/commons/svgElements'
+import { getRectangle } from '@/commons/models/svgElements'
 import ImagePanel from '@/components/atoms/ImagePanel'
 import SvgCanvas from '@/components/molecules/SvgCanvas'
 import SvgElement from '@/components/molecules/SvgElement'
@@ -52,10 +52,10 @@ export default {
   },
   data: () => ({
     scale: 1,
-    svgElementList: [],
     selectedElementIdList: [],
     downStartPoint: null,
-    moveVec: { x: 0, y: 0 }
+    moveVec: { x: 0, y: 0 },
+    localSvgElementList: []
   }),
   computed: {
     ...mapGetters({
@@ -76,9 +76,12 @@ export default {
         height: this.SELECTED_CLIP.height * this.scale * rate
       }
     },
+    svgElementList() {
+      return this.SELECTED_CLIP.svgElementList
+    },
     selectedElementList() {
       return this.selectedElementIdList
-        .map(id => this.svgElementList.find(e => e.id === id))
+        .map(id => this.localSvgElementList.find(e => e.id === id))
         .filter(e => !!e)
     },
     selectedElement() {
@@ -92,25 +95,13 @@ export default {
         return map
       }, {})
     },
-    elementPositionMap() {
-      return this.svgElementList.reduce((map, elm) => {
-        map[elm.id] = {
-          x: elm.x,
-          y: elm.y
-        }
-        if (this.selectedIdMap[elm.id]) {
-          map[elm.id].x += this.moveVec.x
-          map[elm.id].y += this.moveVec.y
-        }
-        return map
-      }, {})
-    },
     selectedAny() {
       return this.selectedElementList.length > 0
     }
   },
   mounted() {
     this.rescale()
+    this.initLocalSvgElementList()
   },
   updated() {
     this.rescale()
@@ -118,11 +109,21 @@ export default {
   watch: {
     windowInfo() {
       this.rescale()
+    },
+    SELECTED_CLIP() {
+      this.rescale()
+      this.selectedElementIdList = []
+    },
+    svgElementList() {
+      this.initLocalSvgElementList()
     }
   },
   methods: {
     ...mapActions({
-      _setCanvasMode: clipTypes.a.SET_CANVAS_MODE
+      _setCanvasMode: clipTypes.a.SET_CANVAS_MODE,
+      _createSvgElement: clipTypes.a.CREATE_SVG_ELEMENT,
+      _updateSvgElement: clipTypes.a.UPDATE_SVG_ELEMENT,
+      _deleteSvgElement: clipTypes.a.DELETE_SVG_ELEMENT
     }),
     htmlToSvg(val) {
       return val / this.scale
@@ -150,13 +151,41 @@ export default {
         this.scale = Math.min(rate, 1)
       })
     },
-    // オブジェクト参照を変更せずにプロパティを更新する
-    updateElement({ id, to }) {
-      const selected = this.svgElementList.find(e => e.id === id)
-      if (!selected) return
+    initLocalSvgElementList() {
+      this.localSvgElementList = this.svgElementList.map(elm => ({ ...elm }))
+    },
+    createSvgElement(svgElement, commit = false) {
+      this.localSvgElementList.push(svgElement)
+      if (commit) {
+        this._createSvgElement({
+          clipId: this.SELECTED_CLIP.id,
+          svgElement
+        })
+      }
+    },
+    updateSvgElement({ id, to }, commit = false) {
+      const elm = this.localSvgElementList.find(elm => elm.id === id)
       Object.keys(to).forEach(key => {
-        selected[key] = to[key]
+        elm[key] = to[key]
       })
+      if (commit) {
+        this._updateSvgElement({
+          clipId: this.SELECTED_CLIP.id,
+          svgElement: { id, ...to }
+        })
+      }
+    },
+    deleteSvgElement(svgElementId, commit = false) {
+      const index = this.localSvgElementList.findIndex(
+        elm => elm.id === svgElementId
+      )
+      this.localSvgElementList.splice(index, 1)
+      if (commit) {
+        this._deleteSvgElement({
+          clipId: this.SELECTED_CLIP.id,
+          svgElementId
+        })
+      }
     },
     selectElement(id, multi) {
       if (!multi) this.clearSelectElement()
@@ -181,7 +210,7 @@ export default {
       if (this.CANVAS_MODE !== 'draw') return
       const p = this.getSvgPoint(e)
       const rect = getRectangle({ ...p })
-      this.svgElementList.push(rect)
+      this.createSvgElement(rect, true)
       this.selectElement(rect.id)
     },
     mousedown(e) {
@@ -203,7 +232,7 @@ export default {
             width: p.x - this.selectedElement.x,
             height: p.y - this.selectedElement.y
           }
-          this.updateElement({ id: this.selectedElement.id, to: rect })
+          this.updateSvgElement({ id: this.selectedElement.id, to: rect })
         }
       }
     },
@@ -211,15 +240,13 @@ export default {
       if (this.CANVAS_MODE === 'move') {
         this.setCanvasMode('select')
       }
-
       this.selectedElementList.forEach(elm => {
-        this.updateElement({
-          id: elm.id,
-          to: { x: elm.x + this.moveVec.x, y: elm.y + this.moveVec.y }
-        })
-      })
-      if (this.selectedElement) {
-        const rect = { ...this.selectedElement }
+        const rect = {
+          x: elm.x + this.moveVec.x,
+          y: elm.y + this.moveVec.y,
+          width: elm.width,
+          height: elm.height
+        }
         if (rect.width < 0) {
           rect.width *= -1
           rect.x -= rect.width
@@ -228,8 +255,14 @@ export default {
           rect.height *= -1
           rect.y -= rect.height
         }
-        this.updateElement({ id: this.selectedElement.id, to: rect })
-      }
+        this.updateSvgElement(
+          {
+            id: elm.id,
+            to: rect
+          },
+          true
+        )
+      })
       this.downStartPoint = null
       this.moveVec = { x: 0, y: 0 }
     },

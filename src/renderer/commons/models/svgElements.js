@@ -1,6 +1,4 @@
-function createId() {
-  return Math.random() + 1
-}
+import { createId } from './base'
 
 export function getRectangle(arg) {
   return {
