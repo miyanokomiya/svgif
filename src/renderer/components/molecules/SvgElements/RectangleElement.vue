@@ -1,75 +1,44 @@
 <template>
-  <g>
-    <g @mousedown="$emit('startMove', rect.id)">
-      <SvgRectangle
-        v-if="selected && !plain"
-        :x="rect.x"
-        :y="rect.y"
-        :width="rect.width"
-        :height="rect.height"
-        :stroke="selectedStroke"
-        :strokeOpacity="selectedStrokeOpacity"
-        :strokeWidth="selectedStrokeWidth"
-      />
-      <SvgRectangle
-        :x="rect.x"
-        :y="rect.y"
-        :width="rect.width"
-        :height="rect.height"
-        :stroke="rect.stroke"
-        :strokeWidth="rect.strokeWidth"
-      />
-      <SvgCircle
-        v-if="!plain"
-        :cx="rect.x"
-        :cy="rect.y"
-        :r="htmlToSvg(7)"
-        stroke="black"
-        fill="white"
-      />
-    </g>
-    <template v-if="selected && !plain">
-      <g @mousedown="$emit('deleteElement', rect.id)">
-        <SvgCircle
-          :cx="rect.x"
-          :cy="rect.y + rect.height"
-          :r="htmlToSvg(10)"
-          stroke="black"
-          fill="white"
-        />
-        <path
-          :d="`M ${rect.x - htmlToSvg(5)} ${rect.y + rect.height - htmlToSvg(5)} l ${htmlToSvg(10)} ${htmlToSvg(10)} m 0 ${htmlToSvg(-10)} l ${htmlToSvg(-10)} ${htmlToSvg(10)}`"
-          stroke="black"
-          :stroke-width="htmlToSvg(2)"
-        />
-      </g>
-      <g @mousedown="$emit('startResize', rect.id)">
-        <SvgCircle
-          :cx="rect.x + rect.width"
-          :cy="rect.y + rect.height"
-          :r="htmlToSvg(10)"
-          stroke="black"
-          fill="white"
-        />
-        <path
-          :d="`M ${rect.x + rect.width + htmlToSvg(5)} ${rect.y + rect.height - htmlToSvg(5)} v ${htmlToSvg(10)} h ${htmlToSvg(-10)} z`"
-          stroke="black"
-        />
-      </g>
-    </template>
-  </g>
+<RectangleFrame
+  :svgElement="rect"
+  :scale="scale"
+  :selected="selected"
+  :plain="plain"
+  @startMove="$emit('startMove', rect.id)"
+  @startResize="$emit('startResize', rect.id)"
+  @deleteElement="$emit('deleteElement', rect.id)"
+>
+  <SvgRectangle
+    v-if="selected && !plain"
+    :x="rect.x"
+    :y="rect.y"
+    :width="rect.width"
+    :height="rect.height"
+    :stroke="selectedStroke"
+    :strokeOpacity="selectedStrokeOpacity"
+    :strokeWidth="selectedStrokeWidth"
+  />
+  <SvgRectangle
+    :x="rect.x"
+    :y="rect.y"
+    :width="rect.width"
+    :height="rect.height"
+    :stroke="rect.stroke"
+    :strokeWidth="rect.strokeWidth"
+  />
+</RectangleFrame>
 </template>
 
 <script>
 import BaseElement from './BaseElement'
 import SvgRectangle from '@/components/atoms/SvgRectangle'
-import SvgCircle from '@/components/atoms/SvgCircle'
+import RectangleFrame from './RectangleFrame'
 
 export default {
   extends: BaseElement,
   components: {
     SvgRectangle,
-    SvgCircle
+    RectangleFrame
   },
   computed: {
     rect() {
