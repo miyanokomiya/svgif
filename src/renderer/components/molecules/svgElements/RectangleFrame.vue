@@ -2,6 +2,15 @@
   <g>
     <g @mousedown="$emit('startMove', svgElement.id)">
       <slot/>
+    </g>
+    <path
+      :d="`M ${svgElement.x} ${svgElement.y + svgElement.height / 2} v ${-svgElement.height / 2} h ${svgElement.width / 2}`"
+      stroke="black"
+      :stroke-width="htmlToSvg(1)"
+      :stroke-dasharray="`${htmlToSvg(1)}, ${htmlToSvg(5)}`"
+      fill="none"
+    />
+    <g @mousedown="$emit('startMove', svgElement.id)">
       <SvgCircle
         v-if="!plain"
         :cx="svgElement.x"
@@ -12,6 +21,13 @@
       />
     </g>
     <template v-if="selected && !plain">
+      <path
+        :d="`M ${svgElement.x} ${svgElement.y + svgElement.height / 2} v ${svgElement.height / 2} h ${svgElement.width / 2}`"
+        stroke="black"
+        :stroke-width="htmlToSvg(1)"
+        :stroke-dasharray="`${htmlToSvg(1)}, ${htmlToSvg(5)}`"
+        fill="none"
+      />
       <g @mousedown="$emit('deleteElement', svgElement.id)">
         <SvgCircle
           :cx="svgElement.x"
@@ -26,6 +42,13 @@
           :stroke-width="htmlToSvg(2)"
         />
       </g>
+      <path
+        :d="`M ${svgElement.x + svgElement.width} ${svgElement.y + svgElement.height / 2} v ${svgElement.height / 2} h ${-svgElement.width / 2}`"
+        stroke="black"
+        :stroke-width="htmlToSvg(1)"
+        :stroke-dasharray="`${htmlToSvg(1)}, ${htmlToSvg(5)}`"
+        fill="none"
+      />
       <g @mousedown="$emit('startResize', svgElement.id)">
         <SvgCircle
           :cx="svgElement.x + svgElement.width"
