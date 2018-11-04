@@ -258,11 +258,17 @@ export default {
       this.updateSvgElementList(toList, true)
     },
     mousedownSelf(e) {
-      if (this.CANVAS_MODE !== 'draw') return
-      const p = this.getSvgPoint(e)
-      const elm = this.createElement({ ...p })
-      this.createSvgElement(elm, true)
-      this.selectElement(elm.id)
+      if (this.CANVAS_MODE === 'select') {
+        setTimeout(() => {
+          if (this.downStartPoint) return
+          this.clearSelectElement()
+        }, 200)
+      } else if (this.CANVAS_MODE === 'draw') {
+        const p = this.getSvgPoint(e)
+        const elm = this.createElement({ ...p })
+        this.createSvgElement(elm, true)
+        this.selectElement(elm.id)
+      }
     },
     mousedown(e) {
       this.downStartPoint = this.getSvgPoint(e)
@@ -283,6 +289,8 @@ export default {
     mouseup(e) {
       if (this.CANVAS_MODE === 'move') {
         this.setCanvasMode('select')
+        // } else if (this.CANVAS_MODE === 'select') {
+        //   this.clearSelectElement()
       }
       this.commitMoveElementList({
         elementList: this.selectedElementList,
