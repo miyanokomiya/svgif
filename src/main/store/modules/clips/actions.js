@@ -66,6 +66,10 @@ const actions = {
   [types.a.DELETE_SVG_ELEMENT]({ commit }, { clipId, svgElementId }) {
     commit(types.m.REMOVE_SVG_ELEMENT, { clipId, svgElementId })
     return Promise.resolve()
+  },
+  [types.a.SET_ELEMENT_COLOR]({ commit }, elementColor) {
+    commit(types.m.SET_ELEMENT_COLOR, elementColor)
+    return Promise.resolve()
   }
 }
 

@@ -28,6 +28,9 @@ const getters = {
   },
   [types.g.ELEMENT_TYPE](state) {
     return state.elementType
+  },
+  [types.g.ELEMENT_COLOR](state) {
+    return state.elementColor
   }
 }
 

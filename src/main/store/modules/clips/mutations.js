@@ -66,6 +66,9 @@ const mutations = {
     const clip = state.clipList.find(c => c.id === clipId)
     const index = clip.svgElementList.findIndex(elm => elm.id === svgElementId)
     clip.svgElementList.splice(index, 1)
+  },
+  [types.m.SET_ELEMENT_COLOR](state, elementColor) {
+    state.elementColor = elementColor
   }
 }
 
