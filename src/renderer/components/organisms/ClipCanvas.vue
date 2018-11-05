@@ -251,8 +251,7 @@ export default {
               : {
                   id: element.id,
                   strokeWidth: Math.max(
-                    (y - (element.y + element.height)) * 2 -
-                      this.htmlToSvg(15 + 7),
+                    (y - (element.y + element.height + this.htmlToSvg(15))) * 2,
                     1
                   )
                 }
