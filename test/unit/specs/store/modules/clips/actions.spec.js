@@ -278,4 +278,21 @@ describe('store/modules/clips/actions', () => {
       })
     })
   })
+  describe('SET_ELEMENT_COLOR', () => {
+    it('mutationが正しく実行されること', done => {
+      testAction({
+        done,
+        action: actions[types.a.SET_ELEMENT_COLOR],
+        payload: 'abc',
+        mutations: [
+          {
+            type: types.m.SET_ELEMENT_COLOR,
+            test: mode => {
+              expect(mode).to.equal('abc')
+            }
+          }
+        ]
+      })
+    })
+  })
 })

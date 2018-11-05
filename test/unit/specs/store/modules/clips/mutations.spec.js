@@ -232,4 +232,13 @@ describe('store/modules/clips/mutations', () => {
       expect(state.clipList).to.have.lengthOf(1)
     })
   })
+  describe('SET_ELEMENT_COLOR', () => {
+    it('elementColor が変更されること', () => {
+      const state = {
+        elementColor: 'abc'
+      }
+      mutations[types.m.SET_ELEMENT_COLOR](state, 'cba')
+      expect(state.elementColor).to.equal('cba')
+    })
+  })
 })

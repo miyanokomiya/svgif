@@ -76,4 +76,11 @@ describe('store/modules/clips/getters', () => {
       expect(val).to.equal('abc')
     })
   })
+  describe('ELEMENT_COLOR', () => {
+    it('elementColor が取得されること', () => {
+      const state = { elementColor: 'abc' }
+      const val = getters[types.g.ELEMENT_COLOR](state)
+      expect(val).to.equal('abc')
+    })
+  })
 })
