@@ -1,5 +1,5 @@
 <template>
-  <div class="draw-tools">
+  <div class="draw-tools" v-if="SELECTED_CLIP">
     <el-button-group>
       <el-button
         icon="el-icon-news"
@@ -33,7 +33,7 @@
     </el-button-group>
     <el-color-picker
       :value="ELEMENT_COLOR"
-      @input="_setElementColor"
+      @input="setElementColor"
       show-alpha
       :predefine="predefineColors">
     </el-color-picker>
@@ -65,16 +65,23 @@ export default {
   }),
   computed: {
     ...mapGetters({
+      SELECTED_CLIP: clipTypes.g.SELECTED_CLIP,
       CANVAS_MODE: clipTypes.g.CANVAS_MODE,
       ELEMENT_TYPE: clipTypes.g.ELEMENT_TYPE,
       ELEMENT_COLOR: clipTypes.g.ELEMENT_COLOR
-    })
+    }),
+    selectedElementList() {
+      return this.$svgif.selectedElementIdList
+        .map(id => this.SELECTED_CLIP.svgElementList.find(e => e.id === id))
+        .filter(e => !!e)
+    }
   },
   methods: {
     ...mapActions({
       _setCanvasMode: clipTypes.a.SET_CANVAS_MODE,
       _setElementType: clipTypes.a.SET_ELEMENT_TYPE,
-      _setElementColor: clipTypes.a.SET_ELEMENT_COLOR
+      _setElementColor: clipTypes.a.SET_ELEMENT_COLOR,
+      _updateSvgElement: clipTypes.a.UPDATE_SVG_ELEMENT
     }),
     setCanvasMode(mode) {
       if (this.CANVAS_MODE === mode) {
@@ -86,6 +93,16 @@ export default {
     setElementType(type) {
       this._setElementType(type)
       this._setCanvasMode('draw')
+    },
+    setElementColor(val) {
+      this._setElementColor(val)
+      this._updateSvgElement({
+        clipId: this.SELECTED_CLIP.id,
+        svgElementList: this.selectedElementList.map(elm => ({
+          ...elm,
+          stroke: val
+        }))
+      })
     }
   }
 }

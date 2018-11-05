@@ -4,7 +4,8 @@ export default {
       windowInfo: {
         width: 0,
         height: 0
-      }
+      },
+      selectedElementIdList: []
     }
     const onResize = () => {
       state.windowInfo = {

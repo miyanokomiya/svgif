@@ -62,7 +62,6 @@ export default {
   },
   data: () => ({
     scale: 1,
-    selectedElementIdList: [],
     downStartPoint: null,
     moveVec: { x: 0, y: 0 },
     localSvgElementList: [],
@@ -78,6 +77,14 @@ export default {
     }),
     windowInfo() {
       return this.$svgif.windowInfo
+    },
+    selectedElementIdList: {
+      get() {
+        return this.$svgif.selectedElementIdList
+      },
+      set(val) {
+        this.$svgif.selectedElementIdList = val
+      }
     },
     imageSize() {
       const wRate = this.WHOLE_SIZE.width / this.SELECTED_CLIP.width
@@ -128,15 +135,6 @@ export default {
     },
     svgElementList() {
       this.initLocalSvgElementList()
-    },
-    ELEMENT_COLOR() {
-      this.updateSvgElementList(
-        this.selectedElementList.map(elm => ({
-          ...elm,
-          stroke: this.ELEMENT_COLOR
-        })),
-        true
-      )
     }
   },
   methods: {
