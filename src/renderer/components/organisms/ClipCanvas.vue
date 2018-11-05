@@ -73,7 +73,8 @@ export default {
       SELECTED_CLIP: clipTypes.g.SELECTED_CLIP,
       WHOLE_SIZE: clipTypes.g.WHOLE_SIZE,
       CANVAS_MODE: clipTypes.g.CANVAS_MODE,
-      ELEMENT_TYPE: clipTypes.g.ELEMENT_TYPE
+      ELEMENT_TYPE: clipTypes.g.ELEMENT_TYPE,
+      ELEMENT_COLOR: clipTypes.g.ELEMENT_COLOR
     }),
     windowInfo() {
       return this.$svgif.windowInfo
@@ -127,6 +128,15 @@ export default {
     },
     svgElementList() {
       this.initLocalSvgElementList()
+    },
+    ELEMENT_COLOR() {
+      this.updateSvgElementList(
+        this.selectedElementList.map(elm => ({
+          ...elm,
+          stroke: this.ELEMENT_COLOR
+        })),
+        true
+      )
     }
   },
   methods: {
@@ -224,9 +234,9 @@ export default {
     createElement({ x, y }) {
       switch (this.ELEMENT_TYPE) {
         case 'rectangle':
-          return getRectangle({ x, y })
+          return getRectangle({ x, y, stroke: this.ELEMENT_COLOR })
         case 'circle':
-          return getCircle({ x, y })
+          return getCircle({ x, y, stroke: this.ELEMENT_COLOR })
       }
     },
     resizeElement({ element, x, y }) {
