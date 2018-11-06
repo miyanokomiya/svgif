@@ -80,7 +80,8 @@ export default {
     downStartPoint: null,
     moveVec: { x: 0, y: 0 },
     localSvgElementList: [],
-    drawMode: ['resize, resizeWidth', 'rotate'][0]
+    drawMode: ['resize, resizeWidth', 'rotate'][0],
+    canvasDragging: false
   }),
   computed: {
     ...mapGetters({
@@ -130,6 +131,7 @@ export default {
       return this.selectedElementList.length > 0
     },
     selectRangeRectangle() {
+      if (!this.canvasDragging) return
       if (this.$svgif.canvasMode !== 'select') return null
       if (!this.downStartPoint) return null
       if (!this.moveVec) return null
@@ -322,6 +324,7 @@ export default {
     },
     mousedownSelf(e) {
       if (this.$svgif.canvasMode === 'select') {
+        this.canvasDragging = true
         setTimeout(() => {
           if (this.downStartPoint) return
           this.clearSelectElement()
@@ -362,6 +365,7 @@ export default {
       this.downStartPoint = null
       this.moveVec = { x: 0, y: 0 }
       this.drawMode = 'resize'
+      this.canvasDragging = false
     },
     startMoveElement(id) {
       if (this.selectedIdMap[id]) {
