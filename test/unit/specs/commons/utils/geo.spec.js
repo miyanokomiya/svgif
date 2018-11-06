@@ -115,4 +115,71 @@ describe('geo 幾何計算モジュールのテスト', () => {
       expect(rec.height).to.equal(2)
     })
   })
+  describe('getRadian ２点のラジアン取得', () => {
+    it('正しく取得されること', () => {
+      const rad = geo.getRadian({ x: 0, y: 0 }, { x: 1, y: 1 })
+      expect(rad).to.closeTo(Math.PI / 4, THRESHOLD)
+    })
+    it('正しく取得されること', () => {
+      const rad = geo.getRadian({ x: 0, y: 0 }, { x: -1, y: 1 })
+      expect(rad).to.closeTo((Math.PI / 4) * 3, THRESHOLD)
+    })
+    it('正しく取得されること', () => {
+      const rad = geo.getRadian({ x: 0, y: 0 }, { x: -1, y: -1 })
+      expect(rad).to.closeTo(-(Math.PI / 4) * 3, THRESHOLD)
+    })
+    it('正しく取得されること', () => {
+      const rad = geo.getRadian({ x: 0, y: 0 }, { x: 1, y: -1 })
+      expect(rad).to.closeTo(-Math.PI / 4, THRESHOLD)
+    })
+  })
+  describe('getRectangleCenter 矩形の中心', () => {
+    it('正しく取得されること', () => {
+      const rec = geo.getRectangleCenter({ x: 1, y: 2, width: 2, height: 4 })
+      expect(rec.x).to.closeTo(2, THRESHOLD)
+      expect(rec.y).to.closeTo(4, THRESHOLD)
+    })
+  })
+  describe('rotateRectangleAtCenter 矩形の中心で回転', () => {
+    it('正しく取得されること', () => {
+      const rec = geo.rotateRectangleAtCenter(
+        { x: -1, y: -1, width: 2, height: 2 },
+        0
+      )
+      expect(rec.x).to.closeTo(-1, THRESHOLD)
+      expect(rec.y).to.closeTo(-1, THRESHOLD)
+      expect(rec.width).to.closeTo(2, THRESHOLD)
+      expect(rec.height).to.closeTo(2, THRESHOLD)
+    })
+    it('正しく取得されること', () => {
+      const rec = geo.rotateRectangleAtCenter(
+        { x: -1, y: -1, width: 2, height: 2 },
+        Math.PI
+      )
+      expect(rec.x).to.closeTo(1, THRESHOLD)
+      expect(rec.y).to.closeTo(1, THRESHOLD)
+      expect(rec.width).to.closeTo(-2, THRESHOLD)
+      expect(rec.height).to.closeTo(-2, THRESHOLD)
+    })
+    it('正しく取得されること', () => {
+      const rec = geo.rotateRectangleAtCenter(
+        { x: 0, y: 0, width: 2, height: 2 },
+        Math.PI
+      )
+      expect(rec.x).to.closeTo(2, THRESHOLD)
+      expect(rec.y).to.closeTo(2, THRESHOLD)
+      expect(rec.width).to.closeTo(-2, THRESHOLD)
+      expect(rec.height).to.closeTo(-2, THRESHOLD)
+    })
+    it('正しく取得されること', () => {
+      const rec = geo.rotateRectangleAtCenter(
+        { x: -1, y: -1, width: 2, height: 2 },
+        Math.PI / 2
+      )
+      expect(rec.x).to.closeTo(1, THRESHOLD)
+      expect(rec.y).to.closeTo(-1, THRESHOLD)
+      expect(rec.width).to.closeTo(-2, THRESHOLD)
+      expect(rec.height).to.closeTo(2, THRESHOLD)
+    })
+  })
 })

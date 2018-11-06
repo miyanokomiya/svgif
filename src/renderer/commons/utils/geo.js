@@ -74,3 +74,33 @@ export function getNormalRect(rec) {
   }
   return to
 }
+
+export function getRadian(from, to) {
+  const v = vector(from, to)
+  return Math.atan2(v.y, v.x)
+}
+
+export function getRectangleCenter(rec) {
+  return {
+    x: rec.x + rec.width / 2,
+    y: rec.y + rec.height / 2
+  }
+}
+
+export function rotateRectangleAtCenter(rec, rad) {
+  const c = getRectangleCenter(rec)
+  const bx = rec.x - c.x
+  const by = rec.y - c.y
+  const bw = rec.width / 2
+  const bh = rec.height / 2
+  const rx = Math.cos(rad) * bx - Math.sin(rad) * by
+  const ry = Math.sin(rad) * bx + Math.cos(rad) * by
+  const rw = Math.cos(rad) * bw - Math.sin(rad) * bh
+  const rh = Math.sin(rad) * bw + Math.cos(rad) * bh
+  return {
+    x: c.x + rx,
+    y: c.y + ry,
+    width: rw * 2,
+    height: rh * 2
+  }
+}
