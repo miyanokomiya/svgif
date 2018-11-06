@@ -33,6 +33,7 @@
             @startMove="startMoveElement"
             @startResize="startResizeElement"
             @startResizeWidth="startResizeWidth"
+            @startRotate="startRotate"
             @deleteElement="id => deleteSvgElement(id, true)"
           />
           <SvgRectangle
@@ -79,7 +80,7 @@ export default {
     downStartPoint: null,
     moveVec: { x: 0, y: 0 },
     localSvgElementList: [],
-    drawMode: ['resize, resizeWidth'][0]
+    drawMode: ['resize, resizeWidth', 'rotate'][0]
   }),
   computed: {
     ...mapGetters({
@@ -270,20 +271,42 @@ export default {
       switch (element.name) {
         case 'rectangle':
         case 'circle':
-          const to =
-            this.drawMode === 'resize'
-              ? {
-                  id: element.id,
-                  width: x - element.x,
-                  height: y - element.y
-                }
-              : {
-                  id: element.id,
-                  strokeWidth: Math.max(
-                    (y - (element.y + element.height + this.htmlToSvg(15))) * 2,
-                    1
-                  )
-                }
+          let to = null
+          if (this.drawMode === 'resize') {
+            const rotateElement = geo.rotateRectangleAtCenter(
+              element,
+              element.radian
+            )
+            const rec = geo.rotateRectangleAtCenter(
+              {
+                x: rotateElement.x,
+                y: rotateElement.y,
+                width: x - rotateElement.x,
+                height: y - rotateElement.y
+              },
+              -element.radian
+            )
+            to = {
+              id: element.id,
+              ...rec
+            }
+          } else if (this.drawMode === 'resizeWidth') {
+            const d = geo.distance(geo.getRectangleCenter(element), { x, y })
+            to = {
+              id: element.id,
+              strokeWidth: Math.min(
+                Math.max((d - element.height / 2 - this.htmlToSvg(15)) * 2, 1),
+                element.height
+              )
+            }
+          } else {
+            to = {
+              id: element.id,
+              radian:
+                geo.getRadian(geo.getRectangleCenter(element), { x, y }) +
+                Math.PI / 2
+            }
+          }
           this.updateSvgElementList([to])
       }
     },
@@ -365,6 +388,11 @@ export default {
       this.selectElement(id)
       this.setCanvasMode('draw')
       this.drawMode = 'resizeWidth'
+    },
+    startRotate(id) {
+      this.selectElement(id)
+      this.setCanvasMode('draw')
+      this.drawMode = 'rotate'
     },
     dropFile(e) {
       const files = e.target.files

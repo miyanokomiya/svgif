@@ -8,6 +8,7 @@
   @startResize="$emit('startResize', rect.id)"
   @deleteElement="$emit('deleteElement', rect.id)"
   @startResizeWidth="$emit('startResizeWidth', rect.id)"
+  @startRotate="$emit('startRotate', rect.id)"
 >
   <SvgCircle
     v-if="selected && !plain"

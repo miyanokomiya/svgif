@@ -1,5 +1,5 @@
 <template>
-  <g>
+  <g :transform="transform">
     <g @mousedown="$emit('startMove', svgElement.id)">
       <slot/>
     </g>
@@ -83,6 +83,30 @@
           :stroke-width="htmlToSvg(3)"
         />
       </g>
+      <g @mousedown="$emit('startRotate', svgElement.id)">
+        <path
+          :d="`M ${svgElement.x + svgElement.width / 2} ${svgElement.y} v -${htmlToSvg(15) + svgElement.strokeWidth / 2}`"
+          stroke="black"
+          :stroke-width="htmlToSvg(1)"
+          :stroke-dasharray="`${htmlToSvg(1)}, ${htmlToSvg(5)}`"
+          fill="none"
+        />
+        <SvgCircle
+          :cx="svgElement.x + svgElement.width / 2"
+          :cy="svgElement.y - (htmlToSvg(15) + svgElement.strokeWidth / 2)"
+          :r="htmlToSvg(7)"
+          stroke="black"
+          fill="white"
+        />
+        <SvgCircle
+          :cx="svgElement.x + svgElement.width / 2"
+          :cy="svgElement.y - (htmlToSvg(15) + svgElement.strokeWidth / 2)"
+          :r="htmlToSvg(3)"
+          stroke="black"
+          :stroke-width="htmlToSvg(2)"
+          fill="none"
+        />
+      </g>
     </template>
   </g>
 </template>
@@ -90,6 +114,7 @@
 <script>
 import BaseElement from './BaseElement'
 import SvgCircle from '@/components/atoms/SvgCircle'
+import * as geo from '@/commons/utils/geo'
 
 export default {
   extends: BaseElement,
@@ -105,6 +130,14 @@ export default {
         width: 1,
         height: 1
       })
+    }
+  },
+  computed: {
+    transform() {
+      const center = geo.getRectangleCenter(this.svgElement)
+      return `rotate(${(this.svgElement.radian / Math.PI) * 180}, ${
+        center.x
+      }, ${center.y})`
     }
   }
 }
