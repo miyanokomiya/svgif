@@ -89,13 +89,11 @@
 
 <script>
 import BaseElement from './BaseElement'
-import SvgRectangle from '@/components/atoms/SvgRectangle'
 import SvgCircle from '@/components/atoms/SvgCircle'
 
 export default {
   extends: BaseElement,
   components: {
-    SvgRectangle,
     SvgCircle
   },
   props: {

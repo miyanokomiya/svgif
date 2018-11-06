@@ -27,13 +27,24 @@
             class="svg-element"
             :key="svgElement.id"
             :svgElement="svgElement"
-            :moveVec="selectedIdMap[svgElement.id] ? moveVec : undefined"
+            :moveVec="selectedIdMap[svgElement.id]? elementMoveVec : undefined"
             :scale="scale"
             :selected="selectedIdMap[svgElement.id]"
             @startMove="startMoveElement"
             @startResize="startResizeElement"
             @startResizeWidth="startResizeWidth"
             @deleteElement="id => deleteSvgElement(id, true)"
+          />
+          <SvgRectangle
+            v-if="selectRangeRectangle"
+            :x="selectRangeRectangle.x"
+            :y="selectRangeRectangle.y"
+            :width="selectRangeRectangle.width"
+            :height="selectRangeRectangle.height"
+            stroke="gray"
+            :strokeOpacity="0.7"
+            :strokeWidth="htmlToSvg(5)"
+            :strokeDasharray="[htmlToSvg(5), htmlToSvg(5), htmlToSvg(2), htmlToSvg(5)]"
           />
         </SvgCanvas>
       </div>
@@ -48,16 +59,19 @@ import clipTypes from '@main/store/modules/clips/types'
 import { getPoint } from '@/commons/utils/canvas'
 import { getRectangle, getCircle } from '@/commons/models/svgElements'
 import { readImageFile } from '@/commons/utils/file'
+import * as geo from '@/commons/utils/geo'
 import ImagePanel from '@/components/atoms/ImagePanel'
+import ClipTimeLine from '@/components/organisms/ClipTimeLine'
 import SvgCanvas from '@/components/molecules/SvgCanvas'
 import SvgElement from '@/components/molecules/SvgElement'
-import ClipTimeLine from '@/components/organisms/ClipTimeLine'
+import SvgRectangle from '@/components/atoms/SvgRectangle'
 
 export default {
   components: {
     ImagePanel,
     SvgCanvas,
     SvgElement,
+    SvgRectangle,
     ClipTimeLine
   },
   data: () => ({
@@ -116,6 +130,21 @@ export default {
     },
     selectedAny() {
       return this.selectedElementList.length > 0
+    },
+    selectRangeRectangle() {
+      if (this.CANVAS_MODE !== 'select') return null
+      if (!this.downStartPoint) return null
+      if (!this.moveVec) return null
+      return {
+        x: this.downStartPoint.x,
+        y: this.downStartPoint.y,
+        width: this.moveVec.x,
+        height: this.moveVec.y
+      }
+    },
+    elementMoveVec() {
+      if (this.CANVAS_MODE !== 'move') return { x: 0, y: 0 }
+      return this.moveVec
     }
   },
   mounted() {
@@ -260,13 +289,13 @@ export default {
     },
     commitMoveElementList({ elementList, x, y }) {
       const toList = elementList.map(element => {
-        // TODO localSvgElementList と moveVec の扱いが微妙
+        // TODO localSvgElementList と elementMoveVec の扱いが微妙
         const to = this.localSvgElementList.find(elm => elm.id === element.id)
         switch (element.name) {
           case 'rectangle':
           case 'circle':
-            to.x += this.moveVec.x
-            to.y += this.moveVec.y
+            to.x += this.elementMoveVec.x
+            to.y += this.elementMoveVec.y
             if (to.width < 0) {
               to.width *= -1
               to.x -= to.width
@@ -297,15 +326,13 @@ export default {
       this.downStartPoint = this.getSvgPoint(e)
     },
     mousemove(e) {
-      if (!this.selectedAny) return
       if (!this.downStartPoint) return
       const p = this.getSvgPoint(e)
-      if (this.CANVAS_MODE === 'move') {
-        this.moveVec = {
-          x: p.x - this.downStartPoint.x,
-          y: p.y - this.downStartPoint.y
-        }
-      } else if (this.CANVAS_MODE === 'draw') {
+      this.moveVec = {
+        x: p.x - this.downStartPoint.x,
+        y: p.y - this.downStartPoint.y
+      }
+      if (this.CANVAS_MODE === 'draw') {
         this.resizeElement({ element: this.selectedElement, ...p })
       }
     },
@@ -315,8 +342,13 @@ export default {
       }
       this.commitMoveElementList({
         elementList: this.selectedElementList,
-        ...this.moveVec
+        ...this.elementMoveVec
       })
+      if (this.selectRangeRectangle) {
+        this.localSvgElementList
+          .filter(elm => geo.isRectInRect(this.selectRangeRectangle, elm))
+          .forEach(elm => this.selectElement(elm.id, true))
+      }
       this.downStartPoint = null
       this.moveVec = { x: 0, y: 0 }
       this.drawMode = 'resize'

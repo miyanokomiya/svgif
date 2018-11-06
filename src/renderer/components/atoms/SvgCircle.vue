@@ -9,7 +9,7 @@
   :stroke-opacity="strokeOpacity"
   :fill="fill"
   :fill-opacity="fillOpacity"
-  :stroke-dasharray="strokeDasharray"
+  :stroke-dasharray="strokeDasharray.join(' ')"
   :stroke-dashoffset="strokeDashoffset"
 />
 </template>
@@ -58,8 +58,8 @@ export default {
       default: 1
     },
     strokeDasharray: {
-      type: Number,
-      default: 0
+      type: Array,
+      default: () => []
     },
     strokeDashoffset: {
       type: Number,
