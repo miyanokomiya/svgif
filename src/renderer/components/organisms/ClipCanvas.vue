@@ -335,6 +335,7 @@ export default {
         const elm = this.createElement({ ...p })
         this.createSvgElement(elm, true)
         this.selectElement(elm.id)
+        this.drawMode = 'resize'
       }
     },
     mousedown(e) {
