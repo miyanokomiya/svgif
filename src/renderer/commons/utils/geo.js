@@ -61,3 +61,16 @@ export function center(p1, p2) {
     y: (p1.y + p2.y) / 2
   }
 }
+
+export function getNormalRect(rec) {
+  const to = { ...rec }
+  if (to.width < 0) {
+    to.width *= -1
+    to.x -= to.width
+  }
+  if (to.height < 0) {
+    to.height *= -1
+    to.y -= to.height
+  }
+  return to
+}

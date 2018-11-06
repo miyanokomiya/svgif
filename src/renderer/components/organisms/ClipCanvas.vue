@@ -135,12 +135,12 @@ export default {
       if (this.CANVAS_MODE !== 'select') return null
       if (!this.downStartPoint) return null
       if (!this.moveVec) return null
-      return {
+      return geo.getNormalRect({
         x: this.downStartPoint.x,
         y: this.downStartPoint.y,
         width: this.moveVec.x,
         height: this.moveVec.y
-      }
+      })
     },
     elementMoveVec() {
       if (this.CANVAS_MODE !== 'move') return { x: 0, y: 0 }
@@ -296,15 +296,7 @@ export default {
           case 'circle':
             to.x += this.elementMoveVec.x
             to.y += this.elementMoveVec.y
-            if (to.width < 0) {
-              to.width *= -1
-              to.x -= to.width
-            }
-            if (to.height < 0) {
-              to.height *= -1
-              to.y -= to.height
-            }
-            return to
+            return geo.getNormalRect(to)
         }
       })
       this.updateSvgElementList(toList, true)

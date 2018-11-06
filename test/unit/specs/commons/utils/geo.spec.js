@@ -106,4 +106,13 @@ describe('geo 幾何計算モジュールのテスト', () => {
       expect(c.y).to.equal(2)
     })
   })
+  describe('getNormalRect 矩形の正規化', () => {
+    it('正しく取得されること', () => {
+      const rec = geo.getNormalRect({ x: 0, y: 0, width: -1, height: -2 })
+      expect(rec.x).to.equal(-1)
+      expect(rec.y).to.equal(-2)
+      expect(rec.width).to.equal(1)
+      expect(rec.height).to.equal(2)
+    })
+  })
 })
