@@ -189,40 +189,6 @@ describe('store/modules/clips/actions', () => {
       })
     })
   })
-  describe('SET_CANVAS_MODE', () => {
-    it('mutationが正しく実行されること', done => {
-      testAction({
-        done,
-        action: actions[types.a.SET_CANVAS_MODE],
-        payload: 'abc',
-        mutations: [
-          {
-            type: types.m.SET_CANVAS_MODE,
-            test: mode => {
-              expect(mode).to.equal('abc')
-            }
-          }
-        ]
-      })
-    })
-  })
-  describe('SET_ELEMENT_TYPE', () => {
-    it('mutationが正しく実行されること', done => {
-      testAction({
-        done,
-        action: actions[types.a.SET_ELEMENT_TYPE],
-        payload: 'abc',
-        mutations: [
-          {
-            type: types.m.SET_ELEMENT_TYPE,
-            test: mode => {
-              expect(mode).to.equal('abc')
-            }
-          }
-        ]
-      })
-    })
-  })
   describe('CREATE_SVG_ELEMENT', () => {
     it('mutationが正しく実行されること', done => {
       testAction({
@@ -272,23 +238,6 @@ describe('store/modules/clips/actions', () => {
             test: ({ clipId, svgElementId }) => {
               expect(clipId).to.equal(1)
               expect(svgElementId).to.equal('abc')
-            }
-          }
-        ]
-      })
-    })
-  })
-  describe('SET_ELEMENT_COLOR', () => {
-    it('mutationが正しく実行されること', done => {
-      testAction({
-        done,
-        action: actions[types.a.SET_ELEMENT_COLOR],
-        payload: 'abc',
-        mutations: [
-          {
-            type: types.m.SET_ELEMENT_COLOR,
-            test: mode => {
-              expect(mode).to.equal('abc')
             }
           }
         ]

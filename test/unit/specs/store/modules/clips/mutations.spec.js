@@ -145,24 +145,6 @@ describe('store/modules/clips/mutations', () => {
       expect(state.clipList[1].delay).to.equal(1)
     })
   })
-  describe('SET_CANVAS_MODE', () => {
-    it('canvasMode が変更されること', () => {
-      const state = {
-        canvasMode: 'abc'
-      }
-      mutations[types.m.SET_CANVAS_MODE](state, 'cba')
-      expect(state.canvasMode).to.equal('cba')
-    })
-  })
-  describe('SET_ELEMENT_TYPE', () => {
-    it('elementType が変更されること', () => {
-      const state = {
-        elementType: 'abc'
-      }
-      mutations[types.m.SET_ELEMENT_TYPE](state, 'cba')
-      expect(state.elementType).to.equal('cba')
-    })
-  })
   describe('ADD_SVG_ELEMENT', () => {
     it('指定 clipId の clip に svgElement が追加されること', () => {
       const state = {
@@ -230,15 +212,6 @@ describe('store/modules/clips/mutations', () => {
       const elm = state.clipList[0].svgElementList[0]
       expect(elm.id).to.equal(3)
       expect(state.clipList).to.have.lengthOf(1)
-    })
-  })
-  describe('SET_ELEMENT_COLOR', () => {
-    it('elementColor が変更されること', () => {
-      const state = {
-        elementColor: 'abc'
-      }
-      mutations[types.m.SET_ELEMENT_COLOR](state, 'cba')
-      expect(state.elementColor).to.equal('cba')
     })
   })
 })

@@ -62,25 +62,4 @@ describe('store/modules/clips/getters', () => {
       expect(val).to.equal(51)
     })
   })
-  describe('CANVAS_MODE', () => {
-    it('canvasMode が取得されること', () => {
-      const state = { canvasMode: 'abc' }
-      const val = getters[types.g.CANVAS_MODE](state)
-      expect(val).to.equal('abc')
-    })
-  })
-  describe('ELEMENT_TYPE', () => {
-    it('elementType が取得されること', () => {
-      const state = { elementType: 'abc' }
-      const val = getters[types.g.ELEMENT_TYPE](state)
-      expect(val).to.equal('abc')
-    })
-  })
-  describe('ELEMENT_COLOR', () => {
-    it('elementColor が取得されること', () => {
-      const state = { elementColor: 'abc' }
-      const val = getters[types.g.ELEMENT_COLOR](state)
-      expect(val).to.equal('abc')
-    })
-  })
 })

@@ -5,7 +5,10 @@ export default {
         width: 0,
         height: 0
       },
-      selectedElementIdList: []
+      selectedElementIdList: [],
+      canvasMode: ['select', 'move', 'draw'][0],
+      elementType: ['rectangle'][0],
+      elementColor: 'rgba(255, 69, 0, 0.68)'
     }
     const onResize = () => {
       state.windowInfo = {

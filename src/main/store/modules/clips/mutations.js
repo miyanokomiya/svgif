@@ -39,12 +39,6 @@ const mutations = {
     if (!clip) return
     clip.delay = delay
   },
-  [types.m.SET_CANVAS_MODE](state, canvasMode) {
-    state.canvasMode = canvasMode
-  },
-  [types.m.SET_ELEMENT_TYPE](state, elementType) {
-    state.elementType = elementType
-  },
   [types.m.ADD_SVG_ELEMENT](state, { clipId, svgElement }) {
     const clip = state.clipList.find(c => c.id === clipId)
     clip.svgElementList.push(svgElement)
@@ -66,9 +60,6 @@ const mutations = {
     const clip = state.clipList.find(c => c.id === clipId)
     const index = clip.svgElementList.findIndex(elm => elm.id === svgElementId)
     clip.svgElementList.splice(index, 1)
-  },
-  [types.m.SET_ELEMENT_COLOR](state, elementColor) {
-    state.elementColor = elementColor
   }
 }
 

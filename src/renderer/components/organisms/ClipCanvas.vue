@@ -85,10 +85,7 @@ export default {
   computed: {
     ...mapGetters({
       SELECTED_CLIP: clipTypes.g.SELECTED_CLIP,
-      WHOLE_SIZE: clipTypes.g.WHOLE_SIZE,
-      CANVAS_MODE: clipTypes.g.CANVAS_MODE,
-      ELEMENT_TYPE: clipTypes.g.ELEMENT_TYPE,
-      ELEMENT_COLOR: clipTypes.g.ELEMENT_COLOR
+      WHOLE_SIZE: clipTypes.g.WHOLE_SIZE
     }),
     windowInfo() {
       return this.$svgif.windowInfo
@@ -133,7 +130,7 @@ export default {
       return this.selectedElementList.length > 0
     },
     selectRangeRectangle() {
-      if (this.CANVAS_MODE !== 'select') return null
+      if (this.$svgif.canvasMode !== 'select') return null
       if (!this.downStartPoint) return null
       if (!this.moveVec) return null
       return geo.getNormalRect({
@@ -144,7 +141,7 @@ export default {
       })
     },
     elementMoveVec() {
-      if (this.CANVAS_MODE !== 'move') return { x: 0, y: 0 }
+      if (this.$svgif.canvasMode !== 'move') return { x: 0, y: 0 }
       return this.moveVec
     }
   },
@@ -169,7 +166,6 @@ export default {
   },
   methods: {
     ...mapActions({
-      _setCanvasMode: clipTypes.a.SET_CANVAS_MODE,
       _createSvgElement: clipTypes.a.CREATE_SVG_ELEMENT,
       _updateSvgElement: clipTypes.a.UPDATE_SVG_ELEMENT,
       _deleteSvgElement: clipTypes.a.DELETE_SVG_ELEMENT,
@@ -189,7 +185,7 @@ export default {
       }
     },
     setCanvasMode(mode) {
-      this._setCanvasMode(mode)
+      this.$svgif.canvasMode = mode
     },
     rescale() {
       this.$nextTick(() => {
@@ -260,11 +256,11 @@ export default {
         : this.selectElement(id)
     },
     createElement({ x, y }) {
-      switch (this.ELEMENT_TYPE) {
+      switch (this.$svgif.elementType) {
         case 'rectangle':
-          return getRectangle({ x, y, stroke: this.ELEMENT_COLOR })
+          return getRectangle({ x, y, stroke: this.$svgif.elementColor })
         case 'circle':
-          return getCircle({ x, y, stroke: this.ELEMENT_COLOR })
+          return getCircle({ x, y, stroke: this.$svgif.elementColor })
       }
     },
     resizeElement({ element, x, y }) {
@@ -325,12 +321,12 @@ export default {
       this.updateSvgElementList(toList, true)
     },
     mousedownSelf(e) {
-      if (this.CANVAS_MODE === 'select') {
+      if (this.$svgif.canvasMode === 'select') {
         setTimeout(() => {
           if (this.downStartPoint) return
           this.clearSelectElement()
         }, 200)
-      } else if (this.CANVAS_MODE === 'draw') {
+      } else if (this.$svgif.canvasMode === 'draw') {
         const p = this.getSvgPoint(e)
         const elm = this.createElement({ ...p })
         this.createSvgElement(elm, true)
@@ -348,14 +344,11 @@ export default {
         x: p.x - this.downStartPoint.x,
         y: p.y - this.downStartPoint.y
       }
-      if (this.CANVAS_MODE === 'draw') {
+      if (this.$svgif.canvasMode === 'draw') {
         this.resizeElement({ element: this.selectedElement, ...p })
       }
     },
     mouseup(e) {
-      if (this.CANVAS_MODE === 'move') {
-        this.setCanvasMode('select')
-      }
       this.commitMoveElementList({
         elementList: this.selectedElementList,
         ...this.elementMoveVec
@@ -365,6 +358,7 @@ export default {
           .filter(elm => geo.isRectInRect(this.selectRangeRectangle, elm))
           .forEach(elm => this.selectElement(elm.id, true))
       }
+      this.setCanvasMode('select')
       this.downStartPoint = null
       this.moveVec = { x: 0, y: 0 }
       this.drawMode = 'resize'

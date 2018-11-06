@@ -3,36 +3,36 @@
     <el-button-group>
       <el-button
         icon="el-icon-news"
-        :type="CANVAS_MODE === 'select' ? 'primary' : ''"
+        :type="$svgif.canvasMode === 'select' ? 'primary' : ''"
         @click="setCanvasMode('select')"
       />
       <el-button
         disabled
         icon="el-icon-rank"
-        :type="CANVAS_MODE === 'move' ? 'primary' : ''"
+        :type="$svgif.canvasMode === 'move' ? 'primary' : ''"
       />
       <el-button
         icon="el-icon-edit"
-        :type="CANVAS_MODE === 'draw' ? 'primary' : ''"
+        :type="$svgif.canvasMode === 'draw' ? 'primary' : ''"
         @click="setCanvasMode('draw')"
       />
     </el-button-group>
     <el-button-group>
       <el-button
-        :type="ELEMENT_TYPE === 'rectangle' ? 'primary' : ''"
+        :type="$svgif.elementType === 'rectangle' ? 'primary' : ''"
         @click="setElementType('rectangle')"
       >
         Rect
       </el-button>
       <el-button
-        :type="ELEMENT_TYPE === 'circle' ? 'primary' : ''"
+        :type="$svgif.elementType === 'circle' ? 'primary' : ''"
         @click="setElementType('circle')"
       >
         Circle
       </el-button>
     </el-button-group>
     <el-color-picker
-      :value="ELEMENT_COLOR"
+      :value="$svgif.elementColor"
       @input="setElementColor"
       show-alpha
       :predefine="predefineColors">
@@ -65,10 +65,7 @@ export default {
   }),
   computed: {
     ...mapGetters({
-      SELECTED_CLIP: clipTypes.g.SELECTED_CLIP,
-      CANVAS_MODE: clipTypes.g.CANVAS_MODE,
-      ELEMENT_TYPE: clipTypes.g.ELEMENT_TYPE,
-      ELEMENT_COLOR: clipTypes.g.ELEMENT_COLOR
+      SELECTED_CLIP: clipTypes.g.SELECTED_CLIP
     }),
     selectedElementList() {
       return this.$svgif.selectedElementIdList
@@ -78,24 +75,21 @@ export default {
   },
   methods: {
     ...mapActions({
-      _setCanvasMode: clipTypes.a.SET_CANVAS_MODE,
-      _setElementType: clipTypes.a.SET_ELEMENT_TYPE,
-      _setElementColor: clipTypes.a.SET_ELEMENT_COLOR,
       _updateSvgElement: clipTypes.a.UPDATE_SVG_ELEMENT
     }),
     setCanvasMode(mode) {
-      if (this.CANVAS_MODE === mode) {
-        this._setCanvasMode('select')
+      if (this.$svgif.canvasMode === mode) {
+        this.$svgif.canvasMode = 'select'
       } else {
-        this._setCanvasMode(mode)
+        this.$svgif.canvasMode = mode
       }
     },
     setElementType(type) {
-      this._setElementType(type)
-      this._setCanvasMode('draw')
+      this.$svgif.elementType = type
+      this.$svgif.canvasMode = 'draw'
     },
     setElementColor(val) {
-      this._setElementColor(val)
+      this.$svgif.elementColor = val
       this._updateSvgElement({
         clipId: this.SELECTED_CLIP.id,
         svgElementList: this.selectedElementList.map(elm => ({
