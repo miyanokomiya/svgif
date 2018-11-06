@@ -1,6 +1,6 @@
 'use strict'
 
-import { app, BrowserWindow } from 'electron'
+import { app, BrowserWindow, ipcMain } from 'electron'
 import './store'
 
 /**
@@ -19,13 +19,10 @@ function createMainWindow() {
     process.env.NODE_ENV === 'development'
       ? `http://localhost:9080/main.html`
       : `file://${__dirname}/main.html`
-  /**
-   * Initial window options
-   */
   mainWindow = new BrowserWindow({
     height: 563,
-    useContentSize: true,
-    width: 1000
+    width: 1000,
+    useContentSize: true
   })
 
   mainWindow.loadURL(winURL)
@@ -42,13 +39,10 @@ function createRecorderWindow() {
     process.env.NODE_ENV === 'development'
       ? `http://localhost:9080/recorder.html`
       : `file://${__dirname}/recorder.html`
-  /**
-   * Initial window options
-   */
   recorderWindow = new BrowserWindow({
-    height: 563,
+    height: 400,
+    width: 600,
     useContentSize: true,
-    width: 1000,
     transparent: true
     // alwaysOnTop: true // クリック透過できないので最前面調整は邪魔そう
   })
@@ -58,16 +52,11 @@ function createRecorderWindow() {
 
   recorderWindow.on('closed', () => {
     recorderWindow = null
-    mainWindow.close()
+    // mainWindow.close()
   })
 }
 
-function createWindow() {
-  createMainWindow()
-  createRecorderWindow()
-}
-
-app.on('ready', createWindow)
+app.on('ready', createMainWindow)
 
 app.on('window-all-closed', () => {
   app.quit()
@@ -75,7 +64,7 @@ app.on('window-all-closed', () => {
 
 app.on('activate', () => {
   if (mainWindow === null) {
-    createWindow()
+    createMainWindow()
   }
 })
 
@@ -98,3 +87,8 @@ app.on('ready', () => {
   if (process.env.NODE_ENV === 'production') autoUpdater.checkForUpdates()
 })
  */
+
+ipcMain.on('show-recorder-window', () => {
+  if (recorderWindow) return recorderWindow.show()
+  createRecorderWindow()
+})

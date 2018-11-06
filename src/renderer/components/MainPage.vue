@@ -1,6 +1,14 @@
 <template>
   <el-container class="main-page">
     <el-aside width="200px">
+      <el-button
+        v-if="!$svgif.isWeb"
+        icon="el-icon-picture"
+        size="mini"
+        @click="showRecorderWindow"
+      >
+        Capture
+      </el-button>
       <DrawTools/>
     </el-aside>
     <el-container>
@@ -37,6 +45,7 @@
 </template>
 
 <script>
+import { ipcRenderer } from 'electron'
 import { mapActions, mapGetters } from 'vuex'
 import clipTypes from '@main/store/modules/clips/types'
 import DrawTools from '@/components/organisms/sidebars/DrawTools'
@@ -99,6 +108,9 @@ export default {
     },
     updateDelay({ id, delay }) {
       this._updateDelay({ id, delay })
+    },
+    showRecorderWindow() {
+      ipcRenderer.send('show-recorder-window')
     }
   }
 }

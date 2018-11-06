@@ -1,6 +1,7 @@
 export default {
   install: Vue => {
     const state = {
+      isWeb: process.env.IS_WEB || false,
       windowInfo: {
         width: 0,
         height: 0
