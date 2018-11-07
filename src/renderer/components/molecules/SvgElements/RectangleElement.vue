@@ -12,8 +12,6 @@
 >
   <SvgRectangle
     v-if="selected && !plain"
-    :x="rect.x"
-    :y="rect.y"
     :width="rect.width"
     :height="rect.height"
     :stroke="selectedStroke"
@@ -21,8 +19,6 @@
     :strokeWidth="selectedStrokeWidth"
   />
   <SvgRectangle
-    :x="rect.x"
-    :y="rect.y"
     :width="rect.width"
     :height="rect.height"
     :stroke="rect.stroke"

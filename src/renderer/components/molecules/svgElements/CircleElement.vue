@@ -51,10 +51,10 @@ export default {
       }
     },
     cx() {
-      return this.rect.x + this.rx
+      return this.rx
     },
     cy() {
-      return this.rect.y + this.ry
+      return this.ry
     },
     rx() {
       return this.rect.width / 2
