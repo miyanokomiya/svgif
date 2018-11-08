@@ -62,6 +62,10 @@ export function center(p1, p2) {
   }
 }
 
+export function crossVector(vec) {
+  return { x: vec.y, y: -vec.x }
+}
+
 export function getNormalRect(rec) {
   const to = { ...rec }
   if (to.width < 0) {

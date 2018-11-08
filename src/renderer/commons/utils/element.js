@@ -34,6 +34,15 @@ function resizeLine({ element, x, y, drawMode, scale }) {
       x2: x,
       y2: y
     }
+  } else if (drawMode === 'resizeWidth') {
+    const d = geo.distance(geo.getRectangleCenter(toRectangle(element)), {
+      x,
+      y
+    })
+    to = {
+      id: element.id,
+      strokeWidth: Math.max((d - htmlToSvg(scale, 15)) * 2, 1)
+    }
   } else {
     to = {
       id: element.id
