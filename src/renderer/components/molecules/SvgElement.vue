@@ -25,16 +25,33 @@
     @startResizeWidth="startResizeWidth"
     @startRotate="startRotate"
   />
+  <LineElement
+    v-else-if="svgElement.name === 'line'"
+    :svgElement="svgElement"
+    :moveVec="moveVec"
+    :selected="selected"
+    :scale="scale"
+    :plain="plain"
+    @startMove="startMove"
+    @deleteElement="deleteElement"
+    @startResize="startResize"
+    @startResizeWidth="startResizeWidth"
+    @startRotate="startRotate"
+    @startResizeLine1="startResizeLine1"
+    @startResizeLine2="startResizeLine2"
+  />
 </template>
 
 <script>
 import RectangleElement from './svgElements/RectangleElement'
 import CircleElement from './svgElements/CircleElement'
+import LineElement from './svgElements/LineElement'
 
 export default {
   components: {
     RectangleElement,
-    CircleElement
+    CircleElement,
+    LineElement
   },
   props: {
     svgElement: {
@@ -73,6 +90,12 @@ export default {
     },
     startRotate(id) {
       this.$emit('startRotate', id)
+    },
+    startResizeLine1(id) {
+      this.$emit('startResizeLine1', id)
+    },
+    startResizeLine2(id) {
+      this.$emit('startResizeLine2', id)
     }
   }
 }

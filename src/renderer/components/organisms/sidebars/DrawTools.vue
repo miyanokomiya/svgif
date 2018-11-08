@@ -30,6 +30,12 @@
       >
         Circle
       </el-button>
+      <el-button
+        :type="$svgif.elementType === 'line' ? 'primary' : ''"
+        @click="setElementType('line')"
+      >
+        LINE
+      </el-button>
     </el-button-group>
     <el-color-picker
       :value="$svgif.elementColor"

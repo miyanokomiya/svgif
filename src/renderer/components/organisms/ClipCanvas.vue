@@ -35,6 +35,8 @@
             @startResizeWidth="startResizeWidth"
             @startRotate="startRotate"
             @deleteElement="id => deleteSvgElement(id, true)"
+            @startResizeLine1="startResizeLine1"
+            @startResizeLine2="startResizeLine2"
           />
           <SvgRectangle
             v-if="selectRangeRectangle"
@@ -58,9 +60,10 @@
 import { mapGetters, mapActions } from 'vuex'
 import clipTypes from '@main/store/modules/clips/types'
 import { getPoint } from '@/commons/utils/canvas'
-import { getRectangle, getCircle } from '@/commons/models/svgElements'
+import { getRectangle, getCircle, getLine } from '@/commons/models/svgElements'
 import { readImageFile } from '@/commons/utils/file'
 import * as geo from '@/commons/utils/geo'
+import * as elementUtils from '@/commons/utils/element'
 import ImagePanel from '@/components/atoms/ImagePanel'
 import ClipTimeLine from '@/components/organisms/ClipTimeLine'
 import SvgCanvas from '@/components/molecules/SvgCanvas'
@@ -174,10 +177,10 @@ export default {
       _createClip: clipTypes.a.CREATE_CLIP
     }),
     htmlToSvg(val) {
-      return val / this.scale
+      return elementUtils.htmlToSvg(this.scale, val)
     },
     svgToHtml(val) {
-      return val * this.scale
+      return elementUtils.svgToHtml(this.scale, val)
     },
     getSvgPoint(e) {
       const p = getPoint(e)
@@ -263,50 +266,25 @@ export default {
           return getRectangle({ x, y, stroke: this.$svgif.elementColor })
         case 'circle':
           return getCircle({ x, y, stroke: this.$svgif.elementColor })
+        case 'line':
+          return getLine({
+            x1: x,
+            y1: y,
+            x2: x,
+            y2: y,
+            stroke: this.$svgif.elementColor
+          })
       }
     },
     resizeElement({ element, x, y }) {
-      switch (element.name) {
-        case 'rectangle':
-        case 'circle':
-          let to = null
-          if (this.drawMode === 'resize') {
-            const rotateElement = geo.rotateRectangleAtCenter(
-              element,
-              element.radian
-            )
-            const rec = geo.rotateRectangleAtCenter(
-              {
-                x: rotateElement.x,
-                y: rotateElement.y,
-                width: x - rotateElement.x,
-                height: y - rotateElement.y
-              },
-              -element.radian
-            )
-            to = {
-              id: element.id,
-              ...rec
-            }
-          } else if (this.drawMode === 'resizeWidth') {
-            const d = geo.distance(geo.getRectangleCenter(element), { x, y })
-            to = {
-              id: element.id,
-              strokeWidth: Math.min(
-                Math.max((d - element.height / 2 - this.htmlToSvg(15)) * 2, 1),
-                element.height
-              )
-            }
-          } else {
-            to = {
-              id: element.id,
-              radian:
-                geo.getRadian(geo.getRectangleCenter(element), { x, y }) +
-                Math.PI / 2
-            }
-          }
-          this.updateSvgElementList([to])
-      }
+      const to = elementUtils.resizeElement({
+        element,
+        x,
+        y,
+        drawMode: this.drawMode,
+        scale: this.scale
+      })
+      this.updateSvgElementList([to])
     },
     commitMoveElementList({ elementList, x, y }) {
       const toList = elementList.map(element => {
@@ -318,9 +296,25 @@ export default {
             to.x += this.elementMoveVec.x
             to.y += this.elementMoveVec.y
             return geo.getNormalRect(to)
+          case 'line':
+            to.x1 += this.elementMoveVec.x
+            to.y1 += this.elementMoveVec.y
+            to.x2 += this.elementMoveVec.x
+            to.y2 += this.elementMoveVec.y
+            return to
         }
       })
       this.updateSvgElementList(toList, true)
+    },
+    setModeAfterCreateElement(element) {
+      switch (element.name) {
+        case 'rectangle':
+        case 'circle':
+          this.drawMode = 'resize'
+          return
+        case 'line':
+          this.drawMode = 'resizeLine1'
+      }
     },
     mousedownSelf(e) {
       if (this.$svgif.canvasMode === 'select') {
@@ -334,7 +328,7 @@ export default {
         const elm = this.createElement({ ...p })
         this.createSvgElement(elm, true)
         this.selectElement(elm.id)
-        this.drawMode = 'resize'
+        this.setModeAfterCreateElement(elm)
       }
     },
     mousedown(e) {
@@ -358,7 +352,12 @@ export default {
       })
       if (this.selectRangeRectangle) {
         this.localSvgElementList
-          .filter(elm => geo.isRectInRect(this.selectRangeRectangle, elm))
+          .filter(elm =>
+            geo.isRectInRect(
+              this.selectRangeRectangle,
+              elementUtils.toRectangle(elm)
+            )
+          )
           .forEach(elm => this.selectElement(elm.id, true))
       }
       this.setCanvasMode('select')
@@ -392,6 +391,16 @@ export default {
       this.selectElement(id)
       this.setCanvasMode('draw')
       this.drawMode = 'rotate'
+    },
+    startResizeLine1(id) {
+      this.selectElement(id)
+      this.setCanvasMode('draw')
+      this.drawMode = 'resizeLine1'
+    },
+    startResizeLine2(id) {
+      this.selectElement(id)
+      this.setCanvasMode('draw')
+      this.drawMode = 'resizeLine2'
     },
     dropFile(e) {
       const files = e.target.files

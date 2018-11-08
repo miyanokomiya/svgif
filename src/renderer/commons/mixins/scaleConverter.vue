@@ -1,11 +1,13 @@
 <script>
+import * as elementUtils from '@/commons/utils/element'
+
 export default {
   methods: {
     htmlToSvg(val) {
-      return val / this.scale
+      return elementUtils.htmlToSvg(this.scale, val)
     },
     svgToHtml(val) {
-      return val * this.scale
+      return elementUtils.svgToHtml(this.scale, val)
     }
   }
 }
