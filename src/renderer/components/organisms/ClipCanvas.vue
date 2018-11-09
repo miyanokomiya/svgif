@@ -60,7 +60,6 @@
 import { mapGetters, mapActions } from 'vuex'
 import clipTypes from '@main/store/modules/clips/types'
 import { getPoint } from '@/commons/utils/canvas'
-import { getRectangle, getCircle, getLine } from '@/commons/models/svgElements'
 import { readImageFile } from '@/commons/utils/file'
 import * as geo from '@/commons/utils/geo'
 import * as elementUtils from '@/commons/utils/element'
@@ -83,7 +82,12 @@ export default {
     downStartPoint: null,
     moveVec: { x: 0, y: 0 },
     localSvgElementList: [],
-    drawMode: ['resize, resizeWidth', 'rotate'][0],
+    drawMode: [
+      'resize, resizeWidth',
+      'rotate',
+      'resizeLine1',
+      'resizeLine2'
+    ][0],
     canvasDragging: false
   }),
   computed: {
@@ -261,20 +265,12 @@ export default {
         : this.selectElement(id)
     },
     createElement({ x, y }) {
-      switch (this.$svgif.elementType) {
-        case 'rectangle':
-          return getRectangle({ x, y, stroke: this.$svgif.elementColor })
-        case 'circle':
-          return getCircle({ x, y, stroke: this.$svgif.elementColor })
-        case 'line':
-          return getLine({
-            x1: x,
-            y1: y,
-            x2: x,
-            y2: y,
-            stroke: this.$svgif.elementColor
-          })
-      }
+      return elementUtils.createElement({
+        elementType: this.$svgif.elementType,
+        elementColor: this.$svgif.elementColor,
+        x,
+        y
+      })
     },
     resizeElement({ element, x, y }) {
       const to = elementUtils.resizeElement({
@@ -286,35 +282,13 @@ export default {
       })
       this.updateSvgElementList([to])
     },
-    commitMoveElementList({ elementList, x, y }) {
-      const toList = elementList.map(element => {
-        // TODO localSvgElementList と elementMoveVec の扱いが微妙
-        const to = this.localSvgElementList.find(elm => elm.id === element.id)
-        switch (element.name) {
-          case 'rectangle':
-          case 'circle':
-            to.x += this.elementMoveVec.x
-            to.y += this.elementMoveVec.y
-            return geo.getNormalRect(to)
-          case 'line':
-            to.x1 += this.elementMoveVec.x
-            to.y1 += this.elementMoveVec.y
-            to.x2 += this.elementMoveVec.x
-            to.y2 += this.elementMoveVec.y
-            return to
-        }
-      })
-      this.updateSvgElementList(toList, true)
-    },
-    setModeAfterCreateElement(element) {
-      switch (element.name) {
-        case 'rectangle':
-        case 'circle':
-          this.drawMode = 'resize'
-          return
-        case 'line':
-          this.drawMode = 'resizeLine1'
-      }
+    commitMoveElementList() {
+      this.updateSvgElementList(
+        this.selectedElementList.map(element =>
+          elementUtils.moveElement({ element, vec: this.elementMoveVec })
+        ),
+        true
+      )
     },
     mousedownSelf(e) {
       if (this.$svgif.canvasMode === 'select') {
@@ -328,7 +302,7 @@ export default {
         const elm = this.createElement({ ...p })
         this.createSvgElement(elm, true)
         this.selectElement(elm.id)
-        this.setModeAfterCreateElement(elm)
+        this.drawMode = elementUtils.getModeAfterCreateElement(elm)
       }
     },
     mousedown(e) {
@@ -346,10 +320,7 @@ export default {
       }
     },
     mouseup(e) {
-      this.commitMoveElementList({
-        elementList: this.selectedElementList,
-        ...this.elementMoveVec
-      })
+      this.commitMoveElementList()
       if (this.selectRangeRectangle) {
         this.localSvgElementList
           .filter(elm =>
@@ -378,29 +349,24 @@ export default {
       this.setCanvasMode('move')
     },
     startResizeElement(id) {
-      this.selectElement(id)
-      this.setCanvasMode('draw')
-      this.drawMode = 'resize'
+      this.startDrawMode(id, 'resize')
     },
     startResizeWidth(id) {
-      this.selectElement(id)
-      this.setCanvasMode('draw')
-      this.drawMode = 'resizeWidth'
+      this.startDrawMode(id, 'resizeWidth')
     },
     startRotate(id) {
-      this.selectElement(id)
-      this.setCanvasMode('draw')
-      this.drawMode = 'rotate'
+      this.startDrawMode(id, 'rotate')
     },
     startResizeLine1(id) {
-      this.selectElement(id)
-      this.setCanvasMode('draw')
-      this.drawMode = 'resizeLine1'
+      this.startDrawMode(id, 'resizeLine1')
     },
     startResizeLine2(id) {
+      this.startDrawMode(id, 'resizeLine2')
+    },
+    startDrawMode(id, drawMode) {
       this.selectElement(id)
       this.setCanvasMode('draw')
-      this.drawMode = 'resizeLine2'
+      this.drawMode = drawMode
     },
     dropFile(e) {
       const files = e.target.files
