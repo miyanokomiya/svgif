@@ -27,18 +27,32 @@
         />
       </g>
       <g @mousedown="$emit('startResizeLine1', svgElement.id)">
+        <path
+          :d="`M ${svgElement.x1} ${svgElement.y1} L ${moveItem1.x} ${moveItem1.y}`"
+          stroke="black"
+          :stroke-width="htmlToSvg(1)"
+          :stroke-dasharray="`${htmlToSvg(1)}, ${htmlToSvg(5)}`"
+          fill="none"
+        />
         <SvgCircle
-          :cx="svgElement.x1"
-          :cy="svgElement.y1"
+          :cx="moveItem1.x"
+          :cy="moveItem1.y"
           :r="htmlToSvg(10)"
           stroke="black"
           fill="white"
         />
       </g>
       <g @mousedown="$emit('startResizeLine2', svgElement.id)">
+        <path
+          :d="`M ${svgElement.x2} ${svgElement.y2} L ${moveItem2.x} ${moveItem2.y}`"
+          stroke="black"
+          :stroke-width="htmlToSvg(1)"
+          :stroke-dasharray="`${htmlToSvg(1)}, ${htmlToSvg(5)}`"
+          fill="none"
+        />
         <SvgCircle
-          :cx="svgElement.x2"
-          :cy="svgElement.y2"
+          :cx="moveItem2.x"
+          :cy="moveItem2.y"
           :r="htmlToSvg(10)"
           stroke="black"
           fill="white"
@@ -53,6 +67,7 @@ import BaseElement from './BaseElement'
 import SvgRectangle from '@/components/atoms/SvgRectangle'
 import SvgCircle from '@/components/atoms/SvgCircle'
 import * as geo from '@/commons/utils/geo'
+import * as elementUtils from '@/commons/utils/element'
 
 export default {
   extends: BaseElement,
@@ -86,8 +101,7 @@ export default {
       return geo.getRadian(this.from, this.to)
     },
     resizeItem() {
-      const vec = geo.unitVector(this.from, this.to)
-      const cross = geo.crossVector(vec)
+      const cross = geo.crossVector(geo.unitVector(this.from, this.to))
       const d = this.htmlToSvg(15) + this.svgElement.strokeWidth / 2
       return {
         x: this.center.x + cross.x * d,
@@ -98,6 +112,24 @@ export default {
       return `rotate(${(this.radian * 180) / Math.PI}, ${this.resizeItem.x}, ${
         this.resizeItem.y
       })`
+    },
+    moveLineItemDiffVector() {
+      return elementUtils.moveLineItemDiffVector({
+        element: this.svgElement,
+        scale: this.scale
+      })
+    },
+    moveItem1() {
+      return {
+        x: this.svgElement.x1 - this.moveLineItemDiffVector.x,
+        y: this.svgElement.y1 - this.moveLineItemDiffVector.y
+      }
+    },
+    moveItem2() {
+      return {
+        x: this.svgElement.x2 + this.moveLineItemDiffVector.x,
+        y: this.svgElement.y2 + this.moveLineItemDiffVector.y
+      }
     }
   }
 }

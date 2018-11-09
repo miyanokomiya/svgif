@@ -21,19 +21,33 @@ export function resizeElement({ element, x, y, drawMode, scale }) {
   }
 }
 
+export function moveLineItemDiffVector({ element, scale }) {
+  const unitVector = geo.unitVector(
+    { x: element.x1, y: element.y1 },
+    { x: element.x2, y: element.y2 }
+  )
+  const d = htmlToSvg(scale, 15)
+  return {
+    x: unitVector.x * d,
+    y: unitVector.y * d
+  }
+}
+
 function resizeLine({ element, x, y, drawMode, scale }) {
   let to = null
   if (drawMode === 'resizeLine1') {
+    const diffV = moveLineItemDiffVector({ element, scale })
     to = {
       id: element.id,
-      x1: x,
-      y1: y
+      x1: x + diffV.x,
+      y1: y + diffV.y
     }
   } else if (drawMode === 'resizeLine2') {
+    const diffV = moveLineItemDiffVector({ element, scale })
     to = {
       id: element.id,
-      x2: x,
-      y2: y
+      x2: x - diffV.x,
+      y2: y - diffV.y
     }
   } else if (drawMode === 'resizeWidth') {
     const d = geo.distance(geo.getRectangleCenter(toRectangle(element)), {

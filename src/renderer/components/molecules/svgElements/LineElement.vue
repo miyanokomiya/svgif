@@ -12,6 +12,16 @@
   @startResizeLine2="$emit('startResizeLine2', line.id)"
 >
   <SvgLine
+    v-if="selected && !plain"
+    :x1="line.x1"
+    :y1="line.y1"
+    :x2="line.x2"
+    :y2="line.y2"
+    :stroke="selectedStroke"
+    :strokeOpacity="selectedStrokeOpacity"
+    :strokeWidth="selectedStrokeWidth"
+  />
+  <SvgLine
     :x1="line.x1"
     :y1="line.y1"
     :x2="line.x2"
