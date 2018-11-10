@@ -3,13 +3,15 @@
     <g @mousedown="$emit('startMove', svgElement.id)">
       <slot/>
     </g>
-    <OptionPath :d="`M ${-svgElement.strokeWidth / 2} ${svgElement.height / 2 - svgElement.strokeWidth / 2} v ${-svgElement.height / 2} h ${svgElement.width / 2}`" />
-    <MoveItem
-      :scale="scale"
-      :cx="-svgElement.strokeWidth / 2"
-      :cy="-svgElement.strokeWidth / 2"
-      @mousedown.native="$emit('startMove', svgElement.id)"
-    />
+    <g v-if="!plain">
+      <OptionPath :d="`M ${-svgElement.strokeWidth / 2} ${svgElement.height / 2 - svgElement.strokeWidth / 2} v ${-svgElement.height / 2} h ${svgElement.width / 2}`" />
+      <MoveItem
+        :scale="scale"
+        :cx="-svgElement.strokeWidth / 2"
+        :cy="-svgElement.strokeWidth / 2"
+        @mousedown.native="$emit('startMove', svgElement.id)"
+      />
+    </g>
     <template v-if="selected && !plain">
       <OptionPath :d="`M ${-svgElement.strokeWidth / 2} ${svgElement.height / 2 + svgElement.strokeWidth / 2} v ${svgElement.height / 2} h ${svgElement.width / 2}`" />
       <DeleteItem
