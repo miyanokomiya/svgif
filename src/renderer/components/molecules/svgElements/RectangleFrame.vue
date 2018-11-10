@@ -3,13 +3,7 @@
     <g @mousedown="$emit('startMove', svgElement.id)">
       <slot/>
     </g>
-    <path
-      :d="`M ${-svgElement.strokeWidth / 2} ${svgElement.height / 2 - svgElement.strokeWidth / 2} v ${-svgElement.height / 2} h ${svgElement.width / 2}`"
-      stroke="black"
-      :stroke-width="htmlToSvg(1)"
-      :stroke-dasharray="`${htmlToSvg(1)}, ${htmlToSvg(5)}`"
-      fill="none"
-    />
+    <OptionPath :d="`M ${-svgElement.strokeWidth / 2} ${svgElement.height / 2 - svgElement.strokeWidth / 2} v ${-svgElement.height / 2} h ${svgElement.width / 2}`" />
     <g @mousedown="$emit('startMove', svgElement.id)">
       <SvgCircle
         v-if="!plain"
@@ -21,13 +15,7 @@
       />
     </g>
     <template v-if="selected && !plain">
-      <path
-        :d="`M ${-svgElement.strokeWidth / 2} ${svgElement.height / 2 + svgElement.strokeWidth / 2} v ${svgElement.height / 2} h ${svgElement.width / 2}`"
-        stroke="black"
-        :stroke-width="htmlToSvg(1)"
-        :stroke-dasharray="`${htmlToSvg(1)}, ${htmlToSvg(5)}`"
-        fill="none"
-      />
+      <OptionPath :d="`M ${-svgElement.strokeWidth / 2} ${svgElement.height / 2 + svgElement.strokeWidth / 2} v ${svgElement.height / 2} h ${svgElement.width / 2}`" />
       <g @mousedown="$emit('deleteElement', svgElement.id)">
         <SvgCircle
           :cx="-svgElement.strokeWidth / 2"
@@ -42,13 +30,7 @@
           :stroke-width="htmlToSvg(2)"
         />
       </g>
-      <path
-        :d="`M ${svgElement.width + svgElement.strokeWidth / 2} ${svgElement.height / 2 + svgElement.strokeWidth / 2} v ${svgElement.height / 2} h ${-svgElement.width / 2}`"
-        stroke="black"
-        :stroke-width="htmlToSvg(1)"
-        :stroke-dasharray="`${htmlToSvg(1)}, ${htmlToSvg(5)}`"
-        fill="none"
-      />
+      <OptionPath :d="`M ${svgElement.width + svgElement.strokeWidth / 2} ${svgElement.height / 2 + svgElement.strokeWidth / 2} v ${svgElement.height / 2} h ${-svgElement.width / 2}`" />
       <g @mousedown="$emit('startResize', svgElement.id)">
         <SvgCircle
           :cx="svgElement.width + svgElement.strokeWidth / 2"
@@ -63,13 +45,7 @@
         />
       </g>
       <g @mousedown="$emit('startResizeWidth', svgElement.id)">
-        <path
-          :d="`M ${svgElement.width / 2} ${svgElement.height} v ${htmlToSvg(15) + svgElement.strokeWidth / 2}`"
-          stroke="black"
-          :stroke-width="htmlToSvg(1)"
-          :stroke-dasharray="`${htmlToSvg(1)}, ${htmlToSvg(5)}`"
-          fill="none"
-        />
+        <OptionPath :d="`M ${svgElement.width / 2} ${svgElement.height} v ${htmlToSvg(15) + svgElement.strokeWidth / 2}`" />
         <SvgCircle
           :cx="svgElement.width / 2"
           :cy="svgElement.height + htmlToSvg(15) + svgElement.strokeWidth / 2"
@@ -77,20 +53,10 @@
           stroke="black"
           fill="white"
         />
-        <path
-          :d="`M ${svgElement.width / 2 - htmlToSvg(5)} ${svgElement.height + htmlToSvg(15) + svgElement.strokeWidth / 2} h ${htmlToSvg(10)}`"
-          stroke="black"
-          :stroke-width="htmlToSvg(3)"
-        />
+        <ResizeWidthItem :scale="scale" :cx="svgElement.width / 2" :cy="svgElement.height + htmlToSvg(15) + svgElement.strokeWidth / 2" />
       </g>
       <g @mousedown="$emit('startRotate', svgElement.id)">
-        <path
-          :d="`M ${svgElement.width / 2} ${0} v -${htmlToSvg(15) + svgElement.strokeWidth / 2}`"
-          stroke="black"
-          :stroke-width="htmlToSvg(1)"
-          :stroke-dasharray="`${htmlToSvg(1)}, ${htmlToSvg(5)}`"
-          fill="none"
-        />
+        <OptionPath :d="`M ${svgElement.width / 2} ${0} v -${htmlToSvg(15) + svgElement.strokeWidth / 2}`" />
         <SvgCircle
           :cx="svgElement.width / 2"
           :cy="-(htmlToSvg(15) + svgElement.strokeWidth / 2)"
@@ -114,11 +80,15 @@
 <script>
 import BaseElement from './BaseElement'
 import SvgCircle from '@/components/atoms/SvgCircle'
+import ResizeWidthItem from '@/components/molecules/svgParts/ResizeWidthItem'
+import OptionPath from '@/components/molecules/svgParts/OptionPath'
 
 export default {
   extends: BaseElement,
   components: {
-    SvgCircle
+    SvgCircle,
+    ResizeWidthItem,
+    OptionPath
   },
   props: {
     svgElement: {

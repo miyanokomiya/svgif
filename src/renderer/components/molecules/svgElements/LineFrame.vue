@@ -5,13 +5,7 @@
     </g>
     <template v-if="selected && !plain">
       <g @mousedown="$emit('startResizeWidth', svgElement.id)">
-        <path
-          :d="`M ${center.x} ${center.y} L ${resizeItem.x} ${resizeItem.y}`"
-          stroke="black"
-          :stroke-width="htmlToSvg(1)"
-          :stroke-dasharray="`${htmlToSvg(1)}, ${htmlToSvg(5)}`"
-          fill="none"
-        />
+        <OptionPath :d="`M ${center.x} ${center.y} L ${resizeItem.x} ${resizeItem.y}`" />
         <SvgCircle
           :cx="resizeItem.x"
           :cy="resizeItem.y"
@@ -19,21 +13,10 @@
           stroke="black"
           fill="white"
         />
-        <path
-          :d="`M ${resizeItem.x - htmlToSvg(5)} ${resizeItem.y} h ${htmlToSvg(10)}`"
-          stroke="black"
-          :stroke-width="htmlToSvg(3)"
-          :transform="rotate"
-        />
+        <ResizeWidthItem :scale="scale" :cx="resizeItem.x" :cy="resizeItem.y" :radian="radian" />
       </g>
       <g @mousedown="$emit('startResizeLine1', svgElement.id)">
-        <path
-          :d="`M ${svgElement.x1} ${svgElement.y1} L ${moveItem1.x} ${moveItem1.y}`"
-          stroke="black"
-          :stroke-width="htmlToSvg(1)"
-          :stroke-dasharray="`${htmlToSvg(1)}, ${htmlToSvg(5)}`"
-          fill="none"
-        />
+        <OptionPath :d="`M ${svgElement.x1} ${svgElement.y1} L ${moveItem1.x} ${moveItem1.y}`" />
         <SvgCircle
           :cx="moveItem1.x"
           :cy="moveItem1.y"
@@ -43,13 +26,7 @@
         />
       </g>
       <g @mousedown="$emit('startResizeLine2', svgElement.id)">
-        <path
-          :d="`M ${svgElement.x2} ${svgElement.y2} L ${moveItem2.x} ${moveItem2.y}`"
-          stroke="black"
-          :stroke-width="htmlToSvg(1)"
-          :stroke-dasharray="`${htmlToSvg(1)}, ${htmlToSvg(5)}`"
-          fill="none"
-        />
+        <OptionPath :d="`M ${svgElement.x2} ${svgElement.y2} L ${moveItem2.x} ${moveItem2.y}`" />
         <SvgCircle
           :cx="moveItem2.x"
           :cy="moveItem2.y"
@@ -66,6 +43,8 @@
 import BaseElement from './BaseElement'
 import SvgRectangle from '@/components/atoms/SvgRectangle'
 import SvgCircle from '@/components/atoms/SvgCircle'
+import ResizeWidthItem from '@/components/molecules/svgParts/ResizeWidthItem'
+import OptionPath from '@/components/molecules/svgParts/OptionPath'
 import * as geo from '@/commons/utils/geo'
 import * as elementUtils from '@/commons/utils/element'
 
@@ -73,7 +52,9 @@ export default {
   extends: BaseElement,
   components: {
     SvgRectangle,
-    SvgCircle
+    SvgCircle,
+    ResizeWidthItem,
+    OptionPath
   },
   props: {
     svgElement: {
@@ -107,11 +88,6 @@ export default {
         x: this.center.x + cross.x * d,
         y: this.center.y + cross.y * d
       }
-    },
-    rotate() {
-      return `rotate(${(this.radian * 180) / Math.PI}, ${this.resizeItem.x}, ${
-        this.resizeItem.y
-      })`
     },
     moveLineItemDiffVector() {
       return elementUtils.moveLineItemDiffVector({
