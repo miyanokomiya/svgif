@@ -3,14 +3,14 @@
   <SvgCircle
     :cx="cx"
     :cy="cy"
-    :r="htmlToSvg(7)"
+    :r="htmlToSvg(10)"
     stroke="black"
     fill="white"
   />
   <path
-    :d="`M ${cx - htmlToSvg(5)} ${cy} h ${htmlToSvg(10)}`"
+    :d="`M ${cx - htmlToSvg(5)} ${cy - htmlToSvg(5)} l ${htmlToSvg(10)} ${htmlToSvg(10)} m 0 ${htmlToSvg(-10)} l ${htmlToSvg(-10)} ${htmlToSvg(10)}`"
     stroke="black"
-    :stroke-width="htmlToSvg(3)"
+    :stroke-width="htmlToSvg(2)"
     :transform="rotate"
   />
 </g>

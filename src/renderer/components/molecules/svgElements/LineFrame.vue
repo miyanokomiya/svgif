@@ -4,17 +4,14 @@
       <slot/>
     </g>
     <template v-if="selected && !plain">
-      <g @mousedown="$emit('startResizeWidth', svgElement.id)">
-        <OptionPath :d="`M ${center.x} ${center.y} L ${resizeItem.x} ${resizeItem.y}`" />
-        <SvgCircle
-          :cx="resizeItem.x"
-          :cy="resizeItem.y"
-          :r="htmlToSvg(7)"
-          stroke="black"
-          fill="white"
-        />
-        <ResizeWidthItem :scale="scale" :cx="resizeItem.x" :cy="resizeItem.y" :radian="radian" />
-      </g>
+      <OptionPath :d="`M ${center.x} ${center.y} L ${resizeItem.x} ${resizeItem.y}`" />
+      <ResizeWidthItem
+        :scale="scale"
+        :cx="resizeItem.x"
+        :cy="resizeItem.y"
+        :radian="radian"
+        @mousedown.native="$emit('startResizeWidth', svgElement.id)"
+      />
       <g @mousedown="$emit('startResizeLine1', svgElement.id)">
         <OptionPath :d="`M ${svgElement.x1} ${svgElement.y1} L ${moveItem1.x} ${moveItem1.y}`" />
         <SvgCircle

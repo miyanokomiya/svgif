@@ -16,20 +16,12 @@
     </g>
     <template v-if="selected && !plain">
       <OptionPath :d="`M ${-svgElement.strokeWidth / 2} ${svgElement.height / 2 + svgElement.strokeWidth / 2} v ${svgElement.height / 2} h ${svgElement.width / 2}`" />
-      <g @mousedown="$emit('deleteElement', svgElement.id)">
-        <SvgCircle
-          :cx="-svgElement.strokeWidth / 2"
-          :cy="svgElement.height + svgElement.strokeWidth / 2"
-          :r="htmlToSvg(10)"
-          stroke="black"
-          fill="white"
-        />
-        <path
-          :d="`M ${-svgElement.strokeWidth / 2 - htmlToSvg(5)} ${svgElement.height + svgElement.strokeWidth / 2 - htmlToSvg(5)} l ${htmlToSvg(10)} ${htmlToSvg(10)} m 0 ${htmlToSvg(-10)} l ${htmlToSvg(-10)} ${htmlToSvg(10)}`"
-          stroke="black"
-          :stroke-width="htmlToSvg(2)"
-        />
-      </g>
+      <DeleteItem
+        :scale="scale"
+        :cx="-svgElement.strokeWidth / 2"
+        :cy="svgElement.height + svgElement.strokeWidth / 2"
+        @mousedown.native="$emit('deleteElement', svgElement.id)"
+      />
       <OptionPath :d="`M ${svgElement.width + svgElement.strokeWidth / 2} ${svgElement.height / 2 + svgElement.strokeWidth / 2} v ${svgElement.height / 2} h ${-svgElement.width / 2}`" />
       <g @mousedown="$emit('startResize', svgElement.id)">
         <SvgCircle
@@ -44,17 +36,13 @@
           stroke="black"
         />
       </g>
-      <g @mousedown="$emit('startResizeWidth', svgElement.id)">
-        <OptionPath :d="`M ${svgElement.width / 2} ${svgElement.height} v ${htmlToSvg(15) + svgElement.strokeWidth / 2}`" />
-        <SvgCircle
-          :cx="svgElement.width / 2"
-          :cy="svgElement.height + htmlToSvg(15) + svgElement.strokeWidth / 2"
-          :r="htmlToSvg(7)"
-          stroke="black"
-          fill="white"
-        />
-        <ResizeWidthItem :scale="scale" :cx="svgElement.width / 2" :cy="svgElement.height + htmlToSvg(15) + svgElement.strokeWidth / 2" />
-      </g>
+      <OptionPath :d="`M ${svgElement.width / 2} ${svgElement.height} v ${htmlToSvg(15) + svgElement.strokeWidth / 2}`" />
+      <ResizeWidthItem
+        :scale="scale"
+        :cx="svgElement.width / 2"
+        :cy="svgElement.height + htmlToSvg(15) + svgElement.strokeWidth / 2"
+        @mousedown.native="$emit('startResizeWidth', svgElement.id)"
+      />
       <g @mousedown="$emit('startRotate', svgElement.id)">
         <OptionPath :d="`M ${svgElement.width / 2} ${0} v -${htmlToSvg(15) + svgElement.strokeWidth / 2}`" />
         <SvgCircle
@@ -81,6 +69,7 @@
 import BaseElement from './BaseElement'
 import SvgCircle from '@/components/atoms/SvgCircle'
 import ResizeWidthItem from '@/components/molecules/svgParts/ResizeWidthItem'
+import DeleteItem from '@/components/molecules/svgParts/DeleteItem'
 import OptionPath from '@/components/molecules/svgParts/OptionPath'
 
 export default {
@@ -88,6 +77,7 @@ export default {
   components: {
     SvgCircle,
     ResizeWidthItem,
+    DeleteItem,
     OptionPath
   },
   props: {
