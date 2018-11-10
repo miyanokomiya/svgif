@@ -1,5 +1,10 @@
 import * as geo from './geo'
-import { getRectangle, getCircle, getLine } from '@/commons/models/svgElements'
+import {
+  getRectangle,
+  getCircle,
+  getLine,
+  getArrow
+} from '@/commons/models/svgElements'
 
 export function htmlToSvg(scale, val) {
   return val / scale
@@ -15,6 +20,7 @@ export function resizeElement({ element, x, y, drawMode, scale }) {
     case 'circle':
       return resizeRectangle({ element, x, y, drawMode, scale })
     case 'line':
+    case 'arrow':
       return resizeLine({ element, x, y, drawMode, scale })
     default:
       return element
@@ -109,6 +115,7 @@ function resizeRectangle({ element, x, y, drawMode, scale }) {
 export function toRectangle(element) {
   switch (element.name) {
     case 'line':
+    case 'arrow':
       const x = Math.min(element.x1, element.x2)
       const y = Math.min(element.y1, element.y2)
       return {
@@ -131,6 +138,7 @@ export function moveElement({ element, vec }) {
       to.y += vec.y
       return geo.getNormalRect(to)
     case 'line':
+    case 'arrow':
       to.x1 += vec.x
       to.y1 += vec.y
       to.x2 += vec.x
@@ -154,6 +162,14 @@ export function createElement({ elementType, elementColor, x, y }) {
         y2: y,
         stroke: elementColor
       })
+    case 'arrow':
+      return getArrow({
+        x1: x,
+        y1: y,
+        x2: x,
+        y2: y,
+        stroke: elementColor
+      })
   }
   throw new Error('unknown element type: ', elementType)
 }
@@ -164,7 +180,8 @@ export function getModeAfterCreateElement(element) {
     case 'circle':
       return 'resize'
     case 'line':
-      return 'resizeLine1'
+    case 'arrow':
+      return 'resizeLine2'
   }
   throw new Error('unknown element type: ', element.name)
 }

@@ -91,16 +91,16 @@ export default {
       const cross = this.unitCross
       const d = this.htmlToSvg(15) + this.svgElement.strokeWidth / 2
       return {
-        x: this.center.x + cross.x * d,
-        y: this.center.y + cross.y * d
+        x: this.center.x - cross.x * d,
+        y: this.center.y - cross.y * d
       }
     },
     deleteItem() {
       const cross = this.unitCross
       const d = this.htmlToSvg(15) + this.svgElement.strokeWidth / 2
       return {
-        x: this.svgElement.x2 + cross.x * d,
-        y: this.svgElement.y2 + cross.y * d
+        x: this.svgElement.x1 - cross.x * d,
+        y: this.svgElement.y1 - cross.y * d
       }
     },
     moveLineItemDiffVector() {
