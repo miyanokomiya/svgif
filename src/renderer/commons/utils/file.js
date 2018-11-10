@@ -20,9 +20,10 @@ export function readImageFile(file) {
 }
 
 export function saveGifFile(gif) {
+  if (process.env.IS_WEB) return
   const remote = require('electron').remote
   const { dialog } = require('electron').remote
-  var fs = require('fs')
+  var fs = remote.require('fs')
   var window = remote.getCurrentWindow()
   var options = {
     filters: [

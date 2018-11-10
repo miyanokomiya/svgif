@@ -96,7 +96,7 @@ let webConfig = {
     new MiniCssExtractPlugin({filename: 'styles.css'}),
     new HtmlWebpackPlugin({
       filename: 'index.html',
-      template: path.resolve(__dirname, '../src/index.ejs'),
+      template: path.resolve(__dirname, '../src/main.ejs'),
       minify: {
         collapseWhitespace: true,
         removeAttributeQuotes: true,
@@ -122,7 +122,10 @@ let webConfig = {
     },
     extensions: ['.js', '.vue', '.json', '.css']
   },
-  target: 'web'
+  target: 'web',
+  node: {
+    fs: 'empty'
+  }
 }
 
 /**
