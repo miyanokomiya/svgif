@@ -69,20 +69,24 @@ function resizeLine({ element, x, y, drawMode, scale }) {
 function resizeRectangle({ element, x, y, drawMode, scale }) {
   let to = null
   if (drawMode === 'resize') {
-    const rotateElement = geo.rotateRectangleAtCenter(element, element.radian)
-    const rec = geo.rotateRectangleAtCenter(
-      {
-        x: rotateElement.x,
-        y: rotateElement.y,
-        width: x - rotateElement.x,
-        height: y - rotateElement.y
-      },
-      -element.radian
-    )
+    const center = geo.getRectangleCenter(element)
+    const adjustedP = geo.rotate({ x, y }, -element.radian, center)
+    adjustedP.x -= element.strokeWidth / 2
+    adjustedP.y -= element.strokeWidth / 2
+    const width = adjustedP.x - element.x
+    const height = adjustedP.y - element.y
     to = {
       id: element.id,
-      ...rec
+      x: element.x,
+      y: element.y,
+      width,
+      height
     }
+    // 矩形始点のずれを直す
+    const rotatedTo = geo.rotateRectangleAtCenter(to, element.radian)
+    const rotatedElement = geo.rotateRectangleAtCenter(element, element.radian)
+    to.x -= rotatedTo.x - rotatedElement.x
+    to.y -= rotatedTo.y - rotatedElement.y
   } else if (drawMode === 'resizeWidth') {
     const d = geo.distance(geo.getRectangleCenter(element), { x, y })
     to = {

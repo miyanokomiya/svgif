@@ -182,4 +182,21 @@ describe('geo 幾何計算モジュールのテスト', () => {
       expect(rec.height).to.closeTo(2, THRESHOLD)
     })
   })
+  describe('rotate 座標回転', () => {
+    it('正しく取得されること', () => {
+      const p = geo.rotate({ x: 1, y: 0 }, Math.PI / 2)
+      expect(p.x).to.closeTo(0, THRESHOLD)
+      expect(p.y).to.closeTo(1, THRESHOLD)
+    })
+    it('正しく取得されること', () => {
+      const p = geo.rotate({ x: 1, y: 0 }, -Math.PI / 2)
+      expect(p.x).to.closeTo(0, THRESHOLD)
+      expect(p.y).to.closeTo(-1, THRESHOLD)
+    })
+    it('正しく取得されること', () => {
+      const p = geo.rotate({ x: 2, y: 1 }, -Math.PI / 2, { x: 1, y: 1 })
+      expect(p.x).to.closeTo(1, THRESHOLD)
+      expect(p.y).to.closeTo(0, THRESHOLD)
+    })
+  })
 })

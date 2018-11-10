@@ -93,18 +93,24 @@ export function getRectangleCenter(rec) {
 
 export function rotateRectangleAtCenter(rec, rad) {
   const c = getRectangleCenter(rec)
-  const bx = rec.x - c.x
-  const by = rec.y - c.y
-  const bw = rec.width / 2
-  const bh = rec.height / 2
-  const rx = Math.cos(rad) * bx - Math.sin(rad) * by
-  const ry = Math.sin(rad) * bx + Math.cos(rad) * by
-  const rw = Math.cos(rad) * bw - Math.sin(rad) * bh
-  const rh = Math.sin(rad) * bw + Math.cos(rad) * bh
+  const p1 = rotate(rec, rad, c)
+  const p2 = rotate({ x: rec.x + rec.width, y: rec.y + rec.height }, rad, c)
   return {
-    x: c.x + rx,
-    y: c.y + ry,
-    width: rw * 2,
-    height: rh * 2
+    x: p1.x,
+    y: p1.y,
+    width: p2.x - p1.x,
+    height: p2.y - p1.y
+  }
+}
+
+export function rotate(p, radian, base = { x: 0, y: 0 }) {
+  const vec = vector(base, p)
+  const rotateVec = {
+    x: vec.x * Math.cos(radian) - vec.y * Math.sin(radian),
+    y: vec.x * Math.sin(radian) + vec.y * Math.cos(radian)
+  }
+  return {
+    x: base.x + rotateVec.x,
+    y: base.y + rotateVec.y
   }
 }
