@@ -36,6 +36,12 @@
       >
         LINE
       </el-button>
+      <el-button
+        :type="$svgif.elementType === 'arrow' ? 'primary' : ''"
+        @click="setElementType('arrow')"
+      >
+        ARROW
+      </el-button>
     </el-button-group>
     <el-color-picker
       :value="$svgif.elementColor"

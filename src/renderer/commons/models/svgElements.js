@@ -41,3 +41,13 @@ export function getLine(arg = {}) {
     ...arg
   }
 }
+
+export function getArrow(arg = {}) {
+  return {
+    ...getLine(),
+    name: 'arrow',
+    radius2: 30,
+    depth2: 50,
+    ...arg
+  }
+}

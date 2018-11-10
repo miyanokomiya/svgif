@@ -40,18 +40,35 @@
     @startResizeLine1="startResizeLine1"
     @startResizeLine2="startResizeLine2"
   />
+  <ArrowElement
+    v-else-if="svgElement.name === 'arrow'"
+    :svgElement="svgElement"
+    :moveVec="moveVec"
+    :selected="selected"
+    :scale="scale"
+    :plain="plain"
+    @startMove="startMove"
+    @deleteElement="deleteElement"
+    @startResize="startResize"
+    @startResizeWidth="startResizeWidth"
+    @startRotate="startRotate"
+    @startResizeLine1="startResizeLine1"
+    @startResizeLine2="startResizeLine2"
+  />
 </template>
 
 <script>
 import RectangleElement from './svgElements/RectangleElement'
 import CircleElement from './svgElements/CircleElement'
 import LineElement from './svgElements/LineElement'
+import ArrowElement from './svgElements/ArrowElement'
 
 export default {
   components: {
     RectangleElement,
     CircleElement,
-    LineElement
+    LineElement,
+    ArrowElement
   },
   props: {
     svgElement: {
