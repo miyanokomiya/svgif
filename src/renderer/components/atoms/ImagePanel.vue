@@ -17,11 +17,11 @@ export default {
     },
     width: {
       type: Number,
-      default: 1
+      default: 0
     },
     height: {
       type: Number,
-      default: 1
+      default: 0
     }
   },
   computed: {

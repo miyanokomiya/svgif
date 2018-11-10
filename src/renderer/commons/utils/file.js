@@ -18,3 +18,25 @@ export function readImageFile(file) {
     fileReader.readAsDataURL(file)
   })
 }
+
+export function saveGifFile(gif) {
+  const remote = require('electron').remote
+  const { dialog } = require('electron').remote
+  var fs = require('fs')
+  var window = remote.getCurrentWindow()
+  var options = {
+    filters: [
+      { name: 'Gif File', extensions: ['gif'] },
+      { name: 'All Files', extensions: ['*'] }
+    ],
+    properties: ['openFile', 'createDirectory']
+  }
+  dialog.showSaveDialog(window, options, filename => {
+    if (filename) {
+      var dataUrl = gif.replace(/^data:image\/gif;base64,/, '')
+      fs.writeFile(filename, dataUrl, 'base64', err => {
+        if (err) console.log(err)
+      })
+    }
+  })
+}

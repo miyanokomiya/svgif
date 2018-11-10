@@ -13,8 +13,8 @@
     </el-aside>
     <el-container>
       <el-main>
-        <el-tabs type="border-card">
-          <el-tab-pane label="Canvas">
+        <el-tabs type="border-card" v-model="tabValue">
+          <el-tab-pane label="Canvas" name="Canvas">
             <el-main>
               <ClipCanvas/>
             </el-main>
@@ -24,7 +24,7 @@
               />
             </el-footer>
           </el-tab-pane>
-          <el-tab-pane label="Gif">
+          <el-tab-pane label="Gif" name="Gif" v-if="gif">
             <el-main>
               <GifCanvas
                 :gif="gif"
@@ -34,6 +34,7 @@
             </el-main>
             <el-footer>
               <GifFooter
+                :gif="gif"
                 @createGif="createGif"
               />
             </el-footer>
@@ -66,6 +67,7 @@ export default {
     ImagePanel
   },
   data: () => ({
+    tabValue: 'Canvas',
     gif: ''
   }),
   computed: {
@@ -101,6 +103,7 @@ export default {
           const fileReader = new FileReader()
           fileReader.onload = () => {
             this.gif = fileReader.result
+            this.tabValue = 'Gif'
           }
           fileReader.readAsDataURL(blob)
         }

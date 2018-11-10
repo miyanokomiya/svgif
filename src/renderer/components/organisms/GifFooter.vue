@@ -3,20 +3,29 @@
     <el-button
       type="primary"
       size="mini"
-      icon="el-icon-picture-outline"
+      icon="el-icon-download"
       class="create-gif-button"
+      :disabled="!gif"
       @click="createGif"
     >
-      Create Gif
+      Export Gif
     </el-button>
   </div>
 </template>
 
 <script>
+import { saveGifFile } from '@/commons/utils/file'
 export default {
+  props: {
+    gif: {
+      type: String,
+      default: ''
+    }
+  },
   methods: {
     createGif() {
-      this.$emit('createGif')
+      // this.$emit('createGif')
+      saveGifFile(this.gif)
     }
   }
 }

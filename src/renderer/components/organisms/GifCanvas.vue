@@ -1,16 +1,10 @@
 <template>
   <div class="clip-canvas">
-    <ImagePanel
-      :src="gif"
-      :width="WHOLE_SIZE.width"
-      :height="WHOLE_SIZE.height"
-    />
+    <ImagePanel :src="gif"/>
   </div>
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
-import clipTypes from '@main/store/modules/clips/types'
 import ImagePanel from '@/components/atoms/ImagePanel'
 
 export default {
@@ -26,11 +20,6 @@ export default {
       type: Array,
       required: true
     }
-  },
-  computed: {
-    ...mapGetters({
-      WHOLE_SIZE: clipTypes.g.WHOLE_SIZE
-    })
   }
 }
 </script>
