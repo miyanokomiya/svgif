@@ -4,6 +4,14 @@
       <slot/>
     </g>
     <template v-if="selected && !plain">
+      <OptionPath :d="`M ${svgElement.x2} ${svgElement.y2} L ${deleteItem.x} ${deleteItem.y}`" />
+      <DeleteItem
+        :scale="scale"
+        :cx="deleteItem.x"
+        :cy="deleteItem.y"
+        :radian="radian"
+        @mousedown.native="$emit('deleteElement', svgElement.id)"
+      />
       <OptionPath :d="`M ${center.x} ${center.y} L ${resizeItem.x} ${resizeItem.y}`" />
       <ResizeWidthItem
         :scale="scale"
@@ -41,6 +49,7 @@ import BaseElement from './BaseElement'
 import SvgRectangle from '@/components/atoms/SvgRectangle'
 import SvgCircle from '@/components/atoms/SvgCircle'
 import ResizeWidthItem from '@/components/molecules/svgParts/ResizeWidthItem'
+import DeleteItem from '@/components/molecules/svgParts/DeleteItem'
 import OptionPath from '@/components/molecules/svgParts/OptionPath'
 import * as geo from '@/commons/utils/geo'
 import * as elementUtils from '@/commons/utils/element'
@@ -51,6 +60,7 @@ export default {
     SvgRectangle,
     SvgCircle,
     ResizeWidthItem,
+    DeleteItem,
     OptionPath
   },
   props: {
@@ -78,12 +88,23 @@ export default {
     radian() {
       return geo.getRadian(this.from, this.to)
     },
+    unitCross() {
+      return geo.crossVector(geo.unitVector(this.from, this.to))
+    },
     resizeItem() {
-      const cross = geo.crossVector(geo.unitVector(this.from, this.to))
+      const cross = this.unitCross
       const d = this.htmlToSvg(15) + this.svgElement.strokeWidth / 2
       return {
         x: this.center.x + cross.x * d,
         y: this.center.y + cross.y * d
+      }
+    },
+    deleteItem() {
+      const cross = this.unitCross
+      const d = this.htmlToSvg(15) + this.svgElement.strokeWidth / 2
+      return {
+        x: this.svgElement.x2 + cross.x * d,
+        y: this.svgElement.y2 + cross.y * d
       }
     },
     moveLineItemDiffVector() {
