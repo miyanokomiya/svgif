@@ -35,11 +35,11 @@
   />
   <g slot="edit">
     <!-- <OptionPath :d="`M ${center.x} ${center.y} L ${resizeItem.x} ${resizeItem.y}`" /> -->
-    <ResizeWidthItem
+    <ResizeItem
       :scale="scale"
       :cx="resizeArrowItem2.x"
       :cy="resizeArrowItem2.y"
-      :radian="radian"
+      :radian="radian + Math.PI"
       @mousedown.native="$emit('startResizeArrow2', svgElement.id)"
     />
   </g>
@@ -51,6 +51,7 @@ import BaseElement from './BaseElement'
 import SvgArrow from '@/components/atoms/SvgArrow'
 import LineFrame from './LineFrame'
 import ResizeWidthItem from '@/components/molecules/svgParts/ResizeWidthItem'
+import ResizeItem from '@/components/molecules/svgParts/ResizeItem'
 import * as geo from '@/commons/utils/geo'
 
 export default {
@@ -58,7 +59,8 @@ export default {
   components: {
     SvgArrow,
     LineFrame,
-    ResizeWidthItem
+    ResizeWidthItem,
+    ResizeItem
   },
   computed: {
     line() {
