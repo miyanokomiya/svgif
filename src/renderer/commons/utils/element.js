@@ -64,6 +64,18 @@ function resizeLine({ element, x, y, drawMode, scale }) {
       id: element.id,
       strokeWidth: Math.max((d - htmlToSvg(scale, 15)) * 2, 1)
     }
+  } else if (drawMode === 'startResizeArrow2') {
+    const fromP = { x: element.x1, y: element.y1 }
+    const toP = { x: element.x2, y: element.y2 }
+    const vec = geo.vector(toP, { x, y })
+    const distance = geo.distance(fromP, toP)
+    const radian = geo.getRadian(fromP, toP)
+    const rotatedVec = geo.rotate(vec, -radian)
+    to = {
+      id: element.id,
+      radius2: Math.max(-rotatedVec.y - element.strokeWidth / 2, 0),
+      depth2: Math.min(Math.max(-rotatedVec.x, 0), distance)
+    }
   } else {
     to = {
       id: element.id

@@ -33,6 +33,16 @@
     :stroke="line.stroke"
     :strokeWidth="line.strokeWidth"
   />
+  <g slot="edit">
+    <!-- <OptionPath :d="`M ${center.x} ${center.y} L ${resizeItem.x} ${resizeItem.y}`" /> -->
+    <ResizeWidthItem
+      :scale="scale"
+      :cx="resizeArrowItem2.x"
+      :cy="resizeArrowItem2.y"
+      :radian="radian"
+      @mousedown.native="$emit('startResizeArrow2', svgElement.id)"
+    />
+  </g>
 </LineFrame>
 </template>
 
@@ -40,12 +50,15 @@
 import BaseElement from './BaseElement'
 import SvgArrow from '@/components/atoms/SvgArrow'
 import LineFrame from './LineFrame'
+import ResizeWidthItem from '@/components/molecules/svgParts/ResizeWidthItem'
+import * as geo from '@/commons/utils/geo'
 
 export default {
   extends: BaseElement,
   components: {
     SvgArrow,
-    LineFrame
+    LineFrame,
+    ResizeWidthItem
   },
   computed: {
     line() {
@@ -55,6 +68,41 @@ export default {
         y1: this.svgElement.y1 + this.moveVec.y,
         x2: this.svgElement.x2 + this.moveVec.x,
         y2: this.svgElement.y2 + this.moveVec.y
+      }
+    },
+    from() {
+      return {
+        x: this.svgElement.x1,
+        y: this.svgElement.y1
+      }
+    },
+    to() {
+      return {
+        x: this.svgElement.x2,
+        y: this.svgElement.y2
+      }
+    },
+    radian() {
+      return geo.getRadian(this.from, this.to)
+    },
+    unitCross() {
+      return geo.crossVector(this.unitVector)
+    },
+    unitVector() {
+      return geo.unitVector(this.from, this.to)
+    },
+    resizeArrowItem2() {
+      return {
+        x:
+          this.svgElement.x2 -
+          this.unitVector.x * this.svgElement.depth2 +
+          this.unitCross.x *
+            (this.svgElement.radius2 + this.svgElement.strokeWidth / 2),
+        y:
+          this.svgElement.y2 -
+          this.unitVector.y * this.svgElement.depth2 +
+          this.unitCross.y *
+            (this.svgElement.radius2 + this.svgElement.strokeWidth / 2)
       }
     }
   }

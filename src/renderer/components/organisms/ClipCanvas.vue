@@ -37,6 +37,7 @@
             @deleteElement="id => deleteSvgElement(id, true)"
             @startResizeLine1="startResizeLine1"
             @startResizeLine2="startResizeLine2"
+            @startResizeArrow2="startResizeArrow2"
           />
           <SvgRectangle
             v-if="selectRangeRectangle"
@@ -362,6 +363,9 @@ export default {
     },
     startResizeLine2(id) {
       this.startDrawMode(id, 'resizeLine2')
+    },
+    startResizeArrow2(id) {
+      this.startDrawMode(id, 'startResizeArrow2')
     },
     startDrawMode(id, drawMode) {
       this.selectElement(id)

@@ -38,6 +38,7 @@
           :radian="radian"
         />
       </g>
+      <slot name="edit" />
     </template>
   </g>
 </template>

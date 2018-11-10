@@ -54,6 +54,7 @@
     @startRotate="startRotate"
     @startResizeLine1="startResizeLine1"
     @startResizeLine2="startResizeLine2"
+    @startResizeArrow2="startResizeArrow2"
   />
 </template>
 
@@ -113,6 +114,9 @@ export default {
     },
     startResizeLine2(id) {
       this.$emit('startResizeLine2', id)
+    },
+    startResizeArrow2(id) {
+      this.$emit('startResizeArrow2', id)
     }
   }
 }

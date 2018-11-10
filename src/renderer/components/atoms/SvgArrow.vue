@@ -41,9 +41,6 @@ export default {
     distance() {
       return geo.distance(this.from, this.to)
     },
-    radian() {
-      return geo.getRadian(this.from, this.to)
-    },
     unitCross() {
       return geo.crossVector(this.unitVector)
     },
@@ -64,8 +61,8 @@ export default {
     },
     p3() {
       return {
-        x: this.p2.x + this.unitCross.x * (this.radius2 + this.strokeWidth / 2),
-        y: this.p2.y + this.unitCross.y * (this.radius2 + this.strokeWidth / 2)
+        x: this.p2.x + this.unitCross.x * this.radius2,
+        y: this.p2.y + this.unitCross.y * this.radius2
       }
     },
     p4() {
@@ -76,8 +73,8 @@ export default {
     },
     p5() {
       return {
-        x: this.p6.x - this.unitCross.x * (this.radius2 + this.strokeWidth / 2),
-        y: this.p6.y - this.unitCross.y * (this.radius2 + this.strokeWidth / 2)
+        x: this.p6.x - this.unitCross.x * this.radius2,
+        y: this.p6.y - this.unitCross.y * this.radius2
       }
     },
     p6() {
