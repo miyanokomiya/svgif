@@ -22,22 +22,20 @@
       />
       <g @mousedown="$emit('startResizeLine1', svgElement.id)">
         <OptionPath :d="`M ${svgElement.x1} ${svgElement.y1} L ${moveItem1.x} ${moveItem1.y}`" />
-        <SvgCircle
+        <MoveItem
+          :scale="scale"
           :cx="moveItem1.x"
           :cy="moveItem1.y"
-          :r="htmlToSvg(10)"
-          stroke="black"
-          fill="white"
+          :radian="radian"
         />
       </g>
       <g @mousedown="$emit('startResizeLine2', svgElement.id)">
         <OptionPath :d="`M ${svgElement.x2} ${svgElement.y2} L ${moveItem2.x} ${moveItem2.y}`" />
-        <SvgCircle
+        <MoveItem
+          :scale="scale"
           :cx="moveItem2.x"
           :cy="moveItem2.y"
-          :r="htmlToSvg(10)"
-          stroke="black"
-          fill="white"
+          :radian="radian"
         />
       </g>
     </template>
@@ -46,10 +44,9 @@
 
 <script>
 import BaseElement from './BaseElement'
-import SvgRectangle from '@/components/atoms/SvgRectangle'
-import SvgCircle from '@/components/atoms/SvgCircle'
 import ResizeWidthItem from '@/components/molecules/svgParts/ResizeWidthItem'
 import DeleteItem from '@/components/molecules/svgParts/DeleteItem'
+import MoveItem from '@/components/molecules/svgParts/MoveItem'
 import OptionPath from '@/components/molecules/svgParts/OptionPath'
 import * as geo from '@/commons/utils/geo'
 import * as elementUtils from '@/commons/utils/element'
@@ -57,10 +54,9 @@ import * as elementUtils from '@/commons/utils/element'
 export default {
   extends: BaseElement,
   components: {
-    SvgRectangle,
-    SvgCircle,
     ResizeWidthItem,
     DeleteItem,
+    MoveItem,
     OptionPath
   },
   props: {

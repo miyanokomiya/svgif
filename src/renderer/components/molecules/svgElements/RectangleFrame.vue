@@ -4,16 +4,12 @@
       <slot/>
     </g>
     <OptionPath :d="`M ${-svgElement.strokeWidth / 2} ${svgElement.height / 2 - svgElement.strokeWidth / 2} v ${-svgElement.height / 2} h ${svgElement.width / 2}`" />
-    <g @mousedown="$emit('startMove', svgElement.id)">
-      <SvgCircle
-        v-if="!plain"
-        :cx="-svgElement.strokeWidth / 2"
-        :cy="-svgElement.strokeWidth / 2"
-        :r="htmlToSvg(7)"
-        stroke="black"
-        :fill="selected ? selectedStroke : 'white'"
-      />
-    </g>
+    <MoveItem
+      :scale="scale"
+      :cx="-svgElement.strokeWidth / 2"
+      :cy="-svgElement.strokeWidth / 2"
+      @mousedown.native="$emit('startMove', svgElement.id)"
+    />
     <template v-if="selected && !plain">
       <OptionPath :d="`M ${-svgElement.strokeWidth / 2} ${svgElement.height / 2 + svgElement.strokeWidth / 2} v ${svgElement.height / 2} h ${svgElement.width / 2}`" />
       <DeleteItem
@@ -70,6 +66,7 @@ import BaseElement from './BaseElement'
 import SvgCircle from '@/components/atoms/SvgCircle'
 import ResizeWidthItem from '@/components/molecules/svgParts/ResizeWidthItem'
 import DeleteItem from '@/components/molecules/svgParts/DeleteItem'
+import MoveItem from '@/components/molecules/svgParts/MoveItem'
 import OptionPath from '@/components/molecules/svgParts/OptionPath'
 
 export default {
@@ -78,6 +75,7 @@ export default {
     SvgCircle,
     ResizeWidthItem,
     DeleteItem,
+    MoveItem,
     OptionPath
   },
   props: {
