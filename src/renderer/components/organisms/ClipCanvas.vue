@@ -38,6 +38,7 @@
             @startResizeLine1="startResizeLine1"
             @startResizeLine2="startResizeLine2"
             @startResizeArrow2="startResizeArrow2"
+            @startEditText="startEditText"
           />
           <SvgRectangle
             v-if="selectRangeRectangle"
@@ -54,6 +55,19 @@
       </div>
       <ClipTimeLine class="time-line" />
     </template>
+    <el-dialog title="Text" :visible.sync="showEtidTextDialog">
+      <form @submit.prevent="changeText">
+        <el-input
+          v-model="editedText"
+          type="textarea"
+          autocomplete="off"
+        />
+      </form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="showEtidTextDialog = false">Cancel</el-button>
+        <el-button type="primary" @click="changeText">OK</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -89,7 +103,9 @@ export default {
       'resizeLine1',
       'resizeLine2'
     ][0],
-    canvasDragging: false
+    canvasDragging: false,
+    showEtidTextDialog: false,
+    editedText: ''
   }),
   computed: {
     ...mapGetters({
@@ -172,6 +188,9 @@ export default {
     },
     svgElementList() {
       this.initLocalSvgElementList()
+    },
+    showEtidTextDialog() {
+      this.clearMouseState()
     }
   },
   methods: {
@@ -332,6 +351,9 @@ export default {
           )
           .forEach(elm => this.selectElement(elm.id, true))
       }
+      this.clearMouseState()
+    },
+    clearMouseState() {
       this.setCanvasMode('select')
       this.downStartPoint = null
       this.moveVec = { x: 0, y: 0 }
@@ -366,6 +388,19 @@ export default {
     },
     startResizeArrow2(id) {
       this.startDrawMode(id, 'startResizeArrow2')
+    },
+    startEditText(id) {
+      this.selectElement(id)
+      this.showEtidTextDialog = true
+      this.editedText = this.selectedElement.text
+    },
+    changeText() {
+      this.updateSvgElementList(
+        [{ ...this.selectedElement, text: this.editedText }],
+        true
+      )
+      this.showEtidTextDialog = false
+      this.editedText = ''
     },
     startDrawMode(id, drawMode) {
       this.selectElement(id)

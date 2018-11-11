@@ -67,6 +67,7 @@
     @deleteElement="deleteElement"
     @startResize="startResize"
     @startRotate="startRotate"
+    @startEditText="startEditText"
   />
 </template>
 
@@ -131,6 +132,9 @@ export default {
     },
     startResizeArrow2(id) {
       this.$emit('startResizeArrow2', id)
+    },
+    startEditText(id) {
+      this.$emit('startEditText', id)
     }
   }
 }

@@ -221,7 +221,7 @@ export function getTextElementLineHeight(element) {
 }
 
 export function getTextLines(element) {
-  if (!element.text) return ['AAA', 'AAA']
+  if (!element.text) return ['<= Input Text']
   return element.text.split(/\n|\r\n/)
 }
 

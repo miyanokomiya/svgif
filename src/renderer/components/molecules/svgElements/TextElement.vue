@@ -41,6 +41,12 @@
       :radian="Math.PI / 4"
       @mousedown.native="$emit('startResize', svgElement.id)"
     />
+    <TextItem
+      :scale="scale"
+      :cx="0"
+      :cy="height / 2"
+      @mousedown.native="$emit('startEditText', svgElement.id)"
+    />
   </g>
 </g>
 </template>
@@ -51,6 +57,8 @@ import SvgText from '@/components/atoms/SvgText'
 import MoveItem from '@/components/molecules/svgParts/MoveItem'
 import OptionPath from '@/components/molecules/svgParts/OptionPath'
 import ResizeItem from '@/components/molecules/svgParts/ResizeItem'
+import TextItem from '@/components/molecules/svgParts/TextItem'
+
 import {
   getTextElementLineHeight,
   getTextElementHeight,
@@ -63,7 +71,8 @@ export default {
     SvgText,
     MoveItem,
     OptionPath,
-    ResizeItem
+    ResizeItem,
+    TextItem
   },
   computed: {
     rect() {
