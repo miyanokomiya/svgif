@@ -46,7 +46,6 @@
 </template>
 
 <script>
-import { ipcRenderer } from 'electron'
 import { mapActions, mapGetters } from 'vuex'
 import clipTypes from '@main/store/modules/clips/types'
 import DrawTools from '@/components/organisms/sidebars/DrawTools'
@@ -113,6 +112,7 @@ export default {
       this._updateDelay({ id, delay })
     },
     showRecorderWindow() {
+      const ipcRenderer = require('electron').ipcRenderer
       ipcRenderer.send('show-recorder-window')
     }
   }
