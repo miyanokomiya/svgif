@@ -61,10 +61,11 @@ export default {
   },
   computed: {
     isLink() {
-      return (
-        this.text.indexOf('https://') === 0 ||
-        this.text.indexOf('http://') === 0
-      )
+      return false
+      // return (
+      //   this.text.indexOf('https://') === 0 ||
+      //   this.text.indexOf('http://') === 0
+      // )
     }
   },
   methods: {
