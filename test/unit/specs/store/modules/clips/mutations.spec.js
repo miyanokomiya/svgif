@@ -157,6 +157,25 @@ describe('store/modules/clips/mutations', () => {
       expect(state.clipList[0].svgElementList[0]).to.equal('abc')
       expect(state.clipList[0].svgElementList).to.have.lengthOf(1)
     })
+    it('svgElementList を渡すと複数要素が追加されること', () => {
+      const state = {
+        clipList: [
+          {
+            id: 1,
+            svgElementList: [{ id: 2 }, { id: 3 }]
+          }
+        ]
+      }
+      mutations[types.m.ADD_SVG_ELEMENT](state, {
+        clipId: 1,
+        svgElementList: [{ id: 4 }, { id: 5 }]
+      })
+      const elmList = state.clipList[0].svgElementList
+      expect(elmList[0].id).to.equal(2)
+      expect(elmList[1].id).to.equal(3)
+      expect(elmList[2].id).to.equal(4)
+      expect(elmList[3].id).to.equal(5)
+    })
   })
   describe('UPDATE_SVG_ELEMENT', () => {
     it('指定 clipId の clip の svgElement が差分更新されること', () => {

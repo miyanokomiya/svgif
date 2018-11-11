@@ -14,6 +14,8 @@
         />
         <SvgCanvas
           class="svg"
+          tabindex="-1"
+          ref="svgCanvas"
           :style="{ width: `${WHOLE_SIZE.width * scale}px`, height: `${WHOLE_SIZE.height * scale}px` }"
           :width="WHOLE_SIZE.width"
           :height="WHOLE_SIZE.height"
@@ -21,6 +23,10 @@
           @mousedown.native="mousedown"
           @mousemove.native="mousemove"
           @mouseup.native="mouseup"
+          @keydown.native.67.ctrl.exact="copyElements"
+          @keydown.native.67.meta.exact="copyElements"
+          @keydown.native.86.ctrl.exact="pasteElements"
+          @keydown.native.86.meta.exact="pasteElements"
         >
           <SvgElement
             v-for="svgElement in localSvgElementList"
@@ -83,6 +89,7 @@ import ClipTimeLine from '@/components/organisms/ClipTimeLine'
 import SvgCanvas from '@/components/molecules/SvgCanvas'
 import SvgElement from '@/components/molecules/SvgElement'
 import SvgRectangle from '@/components/atoms/SvgRectangle'
+import { createId } from '@/commons/models/base'
 
 export default {
   components: {
@@ -105,7 +112,8 @@ export default {
     ][0],
     canvasDragging: false,
     showEtidTextDialog: false,
-    editedText: ''
+    editedText: '',
+    clipboard: []
   }),
   computed: {
     ...mapGetters({
@@ -185,6 +193,7 @@ export default {
     SELECTED_CLIP() {
       this.rescale()
       this.selectedElementIdList = []
+      if (this.$refs.svgCanvas) this.$refs.svgCanvas.$el.focus()
     },
     svgElementList() {
       this.initLocalSvgElementList()
@@ -229,12 +238,15 @@ export default {
     initLocalSvgElementList() {
       this.localSvgElementList = this.svgElementList.map(elm => ({ ...elm }))
     },
-    createSvgElement(svgElement, commit = false) {
-      this.localSvgElementList.push(svgElement)
+    createSvgElement(svgElementList, commit = false) {
+      this.localSvgElementList = [
+        ...this.localSvgElementList,
+        ...svgElementList
+      ]
       if (commit) {
         this._createSvgElement({
           clipId: this.SELECTED_CLIP.id,
-          svgElement
+          svgElementList
         })
       }
     },
@@ -320,7 +332,7 @@ export default {
       } else if (this.$svgif.canvasMode === 'draw') {
         const p = this.getSvgPoint(e)
         const elm = this.createElement({ ...p })
-        this.createSvgElement(elm, true)
+        this.createSvgElement([elm], true)
         this.selectElement(elm.id)
         this.drawMode = elementUtils.getModeAfterCreateElement(elm)
       }
@@ -406,6 +418,15 @@ export default {
       this.selectElement(id)
       this.setCanvasMode('draw')
       this.drawMode = drawMode
+    },
+    copyElements() {
+      this.clipboard = this.selectedElementList.map(elm => ({ ...elm }))
+    },
+    pasteElements() {
+      const list = this.clipboard.map(elm => ({ ...elm, id: createId() }))
+      this.createSvgElement(list, true)
+      this.clearSelectElement()
+      list.forEach(elm => this.selectElement(elm.id, true))
     },
     dropFile(e) {
       const files = e.target.files

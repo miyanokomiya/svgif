@@ -44,8 +44,11 @@ const actions = {
     })
     return Promise.resolve()
   },
-  [types.a.CREATE_SVG_ELEMENT]({ commit }, { clipId, svgElement }) {
-    commit(types.m.ADD_SVG_ELEMENT, { clipId, svgElement })
+  [types.a.CREATE_SVG_ELEMENT](
+    { commit },
+    { clipId, svgElement, svgElementList }
+  ) {
+    commit(types.m.ADD_SVG_ELEMENT, { clipId, svgElement, svgElementList })
     return Promise.resolve()
   },
   [types.a.UPDATE_SVG_ELEMENT](

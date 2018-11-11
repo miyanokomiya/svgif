@@ -39,9 +39,10 @@ const mutations = {
     if (!clip) return
     clip.delay = delay
   },
-  [types.m.ADD_SVG_ELEMENT](state, { clipId, svgElement }) {
+  [types.m.ADD_SVG_ELEMENT](state, { clipId, svgElement, svgElementList }) {
     const clip = state.clipList.find(c => c.id === clipId)
-    clip.svgElementList.push(svgElement)
+    svgElementList = svgElementList || [svgElement]
+    clip.svgElementList = [...clip.svgElementList, ...svgElementList]
   },
   [types.m.UPDATE_SVG_ELEMENT](state, { clipId, svgElement, svgElementList }) {
     const clip = state.clipList.find(c => c.id === clipId)
