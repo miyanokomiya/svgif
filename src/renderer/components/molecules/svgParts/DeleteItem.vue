@@ -3,12 +3,12 @@
   <SvgCircle
     :cx="cx"
     :cy="cy"
-    :r="htmlToSvg(10)"
+    :r="radius"
     stroke="black"
     fill="white"
   />
   <path
-    :d="`M ${cx - htmlToSvg(5)} ${cy - htmlToSvg(5)} l ${htmlToSvg(10)} ${htmlToSvg(10)} m 0 ${htmlToSvg(-10)} l ${htmlToSvg(-10)} ${htmlToSvg(10)}`"
+    :d="`M ${cx - radius / 2} ${cy - radius / 2} l ${radius} ${radius} m 0 ${-radius} l ${-radius} ${radius}`"
     stroke="black"
     :stroke-width="htmlToSvg(2)"
     :transform="rotate"
@@ -46,6 +46,9 @@ export default {
   computed: {
     rotate() {
       return `rotate(${(this.radian * 180) / Math.PI}, ${this.cx}, ${this.cy})`
+    },
+    radius() {
+      return this.htmlToSvg(7)
     }
   }
 }

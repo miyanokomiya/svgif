@@ -25,7 +25,7 @@
       />
     </g>
   </g>
-  <g v-if="selected && !plain">
+  <g v-if="!plain">
     <OptionPath :d="`M 0 ${height / 2} v ${-height / 2} h ${height / 2}`" />
     <MoveItem
       :scale="scale"
@@ -33,20 +33,28 @@
       :cy="0"
       @mousedown.native="$emit('startMove', svgElement.id)"
     />
-    <OptionPath :d="`M 0 ${height / 2} v ${height / 2} h ${height / 2}`" />
-    <ResizeItem
-      :scale="scale"
-      :cx="0"
-      :cy="height"
-      :radian="Math.PI / 4"
-      @mousedown.native="$emit('startResize', svgElement.id)"
-    />
-    <TextItem
-      :scale="scale"
-      :cx="0"
-      :cy="height / 2"
-      @mousedown.native="$emit('startEditText', svgElement.id)"
-    />
+    <template v-if="selected">
+      <OptionPath :d="`M 0 ${height / 2} v ${height / 2} h ${height / 2}`" />
+      <DeleteItem
+        :scale="scale"
+        :cx="-htmlToSvg(20)"
+        :cy="height"
+        @mousedown.native="$emit('deleteElement', svgElement.id)"
+      />
+      <ResizeItem
+        :scale="scale"
+        :cx="0"
+        :cy="height"
+        :radian="Math.PI / 4"
+        @mousedown.native="$emit('startResize', svgElement.id)"
+      />
+      <TextItem
+        :scale="scale"
+        :cx="0"
+        :cy="height / 2"
+        @mousedown.native="$emit('startEditText', svgElement.id)"
+      />
+    </template>
   </g>
 </g>
 </template>
@@ -58,6 +66,7 @@ import MoveItem from '@/components/molecules/svgParts/MoveItem'
 import OptionPath from '@/components/molecules/svgParts/OptionPath'
 import ResizeItem from '@/components/molecules/svgParts/ResizeItem'
 import TextItem from '@/components/molecules/svgParts/TextItem'
+import DeleteItem from '@/components/molecules/svgParts/DeleteItem'
 
 import {
   getTextElementLineHeight,
@@ -67,16 +76,17 @@ import {
 
 export default {
   extends: BaseElement,
-  data: () => ({
-    bbox: null
-  }),
   components: {
     SvgText,
     MoveItem,
     OptionPath,
     ResizeItem,
-    TextItem
+    TextItem,
+    DeleteItem
   },
+  data: () => ({
+    bbox: null
+  }),
   computed: {
     rect() {
       return {

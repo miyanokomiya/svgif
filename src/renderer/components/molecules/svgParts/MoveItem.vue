@@ -3,7 +3,7 @@
   <SvgCircle
     :cx="cx"
     :cy="cy"
-    :r="htmlToSvg(10)"
+    :r="htmlToSvg(7)"
     stroke="black"
     fill="white"
   />
