@@ -13,7 +13,7 @@
         dominant-baseline="hanging"
       />
     </g>
-    <g>
+    <g ref="main">
       <SvgText
         v-for="(line, i) in lines" :key="i"
         :x="0"
@@ -67,6 +67,9 @@ import {
 
 export default {
   extends: BaseElement,
+  data: () => ({
+    bbox: null
+  }),
   components: {
     SvgText,
     MoveItem,
@@ -93,6 +96,29 @@ export default {
     },
     transform() {
       return `translate(${this.rect.x},${this.rect.y})`
+    }
+  },
+  mounted() {
+    this.recalcBBox()
+  },
+  watch: {
+    svgElement: {
+      handler() {
+        this.recalcBBox()
+      },
+      deep: true
+    },
+    scale() {
+      this.recalcBBox()
+    }
+  },
+  methods: {
+    getBBox() {
+      if (!this.$refs.main) return
+      return this.$refs.main.getBBox()
+    },
+    recalcBBox() {
+      this.bbox = this.getBBox()
     }
   }
 }
