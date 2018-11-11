@@ -29,6 +29,16 @@ export function getCircle(arg = {}) {
   }
 }
 
+export function getText(arg = {}) {
+  return {
+    ...getBaseProps(),
+    name: 'text',
+    text: '',
+    fontSize: 10,
+    ...arg
+  }
+}
+
 export function getLine(arg = {}) {
   return {
     ...getBaseProps(),

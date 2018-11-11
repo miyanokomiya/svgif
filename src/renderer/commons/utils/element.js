@@ -3,7 +3,8 @@ import {
   getRectangle,
   getCircle,
   getLine,
-  getArrow
+  getArrow,
+  getText
 } from '@/commons/models/svgElements'
 
 export function htmlToSvg(scale, val) {
@@ -22,6 +23,11 @@ export function resizeElement({ element, x, y, drawMode, scale }) {
     case 'line':
     case 'arrow':
       return resizeLine({ element, x, y, drawMode, scale })
+    case 'text':
+      return {
+        ...element,
+        fontSize: textHeightToFontSize(element, element.y - y)
+      }
     default:
       return element
   }
@@ -136,6 +142,13 @@ export function toRectangle(element) {
         width: Math.abs(element.x1 - element.x2),
         height: Math.abs(element.y1 - element.y2)
       }
+    case 'text':
+      return {
+        x: element.x,
+        y: element.y,
+        width: 1,
+        height: 1
+      }
     default:
       return element
   }
@@ -146,6 +159,7 @@ export function moveElement({ element, vec }) {
   switch (element.name) {
     case 'rectangle':
     case 'circle':
+    case 'text':
       to.x += vec.x
       to.y += vec.y
       return geo.getNormalRect(to)
@@ -182,6 +196,8 @@ export function createElement({ elementType, elementColor, x, y }) {
         y2: y,
         stroke: elementColor
       })
+    case 'text':
+      return getText({ x, y, stroke: elementColor })
   }
   throw new Error('unknown element type: ', elementType)
 }
@@ -194,6 +210,32 @@ export function getModeAfterCreateElement(element) {
     case 'line':
     case 'arrow':
       return 'resizeLine2'
+    case 'text':
+      return 'move'
   }
   throw new Error('unknown element type: ', element.name)
+}
+
+export function getTextElementLineHeight(element) {
+  return element.fontSize * 0.85
+}
+
+export function getTextLines(element) {
+  if (!element.text) return ['AAA', 'AAA']
+  return element.text.split(/\n|\r\n/)
+}
+
+export function getTextElementHeight(element) {
+  return (
+    getTextElementLineHeight(element) * getTextLines(element).length -
+    element.fontSize * 0.12
+  )
+}
+
+export function textHeightToFontSize(element, height) {
+  return (
+    (Math.abs(height) + element.fontSize * 0.12) /
+    getTextLines(element).length /
+    0.85
+  )
 }

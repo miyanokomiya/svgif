@@ -42,6 +42,12 @@
       >
         ARROW
       </el-button>
+      <el-button
+        :type="$svgif.elementType === 'text' ? 'primary' : ''"
+        @click="setElementType('text')"
+      >
+        TEXT
+      </el-button>
     </el-button-group>
     <el-color-picker
       :value="$svgif.elementColor"

@@ -56,6 +56,18 @@
     @startResizeLine2="startResizeLine2"
     @startResizeArrow2="startResizeArrow2"
   />
+  <TextElement
+    v-else-if="svgElement.name === 'text'"
+    :svgElement="svgElement"
+    :moveVec="moveVec"
+    :selected="selected"
+    :scale="scale"
+    :plain="plain"
+    @startMove="startMove"
+    @deleteElement="deleteElement"
+    @startResize="startResize"
+    @startRotate="startRotate"
+  />
 </template>
 
 <script>
@@ -63,13 +75,15 @@ import RectangleElement from './svgElements/RectangleElement'
 import CircleElement from './svgElements/CircleElement'
 import LineElement from './svgElements/LineElement'
 import ArrowElement from './svgElements/ArrowElement'
+import TextElement from './svgElements/TextElement'
 
 export default {
   components: {
     RectangleElement,
     CircleElement,
     LineElement,
-    ArrowElement
+    ArrowElement,
+    TextElement
   },
   props: {
     svgElement: {
