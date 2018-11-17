@@ -1,27 +1,85 @@
 import types from '@main/store/modules/clips/types'
-import mutations from '@main/store/modules/clips/mutations'
+import mutations, {
+  adjustSvgElementPositions
+} from '@main/store/modules/clips/mutations'
+import { getRectangle } from '@/commons/models/svgElements'
 
 describe('store/modules/clips/mutations', () => {
+  describe('adjustSvgElementPositions キャンバスサイズ変更に伴う svgElement の位置調整', () => {
+    it('mainFunction の前後でキャンバスサイズに変化が合った場合、 svgElement の位置が調整されること', () => {
+      let count = 0
+      const state = {
+        clipList: [
+          {
+            svgElementList: [getRectangle({ x: 0, y: 0 })]
+          }
+        ]
+      }
+      adjustSvgElementPositions({
+        state,
+        getters: {
+          [types.g.WHOLE_SIZE]: () => {
+            if (count === 0) {
+              count++
+              return {
+                width: 100,
+                height: 100
+              }
+            } else {
+              return {
+                width: 200,
+                height: 300
+              }
+            }
+          }
+        }
+      })
+      expect(state.clipList[0].svgElementList[0].x).to.equal(50)
+      expect(state.clipList[0].svgElementList[0].y).to.equal(100)
+    })
+  })
   describe('ADD_CLIP', () => {
     context('index省略の場合', () => {
       it('selectedId が -1 の場合、末尾に追加されること', () => {
-        const state = { clipList: [{ id: 1 }, { id: 2 }], selectedId: -1 }
-        mutations[types.m.ADD_CLIP](state, { clip: { id: 3 } })
+        const state = {
+          clipList: [
+            { id: 1, svgElementList: [] },
+            { id: 2, svgElementList: [] }
+          ],
+          selectedId: -1
+        }
+        mutations[types.m.ADD_CLIP](state, {
+          clip: { id: 3, svgElementList: [] }
+        })
         expect(state.clipList).to.have.lengthOf(3)
         expect(state.clipList[2].id).to.equal(3)
       })
       it('selectedId が -1 ではない場合、 selectedId の次に追加されること', () => {
-        const state = { clipList: [{ id: 1 }, { id: 2 }], selectedId: 1 }
-        mutations[types.m.ADD_CLIP](state, { clip: { id: 3 } })
+        const state = {
+          clipList: [
+            { id: 1, svgElementList: [] },
+            { id: 2, svgElementList: [] }
+          ],
+          selectedId: 1
+        }
+        mutations[types.m.ADD_CLIP](state, {
+          clip: { id: 3, svgElementList: [] }
+        })
         expect(state.clipList).to.have.lengthOf(3)
         expect(state.clipList[1].id).to.equal(3)
       })
     })
     context('index指定の場合', () => {
       it('index の位置に追加されること', () => {
-        const state = { clipList: [{ id: 1 }, { id: 2 }], selectedId: -1 }
+        const state = {
+          clipList: [
+            { id: 1, svgElementList: [] },
+            { id: 2, svgElementList: [] }
+          ],
+          selectedId: -1
+        }
         mutations[types.m.ADD_CLIP](state, {
-          clip: { id: 3 },
+          clip: { id: 3, svgElementList: [] },
           index: 1
         })
         expect(state.clipList).to.have.lengthOf(3)
@@ -31,7 +89,13 @@ describe('store/modules/clips/mutations', () => {
   })
   describe('REMOVE_CLIP', () => {
     context('selectedId が 削除対象ではないとき', () => {
-      const state = { clipList: [{ id: 1 }, { id: 2 }], selectedId: 2 }
+      const state = {
+        clipList: [
+          { id: 1, svgElementList: [] },
+          { id: 2, svgElementList: [] }
+        ],
+        selectedId: 2
+      }
       mutations[types.m.REMOVE_CLIP](state, 1)
       it('引数で指定した id の要素が削除されること', () => {
         expect(state.clipList).to.have.lengthOf(1)
@@ -44,7 +108,11 @@ describe('store/modules/clips/mutations', () => {
     context('selectedId が 削除対象のとき', () => {
       context('selectedId の要素が配列の先頭以外のとき', () => {
         const state = {
-          clipList: [{ id: 1 }, { id: 2 }, { id: 3 }],
+          clipList: [
+            { id: 1, svgElementList: [] },
+            { id: 2, svgElementList: [] },
+            { id: 3, svgElementList: [] }
+          ],
           selectedId: 2
         }
         mutations[types.m.REMOVE_CLIP](state, 2)
@@ -55,7 +123,11 @@ describe('store/modules/clips/mutations', () => {
       context('selectedId の要素が配列の先頭のとき', () => {
         context('削除後の clipList に要素が１つ以上あるとき', () => {
           const state = {
-            clipList: [{ id: 1 }, { id: 2 }, { id: 3 }],
+            clipList: [
+              { id: 1, svgElementList: [] },
+              { id: 2, svgElementList: [] },
+              { id: 3, svgElementList: [] }
+            ],
             selectedId: 1
           }
           mutations[types.m.REMOVE_CLIP](state, 1)
@@ -65,7 +137,7 @@ describe('store/modules/clips/mutations', () => {
         })
         context('削除後の clipList に要素がないとき', () => {
           const state = {
-            clipList: [{ id: 1 }],
+            clipList: [{ id: 1, svgElementList: [] }],
             selectedId: 1
           }
           mutations[types.m.REMOVE_CLIP](state, 1)
