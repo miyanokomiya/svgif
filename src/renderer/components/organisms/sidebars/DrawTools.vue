@@ -1,27 +1,6 @@
 <template>
   <div class="draw-tools" v-if="SELECTED_CLIP">
-    <el-button-group class="mode-group">
-      <el-button
-        icon="el-icon-news"
-        :type="$svgif.canvasMode === 'select' ? 'primary' : ''"
-        size="mini"
-        @click="setCanvasMode('select')"
-      />
-      <el-button
-        disabled
-        icon="el-icon-rank"
-        :type="$svgif.canvasMode === 'move' ? 'primary' : ''"
-        size="mini"
-      />
-      <el-button
-        disabled
-        icon="el-icon-edit"
-        :type="isDrawMode ? 'primary' : ''"
-        size="mini"
-        @click="setCanvasMode('draw')"
-      />
-    </el-button-group>
-    <hr/>
+    <hr v-if="!$svgif.isWeb" />
     <div>
       <el-button-group>
         <el-button
