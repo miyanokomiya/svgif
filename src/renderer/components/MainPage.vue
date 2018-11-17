@@ -97,16 +97,22 @@ export default {
       this._swapClipOrder({ from, to })
     },
     createGif() {
-      createGif({ clipList: this.CLIP_LIST, size: this.WHOLE_SIZE }).then(
-        blob => {
+      createGif({ clipList: this.CLIP_LIST, size: this.WHOLE_SIZE })
+        .then(blob => {
           const fileReader = new FileReader()
           fileReader.onload = () => {
             this.gif = fileReader.result
             this.tabValue = 'Gif'
           }
           fileReader.readAsDataURL(blob)
-        }
-      )
+        })
+        .catch(e => {
+          console.log(e)
+          this.$notify.error({
+            title: 'Error',
+            message: `Error. ${e.message}`
+          })
+        })
     },
     updateDelay({ id, delay }) {
       this._updateDelay({ id, delay })
