@@ -27,6 +27,8 @@
           @keydown.native.67.meta.exact="copyElements"
           @keydown.native.86.ctrl.exact="pasteElements"
           @keydown.native.86.meta.exact="pasteElements"
+          @keydown.native.65.meta.exact="selectAllElements"
+          @keydown.native.88.meta.exact="cutElements"
         >
           <SvgElement
             v-for="svgElement in localSvgElementList"
@@ -40,7 +42,7 @@
             @startResize="startResizeElement"
             @startResizeWidth="startResizeWidth"
             @startRotate="startRotate"
-            @deleteElement="id => deleteSvgElement(id, true)"
+            @deleteElement="id => deleteSvgElementList([id], true)"
             @startResizeLine1="startResizeLine1"
             @startResizeLine2="startResizeLine2"
             @startResizeArrow2="startResizeArrow2"
@@ -264,16 +266,18 @@ export default {
         })
       }
     },
-    deleteSvgElement(svgElementId, commit = false) {
-      this.clearSelectElement(svgElementId)
-      const index = this.localSvgElementList.findIndex(
-        elm => elm.id === svgElementId
-      )
-      this.localSvgElementList.splice(index, 1)
+    deleteSvgElementList(svgElementIdList, commit = false) {
+      svgElementIdList.forEach(svgElementId => {
+        this.clearSelectElement(svgElementId)
+        const index = this.localSvgElementList.findIndex(
+          elm => elm.id === svgElementId
+        )
+        this.localSvgElementList.splice(index, 1)
+      })
       if (commit) {
         this._deleteSvgElement({
           clipId: this.SELECTED_CLIP.id,
-          svgElementId
+          svgElementIdList
         })
       }
     },
@@ -281,6 +285,9 @@ export default {
       if (!multi) this.clearSelectElement()
       if (this.selectedIdMap[id]) return
       this.selectedElementIdList.push(id)
+    },
+    selectAllElements() {
+      this.selectedElementIdList = this.localSvgElementList.map(s => s.id)
     },
     clearSelectElement(id) {
       if (id) {
@@ -428,6 +435,13 @@ export default {
       this.createSvgElement(list, true)
       this.clearSelectElement()
       list.forEach(elm => this.selectElement(elm.id, true))
+    },
+    cutElements() {
+      this.copyElements()
+      this.deleteSvgElementList(
+        this.selectedElementList.map(elm => elm.id),
+        true
+      )
     },
     dropFile(e) {
       const files = e.target.files
