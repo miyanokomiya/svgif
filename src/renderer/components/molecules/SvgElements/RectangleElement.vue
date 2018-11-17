@@ -31,6 +31,7 @@
     :width="imageRect.width"
     :height="imageRect.height"
     :xlink:href="svgElement.base64"
+    xmlns:xlink="http://www.w3.org/1999/xlink"
   />
 </RectangleFrame>
 </template>
