@@ -2,7 +2,6 @@ import Vue from 'vue'
 import axios from 'axios'
 
 import App from './App'
-import router from './router'
 import store from '../main/store'
 import ElementUI from 'element-ui'
 import locale from 'element-ui/lib/locale/lang/en'
@@ -24,7 +23,6 @@ Vue.use(plugins)
 /* eslint-disable no-new */
 new Vue({
   components: { App },
-  router,
   store,
   template: '<App/>'
 }).$mount('#app')

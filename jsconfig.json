@@ -5,6 +5,9 @@
       "@/*": [
         "src/renderer/*"
       ],
+      "@main/*": [
+        "src/main/*"
+      ]
     }
   }
 }
