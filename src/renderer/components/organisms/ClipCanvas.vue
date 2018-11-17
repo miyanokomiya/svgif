@@ -195,13 +195,14 @@ export default {
     SELECTED_CLIP() {
       this.rescale()
       this.selectedElementIdList = []
-      if (this.$refs.svgCanvas) this.$refs.svgCanvas.$el.focus()
+      this.focusCanvas()
     },
     svgElementList() {
       this.initLocalSvgElementList()
     },
     showEtidTextDialog() {
       this.clearMouseState()
+      if (!this.showEtidTextDialog) this.focusCanvas()
     }
   },
   methods: {
@@ -223,6 +224,9 @@ export default {
         x: this.htmlToSvg(p.x),
         y: this.htmlToSvg(p.y)
       }
+    },
+    focusCanvas() {
+      if (this.$refs.svgCanvas) this.$refs.svgCanvas.$el.focus()
     },
     setCanvasMode(mode) {
       this.$svgif.canvasMode = mode
