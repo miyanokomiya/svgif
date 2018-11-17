@@ -4,7 +4,7 @@ export function getClip(clip) {
   return {
     id: createId(),
     createdAt: createDate(new Date()),
-    delay: 300,
+    delay: 1000,
     base64: '',
     width: 0,
     height: 0,
