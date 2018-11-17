@@ -232,5 +232,22 @@ describe('store/modules/clips/mutations', () => {
       expect(elm.id).to.equal(3)
       expect(state.clipList).to.have.lengthOf(1)
     })
+    it('svgElementIdList を渡すと複数要素が削除されること', () => {
+      const state = {
+        clipList: [
+          {
+            id: 1,
+            svgElementList: [{ id: 1 }, { id: 2 }, { id: 3 }]
+          }
+        ]
+      }
+      mutations[types.m.REMOVE_SVG_ELEMENT](state, {
+        clipId: 1,
+        svgElementIdList: [1, 3]
+      })
+      const elmList = state.clipList[0].svgElementList
+      expect(elmList[0].id).to.equal(2)
+      expect(elmList).to.have.lengthOf(1)
+    })
   })
 })

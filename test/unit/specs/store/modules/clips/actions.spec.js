@@ -231,13 +231,14 @@ describe('store/modules/clips/actions', () => {
       testAction({
         done,
         action: actions[types.a.DELETE_SVG_ELEMENT],
-        payload: { clipId: 1, svgElementId: 'abc' },
+        payload: { clipId: 1, svgElementId: 'abc', svgElementIdList: 'bbb' },
         mutations: [
           {
             type: types.m.REMOVE_SVG_ELEMENT,
-            test: ({ clipId, svgElementId }) => {
+            test: ({ clipId, svgElementId, svgElementIdList }) => {
               expect(clipId).to.equal(1)
               expect(svgElementId).to.equal('abc')
+              expect(svgElementIdList).to.equal('bbb')
             }
           }
         ]
