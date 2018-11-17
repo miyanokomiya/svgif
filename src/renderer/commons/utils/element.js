@@ -98,7 +98,10 @@ function resizeRectangle({ element, x, y, drawMode, scale }) {
     adjustedP.x -= element.strokeWidth / 2
     adjustedP.y -= element.strokeWidth / 2
     const width = adjustedP.x - element.x
-    const height = adjustedP.y - element.y
+    // 画像ありの場合はアスペクト比を維持
+    const height = element.base64
+      ? width / element.defaultAspect
+      : adjustedP.y - element.y
     to = {
       id: element.id,
       x: element.x,

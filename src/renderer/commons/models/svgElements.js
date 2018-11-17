@@ -17,6 +17,8 @@ export function getRectangle(arg = {}) {
     width: 1,
     height: 1,
     radian: 0,
+    defaultAspect: 1, // width / height
+    base64: '',
     ...arg
   }
 }

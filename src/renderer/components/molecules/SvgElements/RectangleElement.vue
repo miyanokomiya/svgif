@@ -24,6 +24,14 @@
     :stroke="rect.stroke"
     :strokeWidth="rect.strokeWidth"
   />
+  <image 
+    v-if="svgElement.base64"
+    :x="imageRect.x"
+    :y="imageRect.y"
+    :width="imageRect.width"
+    :height="imageRect.height"
+    :xlink:href="svgElement.base64"
+  />
 </RectangleFrame>
 </template>
 
@@ -44,6 +52,15 @@ export default {
         ...this.svgElement,
         x: this.svgElement.x + this.moveVec.x,
         y: this.svgElement.y + this.moveVec.y
+      }
+    },
+    imageRect() {
+      // <image>は負のサイズに未対応なので調整
+      return {
+        x: this.rect.width > 0 ? 0 : this.rect.width,
+        y: this.rect.height > 0 ? 0 : this.rect.height,
+        width: Math.abs(this.rect.width),
+        height: Math.abs(this.rect.height)
       }
     }
   }

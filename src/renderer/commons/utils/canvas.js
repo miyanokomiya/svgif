@@ -1,6 +1,6 @@
 export const getPoint = e => {
   let x, y
-  let rect = e.currentTarget.getBoundingClientRect()
+  let rect = (e.currentTarget || e.target).getBoundingClientRect()
   let dx = rect.left + window.pageXOffset
   let dy = rect.top + window.pageYOffset
 

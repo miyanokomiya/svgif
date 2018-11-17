@@ -6,7 +6,10 @@
     @drop.prevent="dropFile"
   >
     <template v-if="SELECTED_CLIP">
-      <div class="canvas" ref="wrapper">
+      <div
+        class="canvas"
+        ref="wrapper"
+      >
         <ImagePanel
           :src="SELECTED_CLIP.base64"
           :width="imageSize.width"
@@ -31,6 +34,9 @@
           @keydown.native.65.meta.exact="selectAllElements"
           @keydown.native.88.ctrl.exact="cutElements"
           @keydown.native.88.meta.exact="cutElements"
+          @dragover.native.prevent.stop="e => e.dataTransfer.dropEffect = 'copy'"
+          @dragleave.native.prevent.stop
+          @drop.native.prevent.stop="dropFileInCanvas"
         >
           <SvgElement
             v-for="svgElement in localSvgElementList"
@@ -464,6 +470,36 @@ export default {
                 height
               }
             })
+          })
+          .catch(e => {
+            this.$notify.error({
+              title: 'Error',
+              message: e.message
+            })
+          })
+      })
+    },
+    dropFileInCanvas(e) {
+      const files = e.target.files
+        ? [...e.target.files]
+        : [...e.dataTransfer.files]
+      // 順不同でロードが済んだ順にclip化
+      files.forEach(file => {
+        readImageFile(file)
+          .then(({ base64, width, height }) => {
+            const p = this.getSvgPoint(e)
+            this.$svgif.elementType = 'rectangle'
+            const elm = this.createElement({ ...p })
+            elm.base64 = base64
+            elm.defaultAspect = width / height
+            // サイズはキャンバスに収める
+            elm.width = Math.min(width, this.SELECTED_CLIP.width / 3)
+            elm.height = elm.width / elm.defaultAspect
+            elm.x -= elm.width / 2
+            elm.y -= elm.height / 2
+            this.createSvgElement([elm], true)
+            this.selectElement(elm.id)
+            this.drawMode = elementUtils.getModeAfterCreateElement(elm)
           })
           .catch(e => {
             this.$notify.error({
