@@ -27,7 +27,9 @@
           @keydown.native.67.meta.exact="copyElements"
           @keydown.native.86.ctrl.exact="pasteElements"
           @keydown.native.86.meta.exact="pasteElements"
+          @keydown.native.65.ctrl.exact="selectAllElements"
           @keydown.native.65.meta.exact="selectAllElements"
+          @keydown.native.88.ctrl.exact="cutElements"
           @keydown.native.88.meta.exact="cutElements"
         >
           <SvgElement
