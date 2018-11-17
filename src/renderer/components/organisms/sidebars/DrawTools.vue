@@ -1,68 +1,105 @@
 <template>
   <div class="draw-tools" v-if="SELECTED_CLIP">
-    <el-button-group>
+    <el-button-group class="mode-group">
       <el-button
         icon="el-icon-news"
         :type="$svgif.canvasMode === 'select' ? 'primary' : ''"
+        size="mini"
         @click="setCanvasMode('select')"
       />
       <el-button
         disabled
         icon="el-icon-rank"
         :type="$svgif.canvasMode === 'move' ? 'primary' : ''"
+        size="mini"
       />
       <el-button
+        disabled
         icon="el-icon-edit"
-        :type="$svgif.canvasMode === 'draw' ? 'primary' : ''"
+        :type="isDrawMode ? 'primary' : ''"
+        size="mini"
         @click="setCanvasMode('draw')"
       />
     </el-button-group>
-    <el-button-group>
-      <el-button
-        :type="$svgif.elementType === 'rectangle' ? 'primary' : ''"
-        @click="setElementType('rectangle')"
-      >
-        Rect
-      </el-button>
-      <el-button
-        :type="$svgif.elementType === 'circle' ? 'primary' : ''"
-        @click="setElementType('circle')"
-      >
-        Circle
-      </el-button>
-      <el-button
-        :type="$svgif.elementType === 'line' ? 'primary' : ''"
-        @click="setElementType('line')"
-      >
-        LINE
-      </el-button>
-      <el-button
-        :type="$svgif.elementType === 'arrow' ? 'primary' : ''"
-        @click="setElementType('arrow')"
-      >
-        ARROW
-      </el-button>
-      <el-button
-        :type="$svgif.elementType === 'text' ? 'primary' : ''"
-        @click="setElementType('text')"
-      >
-        TEXT
-      </el-button>
-    </el-button-group>
-    <el-color-picker
-      :value="$svgif.elementColor"
-      @input="setElementColor"
-      show-alpha
-      :predefine="predefineColors">
-    </el-color-picker>
+    <hr/>
+    <div>
+      <el-button-group>
+        <el-button
+          :type="$svgif.elementType === 'rectangle' && isDrawMode ? 'primary' : ''"
+          size="mini"
+          @click="setElementType('rectangle')"
+        >
+          <div class="button-content">
+            <IconRectangle class="button-icon"/>
+          </div>
+        </el-button>
+        <el-button
+          :type="$svgif.elementType === 'circle' && isDrawMode ? 'primary' : ''"
+          size="mini"
+          @click="setElementType('circle')"
+        >
+          <div class="button-content">
+            <IconCircle class="button-icon"/>
+          </div>
+        </el-button>
+        <el-button
+          :type="$svgif.elementType === 'line' && isDrawMode ? 'primary' : ''"
+          size="mini"
+          @click="setElementType('line')"
+        >
+          <div class="button-content">
+            <IconLine class="button-icon"/>
+          </div>
+        </el-button>
+      </el-button-group>
+      <el-button-group>
+        <el-button
+          :type="$svgif.elementType === 'arrow' && isDrawMode ? 'primary' : ''"
+          size="mini"
+          @click="setElementType('arrow')"
+        >
+          <div class="button-content">
+            <IconArrow class="button-icon"/>
+          </div>
+        </el-button>
+        <el-button
+          :type="$svgif.elementType === 'text' && isDrawMode ? 'primary' : ''"
+          size="mini"
+          @click="setElementType('text')"
+        >
+          <div class="button-content">
+            <IconText class="button-icon"/>
+          </div>
+        </el-button>
+      </el-button-group>
+      <el-color-picker
+        class="draw-color"
+        :value="$svgif.elementColor"
+        @input="setElementColor"
+        show-alpha
+        :predefine="predefineColors">
+      </el-color-picker>
+    </div>
   </div>
 </template>
 
 <script>
 import { mapGetters, mapActions } from 'vuex'
 import clipTypes from '@main/store/modules/clips/types'
+import IconRectangle from '@/components/atoms/icons/IconRectangle'
+import IconCircle from '@/components/atoms/icons/IconCircle'
+import IconLine from '@/components/atoms/icons/IconLine'
+import IconArrow from '@/components/atoms/icons/IconArrow'
+import IconText from '@/components/atoms/icons/IconText'
 
 export default {
+  components: {
+    IconRectangle,
+    IconCircle,
+    IconLine,
+    IconArrow,
+    IconText
+  },
   data: () => ({
     predefineColors: [
       '#ff4500',
@@ -89,6 +126,9 @@ export default {
       return this.$svgif.selectedElementIdList
         .map(id => this.SELECTED_CLIP.svgElementList.find(e => e.id === id))
         .filter(e => !!e)
+    },
+    isDrawMode() {
+      return this.$svgif.canvasMode === 'draw'
     }
   },
   methods: {
@@ -123,5 +163,24 @@ export default {
 <style lang="scss" scoped>
 .draw-tools {
   padding: 0.4rem 0;
+  hr {
+    height: 0.1rem;
+    width: 80%;
+    margin: 0.6rem 0 0.6rem 10%;
+    background-color: rgba(gray, 0.5);
+    border: 0;
+  }
+}
+.button-content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  .button-icon {
+    height: 1.3rem;
+    width: auto;
+  }
+}
+.draw-color {
+  vertical-align: middle;
 }
 </style>

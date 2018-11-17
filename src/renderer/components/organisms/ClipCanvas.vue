@@ -418,6 +418,7 @@ export default {
       this.selectElement(id)
       this.setCanvasMode('draw')
       this.drawMode = drawMode
+      this.$svgif.elementType = this.selectedElement.name
     },
     copyElements() {
       this.clipboard = this.selectedElementList.map(elm => ({ ...elm }))
