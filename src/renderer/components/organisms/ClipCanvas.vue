@@ -70,20 +70,40 @@
         </SvgCanvas>
       </div>
       <ClipTimeLine class="time-line" />
+      <el-dialog title="Text" :visible.sync="showEtidTextDialog">
+        <form @submit.prevent="changeText">
+          <el-input
+            v-model="editedText"
+            type="textarea"
+            autocomplete="off"
+          />
+        </form>
+        <span slot="footer" class="dialog-footer">
+          <el-button @click="showEtidTextDialog = false">Cancel</el-button>
+          <el-button type="primary" @click="changeText">OK</el-button>
+        </span>
+      </el-dialog>
     </template>
-    <el-dialog title="Text" :visible.sync="showEtidTextDialog">
-      <form @submit.prevent="changeText">
-        <el-input
-          v-model="editedText"
-          type="textarea"
-          autocomplete="off"
-        />
-      </form>
-      <span slot="footer" class="dialog-footer">
-        <el-button @click="showEtidTextDialog = false">Cancel</el-button>
-        <el-button type="primary" @click="changeText">OK</el-button>
-      </span>
-    </el-dialog>
+    <template v-else>
+      <div class="empty-board">
+        <el-button
+          type="primary"
+          icon="el-icon-circle-plus-outline"
+          @click="startSelectFile"
+        >
+          Add Images
+        </el-button>
+        <p class="drop-text">or Drop Images</p>
+      </div>
+      <input
+        v-show="false"
+        ref="fileInput"
+        multiple
+        type="file"
+        accept="image/*"
+        @change="dropFile"
+      />
+    </template>
   </div>
 </template>
 
@@ -483,7 +503,6 @@ export default {
       const files = e.target.files
         ? [...e.target.files]
         : [...e.dataTransfer.files]
-      // 順不同でロードが済んだ順にclip化
       files.forEach(file => {
         readImageFile(file)
           .then(({ base64, width, height }) => {
@@ -508,6 +527,9 @@ export default {
             })
           })
       })
+    },
+    startSelectFile() {
+      this.$refs.fileInput.click()
     }
   }
 }
@@ -532,6 +554,17 @@ export default {
       .svg-element {
         cursor: pointer;
       }
+    }
+  }
+  .empty-board {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    .drop-text {
+      font-size: 1.2rem;
+      margin-top: 0.4rem;
     }
   }
 }
