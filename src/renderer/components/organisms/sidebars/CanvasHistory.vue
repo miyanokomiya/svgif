@@ -9,6 +9,7 @@
         :body-style="{padding: '0.3rem'}"
         v-for="(data, i) in redoStack"
         :key="i"
+        @click.native="jumpSvgElementHistory(i)"
       >
         {{data.type}}
       </el-card>
@@ -17,9 +18,18 @@
         :body-style="{padding: '0.3rem'}"
         v-for="(data, i) in undoStackReverse"
         :key="redoStack.length + i"
-        :class="{current: i === 0}"
+        :class="{current: !isOldest && i === 0}"
+        @click.native="jumpSvgElementHistory(redoStack.length + i)"
       >
         {{data.type}}
+      </el-card>
+      <el-card
+        class="box-card"
+        :body-style="{padding: '0.3rem'}"
+        :class="{current: isOldest}"
+        @click.native="jumpSvgElementHistory(allHistory.length)"
+      >
+        Oldest
       </el-card>
     </div>
   </div>
@@ -44,12 +54,21 @@ export default {
     },
     allHistory() {
       return [...this.redoStack, ...this.undoStackReverse]
+    },
+    isOldest() {
+      return this.undoStackReverse.length === 0
     }
   },
   methods: {
     ...mapActions({
-      _updateSvgElement: clipTypes.a.UPDATE_SVG_ELEMENT
-    })
+      _jumpSvgElementHistory: clipTypes.a.JUMP_SVG_ELEMENT_HISTORY
+    }),
+    jumpSvgElementHistory(to) {
+      this._jumpSvgElementHistory({
+        clipId: this.SELECTED_CLIP.id,
+        to
+      })
+    }
   }
 }
 </script>
