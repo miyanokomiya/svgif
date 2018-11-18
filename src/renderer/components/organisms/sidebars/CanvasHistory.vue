@@ -1,5 +1,8 @@
 <template>
-  <div class="canvas-history" v-if="SELECTED_CLIP">
+  <div
+    v-if="SELECTED_CLIP"
+    class="canvas-history"
+  >
     <el-card class="title-card" :body-style="{padding: '0.4rem'}">
       <div class="title-block">
         <i v-if="isExistHistory" class="el-icon-delete" @click="cleaeSvgElementHistory" />
@@ -7,7 +10,14 @@
         <span>History</span>
       </div>
     </el-card>
-    <div class="list">
+    <div
+      class="list"
+      tabindex="-1"
+      @keydown.90.ctrl.exact="undoSvgElement"
+      @keydown.90.meta.exact="undoSvgElement"
+      @keydown.90.ctrl.shift.exact="redoSvgElement"
+      @keydown.90.meta.shift.exact="redoSvgElement"
+    >
       <el-card
         class="box-card"
         :body-style="{padding: '0.3rem'}"
@@ -69,7 +79,9 @@ export default {
   methods: {
     ...mapActions({
       _jumpSvgElementHistory: clipTypes.a.JUMP_SVG_ELEMENT_HISTORY,
-      _cleaeSvgElementHistory: clipTypes.a.CLEAR_SVG_ELEMENT_HISTORY
+      _cleaeSvgElementHistory: clipTypes.a.CLEAR_SVG_ELEMENT_HISTORY,
+      _undoSvgElement: clipTypes.a.UNDO_SVG_ELEMENT,
+      _redoSvgElement: clipTypes.a.REDO_SVG_ELEMENT
     }),
     jumpSvgElementHistory(to) {
       this.$svgif.selectedElementIdList = []
@@ -77,6 +89,14 @@ export default {
         clipId: this.SELECTED_CLIP.id,
         to
       })
+    },
+    undoSvgElement() {
+      this.$svgif.selectedElementIdList = []
+      this._undoSvgElement({ clipId: this.SELECTED_CLIP.id })
+    },
+    redoSvgElement() {
+      this.$svgif.selectedElementIdList = []
+      this._redoSvgElement({ clipId: this.SELECTED_CLIP.id })
     },
     cleaeSvgElementHistory() {
       this.$confirm(
@@ -106,6 +126,7 @@ export default {
   .list {
     overflow: auto;
     height: calc(100% - 3.2rem);
+    outline-offset: -0.2rem;
   }
   .title-card {
     font-size: 1.4rem;

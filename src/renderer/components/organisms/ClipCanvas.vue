@@ -589,6 +589,7 @@ export default {
       margin: auto;
       border: 0.1rem solid black;
       user-select: none;
+      outline-offset: -0.2rem;
       .svg-element {
         cursor: pointer;
       }
