@@ -18,33 +18,26 @@
       @keydown.90.ctrl.shift.exact="redoSvgElement"
       @keydown.90.meta.shift.exact="redoSvgElement"
     >
-      <el-card
-        class="box-card"
-        :body-style="{padding: '0.3rem'}"
+      <HistoryItem
         v-for="(data, i) in redoStack"
         :key="i"
+        :label="data.type"
+        :count="data.svgElementList.length"
         @click.native="jumpSvgElementHistory(i)"
-      >
-        {{data.type}}
-      </el-card>
-      <el-card
-        class="box-card"
-        :body-style="{padding: '0.3rem'}"
+      />
+      <HistoryItem
         v-for="(data, i) in undoStackReverse"
         :key="redoStack.length + i"
-        :class="{current: !isOldest && i === 0}"
+        :label="data.type"
+        :count="data.svgElementList.length"
+        :current="!isOldest && i === 0"
         @click.native="jumpSvgElementHistory(redoStack.length + i)"
-      >
-        {{data.type}}
-      </el-card>
-      <el-card
-        class="box-card"
-        :body-style="{padding: '0.3rem'}"
-        :class="{current: isOldest}"
+      />
+      <HistoryItem
+        label="Oldest"
+        :current="isOldest"
         @click.native="jumpSvgElementHistory(allHistory.length)"
-      >
-        Oldest
-      </el-card>
+      />
     </div>
   </div>
 </template>
@@ -52,8 +45,12 @@
 <script>
 import { mapGetters, mapActions } from 'vuex'
 import clipTypes from '@main/store/modules/clips/types'
+import HistoryItem from '@/components/molecules/HistoryItem'
 
 export default {
+  components: {
+    HistoryItem
+  },
   computed: {
     ...mapGetters({
       SELECTED_CLIP: clipTypes.g.SELECTED_CLIP
@@ -144,28 +141,6 @@ export default {
         padding-right: 2.4rem;
         text-align: center;
       }
-    }
-  }
-  .box-card {
-    transition: 0.1s;
-    cursor: pointer;
-    &:first-child {
-      border-top: 0.1rem solid gray;
-    }
-    &:last-child {
-      border-bottom: 0.1rem solid gray;
-    }
-    &:nth-child(odd) {
-      background-color: #eee;
-    }
-    &:hover {
-      background-color: #409eff;
-      color: #fff;
-    }
-    &.current {
-      background-color: #67c23a;
-      color: #fff;
-      cursor: auto;
     }
   }
 }
