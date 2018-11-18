@@ -502,9 +502,11 @@ export default {
       )
     },
     undoSvgElement() {
+      this.clearSelectElement()
       this._undoSvgElement({ clipId: this.SELECTED_CLIP.id })
     },
     redoSvgElement() {
+      this.clearSelectElement()
       this._redoSvgElement({ clipId: this.SELECTED_CLIP.id })
     },
     dropFile(e) {
