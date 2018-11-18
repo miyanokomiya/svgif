@@ -19,7 +19,7 @@
         <el-tabs type="border-card" v-model="tabValue">
           <el-tab-pane label="Canvas" name="Canvas">
             <el-main>
-              <ClipCanvas/>
+              <ClipCanvas v-if="tabValue === 'Canvas'"/>
             </el-main>
             <el-footer>
               <CanvasFooter
@@ -30,6 +30,7 @@
           <el-tab-pane label="Gif" name="Gif" v-if="gif">
             <el-main>
               <GifCanvas
+                v-if="tabValue === 'Gif'"
                 :gif="gif"
                 :clipList="CLIP_LIST"
                 @selectClip="selectClip"

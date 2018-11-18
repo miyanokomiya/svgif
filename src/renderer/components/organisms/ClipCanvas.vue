@@ -272,7 +272,8 @@ export default {
         const wRate = wrapperRect.width / this.WHOLE_SIZE.width
         const hRate = wrapperRect.height / this.WHOLE_SIZE.height
         const rate = Math.min(wRate, hRate)
-        this.scale = Math.min(rate, 1)
+        // 小さすぎるスケールは避ける
+        this.scale = Math.max(Math.min(rate, 1), 0.00001)
       })
     },
     initLocalSvgElementList() {
