@@ -289,6 +289,11 @@ const mutations = {
         undo({ clip })
       }
     }
+  },
+  [types.m.CLEAR_SVG_ELEMENT_HISTORY](state, { clipId }) {
+    const clip = state.clipList.find(c => c.id === clipId)
+    clip.svgElementUndoStack = []
+    clip.svgElementRedoStack = []
   }
 }
 

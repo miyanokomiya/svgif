@@ -89,6 +89,12 @@ const actions = {
       to
     })
     return Promise.resolve()
+  },
+  [types.a.CLEAR_SVG_ELEMENT_HISTORY]({ commit }, { clipId }) {
+    commit(types.m.CLEAR_SVG_ELEMENT_HISTORY, {
+      clipId
+    })
+    return Promise.resolve()
   }
 }
 

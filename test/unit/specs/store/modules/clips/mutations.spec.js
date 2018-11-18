@@ -674,4 +674,30 @@ describe('store/modules/clips/mutations', () => {
       expect(redoStack).to.lengthOf(2)
     })
   })
+  describe('CLEAR_SVG_ELEMENT_HISTORY 履歴クリア', () => {
+    const getState = () => ({
+      clipList: [
+        {
+          id: 1,
+          svgElementUndoStack: [
+            { type: 'UPDATE', svgElementList: [{ id: 2, x: 2 }] },
+            { type: 'UPDATE', svgElementList: [{ id: 2, x: 3 }] }
+          ],
+          svgElementRedoStack: [
+            { type: 'UPDATE', svgElementList: [{ id: 2, x: 4 }] },
+            { type: 'UPDATE', svgElementList: [{ id: 2, x: 5 }] }
+          ]
+        }
+      ]
+    })
+    it('履歴がクリアされること', () => {
+      const state = getState()
+      mutations[types.m.CLEAR_SVG_ELEMENT_HISTORY](state, { clipId: 1 })
+      const clip = state.clipList[0]
+      const undoStack = clip.svgElementUndoStack
+      const redoStack = clip.svgElementRedoStack
+      expect(undoStack).to.lengthOf(0)
+      expect(redoStack).to.lengthOf(0)
+    })
+  })
 })

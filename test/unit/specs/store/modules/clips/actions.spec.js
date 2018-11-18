@@ -297,4 +297,21 @@ describe('store/modules/clips/actions', () => {
       })
     })
   })
+  describe('CLEAR_SVG_ELEMENT_HISTORY', () => {
+    it('mutationが正しく実行されること', done => {
+      testAction({
+        done,
+        action: actions[types.a.CLEAR_SVG_ELEMENT_HISTORY],
+        payload: { clipId: 1 },
+        mutations: [
+          {
+            type: types.m.CLEAR_SVG_ELEMENT_HISTORY,
+            test: ({ clipId }) => {
+              expect(clipId).to.equal(1)
+            }
+          }
+        ]
+      })
+    })
+  })
 })

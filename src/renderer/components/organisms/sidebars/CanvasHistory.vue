@@ -1,7 +1,11 @@
 <template>
   <div class="canvas-history" v-if="SELECTED_CLIP">
     <el-card class="title-card" :body-style="{padding: '0.4rem'}">
-      History
+      <div class="title-block">
+        <i v-if="isExistHistory" class="el-icon-delete" @click="cleaeSvgElementHistory" />
+        <i v-else />
+        <span>History</span>
+      </div>
     </el-card>
     <div class="list">
       <el-card
@@ -57,17 +61,38 @@ export default {
     },
     isOldest() {
       return this.undoStackReverse.length === 0
+    },
+    isExistHistory() {
+      return this.allHistory.length > 0
     }
   },
   methods: {
     ...mapActions({
-      _jumpSvgElementHistory: clipTypes.a.JUMP_SVG_ELEMENT_HISTORY
+      _jumpSvgElementHistory: clipTypes.a.JUMP_SVG_ELEMENT_HISTORY,
+      _cleaeSvgElementHistory: clipTypes.a.CLEAR_SVG_ELEMENT_HISTORY
     }),
     jumpSvgElementHistory(to) {
       this.$svgif.selectedElementIdList = []
       this._jumpSvgElementHistory({
         clipId: this.SELECTED_CLIP.id,
         to
+      })
+    },
+    cleaeSvgElementHistory() {
+      this.$confirm(
+        'This will permanently delete the history. Continue?',
+        'Warning',
+        {
+          confirmButtonText: 'OK',
+          cancelButtonText: 'Cancel',
+          type: 'warning'
+        }
+      ).then(() => {
+        this._cleaeSvgElementHistory({ clipId: this.SELECTED_CLIP.id })
+        this.$message({
+          type: 'success',
+          message: 'Delete completed'
+        })
       })
     }
   }
@@ -84,6 +109,21 @@ export default {
   }
   .title-card {
     font-size: 1.4rem;
+    text-align: left;
+    padding-left: 1rem;
+    .title-block {
+      display: flex;
+      align-items: center;
+      i {
+        width: 14px;
+        cursor: pointer;
+      }
+      span {
+        width: calc(100% - 1.4rem);
+        padding-right: 2.4rem;
+        text-align: center;
+      }
+    }
   }
   .box-card {
     transition: 0.1s;
