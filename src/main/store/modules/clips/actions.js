@@ -38,7 +38,9 @@ const actions = {
         base64: original.base64,
         width: original.width,
         height: original.height,
-        svgElementList: original.svgElementList
+        svgElementList: original.svgElementList,
+        svgElementUndoStack: original.svgElementUndoStack,
+        svgElementRedoStack: original.svgElementRedoStack
       }),
       index: index >= 0 ? index : originalIndex + 1
     })
