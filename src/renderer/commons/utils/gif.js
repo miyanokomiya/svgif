@@ -57,6 +57,7 @@ function createImageList(clipList) {
 
 function addGifFrame({ ctx, size, image, clip, gif, rate }) {
   return new Promise((resolve, reject) => {
+    ctx.beginPath()
     ctx.rect(0, 0, size.width * rate, size.height * rate)
     ctx.fillStyle = '#eee'
     ctx.fill()
