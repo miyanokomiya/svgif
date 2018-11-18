@@ -279,10 +279,20 @@ export default {
       this.localSvgElementList = this.svgElementList.map(elm => ({ ...elm }))
     },
     createSvgElement(svgElementList, commit = false) {
-      this.localSvgElementList = [
-        ...this.localSvgElementList,
-        ...svgElementList
-      ]
+      if (svgElementList.length === 0) return
+      svgElementList.forEach(elm => {
+        const index = this.localSvgElementList.findIndex(
+          current => current.id === elm.id
+        )
+        if (index === -1) {
+          this.localSvgElementList.push(elm)
+        } else {
+          this.localSvgElementList.splice(index, 1, {
+            ...this.localSvgElementList[index],
+            ...elm
+          })
+        }
+      })
       if (commit) {
         this._createSvgElement({
           clipId: this.SELECTED_CLIP.id,
@@ -291,6 +301,7 @@ export default {
       }
     },
     updateSvgElementList(toList, commit = false) {
+      if (toList.length === 0) return
       toList.forEach(({ id, ...to }) => {
         const elm = this.localSvgElementList.find(elm => elm.id === id)
         Object.keys(to).forEach(key => {
@@ -305,6 +316,7 @@ export default {
       }
     },
     deleteSvgElementList(svgElementIdList, commit = false) {
+      if (svgElementIdList.length === 0) return
       svgElementIdList.forEach(svgElementId => {
         this.clearSelectElement(svgElementId)
         const index = this.localSvgElementList.findIndex(
@@ -360,12 +372,19 @@ export default {
       this.updateSvgElementList([to])
     },
     commitMoveElementList() {
-      this.updateSvgElementList(
-        this.selectedElementList.map(element =>
-          elementUtils.moveElement({ element, vec: this.elementMoveVec })
-        ),
-        true
+      const elementList = this.selectedElementList.map(element =>
+        elementUtils.moveElement({ element, vec: this.elementMoveVec })
       )
+      // 新規追加分
+      const createList = elementList.filter(
+        elm => !this.svgElementList.find(org => org.id === elm.id)
+      )
+      // 更新分
+      const updateList = elementList.filter(elm =>
+        this.svgElementList.find(org => org.id === elm.id)
+      )
+      this.createSvgElement(createList, true)
+      this.updateSvgElementList(updateList, true)
     },
     mousedownSelf(e) {
       if (this.$svgif.canvasMode === 'select') {
@@ -377,7 +396,7 @@ export default {
       } else if (this.$svgif.canvasMode === 'draw') {
         const p = this.getSvgPoint(e)
         const elm = this.createElement({ ...p })
-        this.createSvgElement([elm], true)
+        this.createSvgElement([elm])
         this.selectElement(elm.id)
         this.drawMode = elementUtils.getModeAfterCreateElement(elm)
       }
