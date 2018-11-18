@@ -549,7 +549,7 @@ export default {
             elm.base64 = base64
             elm.defaultAspect = width / height
             // サイズはキャンバスに収める
-            elm.width = Math.min(width, this.SELECTED_CLIP.width / 3)
+            elm.width = Math.min(width, this.WHOLE_SIZE.width / 3)
             elm.height = elm.width / elm.defaultAspect
             elm.x -= elm.width / 2
             elm.y -= elm.height / 2
