@@ -372,6 +372,7 @@ export default {
       this.updateSvgElementList([to])
     },
     commitMoveElementList() {
+      if (this.moveVec.x === 0 && this.moveVec.y === 0) return
       const elementList = this.selectedElementList.map(element =>
         elementUtils.moveElement({ element, vec: this.elementMoveVec })
       )
