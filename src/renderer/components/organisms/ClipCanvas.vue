@@ -34,6 +34,10 @@
           @keydown.native.65.meta.exact="selectAllElements"
           @keydown.native.88.ctrl.exact="cutElements"
           @keydown.native.88.meta.exact="cutElements"
+          @keydown.native.90.ctrl.exact="undoSvgElement"
+          @keydown.native.90.meta.exact="undoSvgElement"
+          @keydown.native.90.ctrl.shift.exact="redoSvgElement"
+          @keydown.native.90.meta.shift.exact="redoSvgElement"
           @dragover.native.prevent.stop="e => e.dataTransfer.dropEffect = 'copy'"
           @dragleave.native.prevent.stop
           @drop.native.prevent.stop="dropFileInCanvas"
@@ -238,7 +242,9 @@ export default {
       _createSvgElement: clipTypes.a.CREATE_SVG_ELEMENT,
       _updateSvgElement: clipTypes.a.UPDATE_SVG_ELEMENT,
       _deleteSvgElement: clipTypes.a.DELETE_SVG_ELEMENT,
-      _createClip: clipTypes.a.CREATE_CLIP
+      _createClip: clipTypes.a.CREATE_CLIP,
+      _undoSvgElement: clipTypes.a.UNDO_SVG_ELEMENT,
+      _redoSvgElement: clipTypes.a.REDO_SVG_ELEMENT
     }),
     htmlToSvg(val) {
       return elementUtils.htmlToSvg(this.scale, val)
@@ -474,6 +480,12 @@ export default {
         this.selectedElementList.map(elm => elm.id),
         true
       )
+    },
+    undoSvgElement() {
+      this._undoSvgElement({ clipId: this.SELECTED_CLIP.id })
+    },
+    redoSvgElement() {
+      this._redoSvgElement({ clipId: this.SELECTED_CLIP.id })
     },
     dropFile(e) {
       const files = e.target.files
