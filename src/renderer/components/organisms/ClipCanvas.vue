@@ -376,7 +376,6 @@ export default {
       this.updateSvgElementList([to])
     },
     commitMoveElementList() {
-      if (this.moveVec.x === 0 && this.moveVec.y === 0) return
       const elementList = this.selectedElementList.map(element =>
         elementUtils.moveElement({ element, vec: this.elementMoveVec })
       )
@@ -384,6 +383,13 @@ export default {
       const createList = elementList.filter(
         elm => !this.svgElementList.find(org => org.id === elm.id)
       )
+
+      // 移動がなければ新規作成分を破棄して終了
+      if (this.moveVec.x === 0 && this.moveVec.y === 0) {
+        this.initLocalSvgElementList()
+        return
+      }
+
       // 更新分
       const updateList = elementList.filter(elm =>
         this.svgElementList.find(org => org.id === elm.id)
