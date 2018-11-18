@@ -220,7 +220,7 @@ describe('store/modules/clips/mutations', () => {
   describe('ADD_SVG_ELEMENT', () => {
     it('指定 clipId の clip に svgElement が追加されること', () => {
       const state = {
-        clipList: [{ id: 1, svgElementList: [] }]
+        clipList: [{ id: 1, svgElementList: [], svgElementUndoStack: [] }]
       }
       mutations[types.m.ADD_SVG_ELEMENT](state, {
         clipId: 1,
@@ -234,7 +234,8 @@ describe('store/modules/clips/mutations', () => {
         clipList: [
           {
             id: 1,
-            svgElementList: [{ id: 2 }, { id: 3 }]
+            svgElementList: [{ id: 2 }, { id: 3 }],
+            svgElementUndoStack: []
           }
         ]
       }
@@ -248,6 +249,18 @@ describe('store/modules/clips/mutations', () => {
       expect(elmList[2].id).to.equal(4)
       expect(elmList[3].id).to.equal(5)
     })
+    it('svgElementUndoStack に履歴が追加されること', () => {
+      const state = {
+        clipList: [{ id: 1, svgElementList: [], svgElementUndoStack: [] }]
+      }
+      mutations[types.m.ADD_SVG_ELEMENT](state, {
+        clipId: 1,
+        svgElement: { id: 10 }
+      })
+      const data = state.clipList[0].svgElementUndoStack[0]
+      expect(data.type).to.equal('ADD')
+      expect(data.svgElementList[0].id).to.equal(10)
+    })
   })
   describe('UPDATE_SVG_ELEMENT', () => {
     it('指定 clipId の clip の svgElement が差分更新されること', () => {
@@ -255,7 +268,8 @@ describe('store/modules/clips/mutations', () => {
         clipList: [
           {
             id: 1,
-            svgElementList: [{ id: 2, name: 'a', x: 10 }, { id: 3, name: 'c' }]
+            svgElementList: [{ id: 2, name: 'a', x: 10 }, { id: 3, name: 'c' }],
+            svgElementUndoStack: []
           }
         ]
       }
@@ -275,7 +289,8 @@ describe('store/modules/clips/mutations', () => {
         clipList: [
           {
             id: 1,
-            svgElementList: [{ id: 2, name: 'a', x: 10 }, { id: 3, name: 'c' }]
+            svgElementList: [{ id: 2, name: 'a', x: 10 }, { id: 3, name: 'c' }],
+            svgElementUndoStack: []
           }
         ]
       }
@@ -290,11 +305,37 @@ describe('store/modules/clips/mutations', () => {
       expect(elmList[1].name).to.equal('bb')
       expect(elmList).to.have.lengthOf(2)
     })
+    it('更新された要素の前回状態が差分として履歴に追加されること', () => {
+      const state = {
+        clipList: [
+          {
+            id: 1,
+            svgElementList: [{ id: 2, name: 'a', x: 10 }],
+            svgElementUndoStack: []
+          }
+        ]
+      }
+      mutations[types.m.UPDATE_SVG_ELEMENT](state, {
+        clipId: 1,
+        svgElement: { id: 2, name: 'b' }
+      })
+      const data = state.clipList[0].svgElementUndoStack[0]
+      expect(data.type).to.equal('UPDATE')
+      expect(data.svgElementList[0].id).to.equal(2)
+      expect(data.svgElementList[0].name).to.equal('a')
+      expect(data.svgElementList[0].x).to.equal(undefined)
+    })
   })
   describe('REMOVE_SVG_ELEMENT', () => {
     it('指定 clipId の clip の svgElement が削除されること', () => {
       const state = {
-        clipList: [{ id: 1, svgElementList: [{ id: 2 }, { id: 3 }] }]
+        clipList: [
+          {
+            id: 1,
+            svgElementList: [{ id: 2 }, { id: 3 }],
+            svgElementUndoStack: []
+          }
+        ]
       }
       mutations[types.m.REMOVE_SVG_ELEMENT](state, {
         clipId: 1,
@@ -309,7 +350,8 @@ describe('store/modules/clips/mutations', () => {
         clipList: [
           {
             id: 1,
-            svgElementList: [{ id: 1 }, { id: 2 }, { id: 3 }]
+            svgElementList: [{ id: 1 }, { id: 2 }, { id: 3 }],
+            svgElementUndoStack: []
           }
         ]
       }
@@ -321,5 +363,24 @@ describe('store/modules/clips/mutations', () => {
       expect(elmList[0].id).to.equal(2)
       expect(elmList).to.have.lengthOf(1)
     })
+  })
+  it('削除した要素が履歴に追加されること', () => {
+    const state = {
+      clipList: [
+        {
+          id: 1,
+          svgElementList: [{ id: 2, x: 0 }, { id: 3 }],
+          svgElementUndoStack: []
+        }
+      ]
+    }
+    mutations[types.m.REMOVE_SVG_ELEMENT](state, {
+      clipId: 1,
+      svgElementId: 2
+    })
+    const data = state.clipList[0].svgElementUndoStack[0]
+    expect(data.type).to.equal('REMOVE')
+    expect(data.svgElementList[0].id).to.equal(2)
+    expect(data.svgElementList[0].x).to.equal(0)
   })
 })

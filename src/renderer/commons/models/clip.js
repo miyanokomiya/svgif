@@ -11,6 +11,12 @@ export function getClip(clip) {
     ...clip,
     svgElementList: clip.svgElementList
       ? clip.svgElementList.map(elm => ({ id: createId(), ...elm }))
+      : [],
+    svgElementUndoStack: clip.svgElementUndoStack
+      ? clip.svgElementUndoStack.map(data => JSON.parse(JSON.stringify(data)))
+      : [],
+    svgElementRedoStack: clip.svgElementRedoStack
+      ? clip.svgElementRedoStack.map(data => JSON.parse(JSON.stringify(data)))
       : []
   }
 }

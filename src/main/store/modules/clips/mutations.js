@@ -76,11 +76,32 @@ const mutations = {
   [types.m.ADD_SVG_ELEMENT](state, { clipId, svgElement, svgElementList }) {
     const clip = state.clipList.find(c => c.id === clipId)
     svgElementList = svgElementList || [svgElement]
+
+    // 追加した要素リストのidを保存
+    clip.svgElementUndoStack.push({
+      type: 'ADD',
+      svgElementList: svgElementList.map(elm => ({ id: elm.id }))
+    })
+
     clip.svgElementList = [...clip.svgElementList, ...svgElementList]
   },
   [types.m.UPDATE_SVG_ELEMENT](state, { clipId, svgElement, svgElementList }) {
     const clip = state.clipList.find(c => c.id === clipId)
     svgElementList = svgElementList || [svgElement]
+
+    // 更新した要素リストの更新前情報を保存
+    clip.svgElementUndoStack.push({
+      type: 'UPDATE',
+      svgElementList: svgElementList.map(to => {
+        const from = clip.svgElementList.find(elm => elm.id === to.id)
+        const dif = { id: from.id }
+        for (let key in to) {
+          if (to[key] !== from[key]) dif[key] = from[key]
+        }
+        return dif
+      })
+    })
+
     svgElementList.forEach(svgElement => {
       const index = clip.svgElementList.findIndex(
         elm => elm.id === svgElement.id
@@ -97,6 +118,19 @@ const mutations = {
   ) {
     svgElementIdList = svgElementIdList || [svgElementId]
     const clip = state.clipList.find(c => c.id === clipId)
+
+    // 削除した要素リストを保存
+    clip.svgElementUndoStack.push({
+      type: 'REMOVE',
+      svgElementList: JSON.parse(
+        JSON.stringify(
+          svgElementIdList.map(elm =>
+            clip.svgElementList.find(elm => elm.id === svgElementId)
+          )
+        )
+      )
+    })
+
     svgElementIdList.forEach(svgElementId => {
       const index = clip.svgElementList.findIndex(
         elm => elm.id === svgElementId
