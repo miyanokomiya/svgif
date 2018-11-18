@@ -1,22 +1,24 @@
 import Vue from 'vue'
 import SvgRender from '@/components/organisms/SvgRender'
 
-export function createGif({ clipList, size }) {
+export function createGif({ clipList, size, maxSize }) {
+  maxSize = maxSize || Math.max(size.width, size.height)
+  const rate = maxSize / Math.max(size.width, size.height)
   return new Promise((resolve, reject) => {
     createImageList(clipList).then(imageList => {
       const gif = new window.GIF({
         workers: 2,
         quality: 10,
-        width: size.width,
-        height: size.height
+        width: size.width * rate,
+        height: size.height * rate
       })
       const canvas = document.createElement('canvas')
-      canvas.width = size.width
-      canvas.height = size.height
+      canvas.width = size.width * rate
+      canvas.height = size.height * rate
       const ctx = canvas.getContext('2d')
 
       const promiseList = clipList.map((clip, index) => () =>
-        addGifFrame({ ctx, size, image: imageList[index], clip, gif })
+        addGifFrame({ ctx, size, image: imageList[index], clip, gif, rate })
       )
       promiseList
         .reduce((m, p) => m.then(p), Promise.resolve())
@@ -53,13 +55,19 @@ function createImageList(clipList) {
   })
 }
 
-function addGifFrame({ ctx, size, image, clip, gif }) {
+function addGifFrame({ ctx, size, image, clip, gif, rate }) {
   return new Promise((resolve, reject) => {
-    ctx.clearRect(0, 0, size.width, size.height)
+    ctx.clearRect(0, 0, size.width * rate, size.height * rate)
     ctx.drawImage(
       image,
-      (size.width - image.width) / 2,
-      (size.height - image.height) / 2
+      0,
+      0,
+      image.width,
+      image.height,
+      ((size.width - image.width) / 2) * rate,
+      ((size.height - image.height) / 2) * rate,
+      image.width * rate,
+      image.height * rate
     )
 
     if (clip.svgElementList.length === 0) {
@@ -82,7 +90,17 @@ function addGifFrame({ ctx, size, image, clip, gif }) {
       })
       const url = DOMURL.createObjectURL(svg)
       img.onload = () => {
-        ctx.drawImage(img, 0, 0, size.width, size.height)
+        ctx.drawImage(
+          img,
+          0,
+          0,
+          size.width,
+          size.height,
+          0,
+          0,
+          size.width * rate,
+          size.height * rate
+        )
         gif.addFrame(ctx, { copy: true, delay: clip.delay || 200 })
         DOMURL.revokeObjectURL(url)
         resolve()

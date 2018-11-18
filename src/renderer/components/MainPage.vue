@@ -79,7 +79,8 @@ export default {
     ...mapGetters({
       CLIP_LIST: clipTypes.g.CLIP_LIST,
       SELECTED_CLIP: clipTypes.g.SELECTED_CLIP,
-      WHOLE_SIZE: clipTypes.g.WHOLE_SIZE
+      WHOLE_SIZE: clipTypes.g.WHOLE_SIZE,
+      MAX_SIZE: clipTypes.g.MAX_SIZE
     })
   },
   methods: {
@@ -109,7 +110,11 @@ export default {
         spinner: 'el-icon-loading',
         background: 'rgba(0, 0, 0, 0.7)'
       })
-      createGif({ clipList: this.CLIP_LIST, size: this.WHOLE_SIZE })
+      createGif({
+        clipList: this.CLIP_LIST,
+        size: this.WHOLE_SIZE,
+        maxSize: this.MAX_SIZE
+      })
         .then(blob => {
           const fileReader = new FileReader()
           fileReader.onload = () => {
