@@ -611,4 +611,58 @@ describe('store/modules/clips/mutations', () => {
       })
     })
   })
+  describe('JUMP_SVG_ELEMENT_HISTORY 履歴ジャンプ', () => {
+    const getState = () => ({
+      clipList: [
+        {
+          id: 1,
+          svgElementList: [{ id: 2, x: 1 }, { id: 3 }],
+          svgElementUndoStack: [
+            { type: 'UPDATE', svgElementList: [{ id: 2, x: 2 }] },
+            { type: 'UPDATE', svgElementList: [{ id: 2, x: 3 }] }
+          ],
+          svgElementRedoStack: [
+            { type: 'UPDATE', svgElementList: [{ id: 2, x: 4 }] },
+            { type: 'UPDATE', svgElementList: [{ id: 2, x: 5 }] }
+          ]
+        }
+      ]
+    })
+    it('先頭ジャンプが正しく行えること', () => {
+      const state = getState()
+      mutations[types.m.JUMP_SVG_ELEMENT_HISTORY](state, { clipId: 1, to: 0 })
+      const clip = state.clipList[0]
+      const undoStack = clip.svgElementUndoStack
+      const redoStack = clip.svgElementRedoStack
+      expect(undoStack).to.lengthOf(4)
+      expect(redoStack).to.lengthOf(0)
+    })
+    it('末端ジャンプが正しく行えること', () => {
+      const state = getState()
+      mutations[types.m.JUMP_SVG_ELEMENT_HISTORY](state, { clipId: 1, to: 3 })
+      const clip = state.clipList[0]
+      const undoStack = clip.svgElementUndoStack
+      const redoStack = clip.svgElementRedoStack
+      expect(undoStack).to.lengthOf(0)
+      expect(redoStack).to.lengthOf(4)
+    })
+    it('redo途中へのジャンプが正しく行えること', () => {
+      const state = getState()
+      mutations[types.m.JUMP_SVG_ELEMENT_HISTORY](state, { clipId: 1, to: 1 })
+      const clip = state.clipList[0]
+      const undoStack = clip.svgElementUndoStack
+      const redoStack = clip.svgElementRedoStack
+      expect(undoStack).to.lengthOf(3)
+      expect(redoStack).to.lengthOf(1)
+    })
+    it('undo途中へのジャンプが正しく行えること', () => {
+      const state = getState()
+      mutations[types.m.JUMP_SVG_ELEMENT_HISTORY](state, { clipId: 1, to: 2 })
+      const clip = state.clipList[0]
+      const undoStack = clip.svgElementUndoStack
+      const redoStack = clip.svgElementRedoStack
+      expect(undoStack).to.lengthOf(1)
+      expect(redoStack).to.lengthOf(3)
+    })
+  })
 })

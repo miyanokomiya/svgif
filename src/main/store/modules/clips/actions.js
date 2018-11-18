@@ -80,6 +80,13 @@ const actions = {
       clipId
     })
     return Promise.resolve()
+  },
+  [types.a.JUMP_SVG_ELEMENT_HISTORY]({ commit }, { clipId, to }) {
+    commit(types.m.JUMP_SVG_ELEMENT_HISTORY, {
+      clipId,
+      to
+    })
+    return Promise.resolve()
   }
 }
 

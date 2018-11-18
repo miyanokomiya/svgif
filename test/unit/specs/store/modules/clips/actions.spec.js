@@ -279,4 +279,22 @@ describe('store/modules/clips/actions', () => {
       })
     })
   })
+  describe('JUMP_SVG_ELEMENT_HISTORY', () => {
+    it('mutationが正しく実行されること', done => {
+      testAction({
+        done,
+        action: actions[types.a.JUMP_SVG_ELEMENT_HISTORY],
+        payload: { clipId: 1, to: 2 },
+        mutations: [
+          {
+            type: types.m.JUMP_SVG_ELEMENT_HISTORY,
+            test: ({ clipId, to }) => {
+              expect(clipId).to.equal(1)
+              expect(to).to.equal(2)
+            }
+          }
+        ]
+      })
+    })
+  })
 })
