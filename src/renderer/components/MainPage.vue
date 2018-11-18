@@ -9,7 +9,10 @@
       >
         Capture
       </el-button>
-      <DrawTools/>
+      <div class="tool-box">
+        <DrawTools class="draw-tools"/>
+        <CanvasHistory class="canvas-history"/>
+      </div>
     </el-aside>
     <el-container>
       <el-main>
@@ -49,6 +52,7 @@
 import { mapActions, mapGetters } from 'vuex'
 import clipTypes from '@main/store/modules/clips/types'
 import DrawTools from '@/components/organisms/sidebars/DrawTools'
+import CanvasHistory from '@/components/organisms/sidebars/CanvasHistory'
 import ClipCanvas from '@/components/organisms/ClipCanvas'
 import GifCanvas from '@/components/organisms/GifCanvas'
 import CanvasFooter from '@/components/organisms/CanvasFooter'
@@ -59,6 +63,7 @@ import { createGif } from '@/commons/utils/gif'
 export default {
   components: {
     DrawTools,
+    CanvasHistory,
     ClipCanvas,
     GifCanvas,
     CanvasFooter,
@@ -133,7 +138,16 @@ export default {
   background-color: rgb(238, 241, 246);
   color: #333;
   text-align: center;
-  padding: 0.4rem 0;
+  padding: 0.4rem 0 0;
+  .tool-box {
+    height: calc(100% - 32px);
+    .draw-tools {
+      height: calc(50%);
+    }
+    .canvas-history {
+      height: calc(50%);
+    }
+  }
 }
 .el-main {
   padding: 0;

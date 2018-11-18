@@ -61,8 +61,9 @@ export default {
 
 <style lang="scss" scoped>
 .box-card {
-  text-align: left;
+  height: 100%;
   margin: 1rem 0;
+  text-align: left;
 }
 .help-list {
   list-style: none;

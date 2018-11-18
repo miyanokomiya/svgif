@@ -147,6 +147,7 @@ export default {
 <style lang="scss" scoped>
 .draw-tools {
   padding: 0.4rem 0;
+  overflow: auto;
   hr {
     height: 0.1rem;
     width: 80%;
