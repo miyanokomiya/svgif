@@ -8,6 +8,12 @@
         <li>
           <code>Ctrl(⌘) + A</code><span>Select All</span>
         </li>
+        <li>
+          <code>Ctrl(⌘) + Z</code><span>Undo</span>
+        </li>
+        <li>
+          <code>Ctrl(⌘) + Shift + Z</code><span>Redo</span>
+        </li>
       </ul>
     </el-card>
     <el-card class="box-card">
@@ -70,7 +76,7 @@ export default {
       line-height: 2.4rem;
     }
     code {
-      width: 12rem;
+      width: 26rem;
       margin-right: 1rem;
     }
   }
