@@ -102,6 +102,12 @@ export default {
       this._swapClipOrder({ from, to })
     },
     createGif() {
+      const loading = this.$loading({
+        lock: true,
+        text: 'Creating...',
+        spinner: 'el-icon-loading',
+        background: 'rgba(0, 0, 0, 0.7)'
+      })
       createGif({ clipList: this.CLIP_LIST, size: this.WHOLE_SIZE })
         .then(blob => {
           const fileReader = new FileReader()
@@ -110,8 +116,10 @@ export default {
             this.tabValue = 'Gif'
           }
           fileReader.readAsDataURL(blob)
+          loading.close()
         })
         .catch(e => {
+          loading.close()
           console.log(e)
           this.$notify.error({
             title: 'Error',
