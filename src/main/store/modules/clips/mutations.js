@@ -124,9 +124,15 @@ const mutations = {
       type: 'REMOVE',
       svgElementList: JSON.parse(
         JSON.stringify(
-          svgElementIdList.map(elm =>
-            clip.svgElementList.find(elm => elm.id === svgElementId)
-          )
+          svgElementIdList.map(elm => {
+            const _index = clip.svgElementList.findIndex(
+              elm => elm.id === svgElementId
+            )
+            return {
+              _index,
+              ...clip.svgElementList[_index]
+            }
+          })
         )
       )
     })
@@ -137,6 +143,126 @@ const mutations = {
       )
       clip.svgElementList.splice(index, 1)
     })
+  },
+  [types.m.UNDO_SVG_ELEMENT](state, { clipId }) {
+    const clip = state.clipList.find(c => c.id === clipId)
+    const data = clip.svgElementUndoStack.pop()
+    if (!data) return
+    if (data.type === 'ADD') {
+      // 追加された要素を削除
+      const removedList = []
+      data.svgElementList.forEach(historyElm => {
+        const _index = clip.svgElementList.findIndex(
+          elm => elm.id === historyElm.id
+        )
+        removedList.push({
+          _index,
+          ...clip.svgElementList[_index]
+        })
+        clip.svgElementList.splice(_index, 1)
+      })
+      // 削除対象をredoスタックに追加
+      clip.svgElementRedoStack.push({
+        type: 'ADD',
+        svgElementList: JSON.parse(JSON.stringify(removedList))
+      })
+    } else if (data.type === 'UPDATE') {
+      // 更新された要素を差し戻し
+      const updatedList = []
+      data.svgElementList.forEach(historyElm => {
+        const index = clip.svgElementList.findIndex(
+          elm => elm.id === historyElm.id
+        )
+        const from = clip.svgElementList[index]
+        const dif = { id: from.id }
+        for (let key in historyElm) {
+          if (historyElm[key] !== from[key]) dif[key] = from[key]
+        }
+        updatedList.push(dif)
+        clip.svgElementList.splice(index, 1, {
+          ...clip.svgElementList[index],
+          ...historyElm
+        })
+      })
+      // 差し戻し対象をredoスタックに追加
+      clip.svgElementRedoStack.push({
+        type: 'UPDATE',
+        svgElementList: JSON.parse(JSON.stringify(updatedList))
+      })
+    } else if (data.type === 'REMOVE') {
+      // 削除された要素を追加
+      const addList = []
+      data.svgElementList.forEach(historyElm => {
+        addList.push({ id: historyElm.id })
+        clip.svgElementList.splice(historyElm._index, 0, historyElm)
+        delete historyElm._index
+      })
+      // 追加対象をredoスタックに追加
+      clip.svgElementRedoStack.push({
+        type: 'REMOVE',
+        svgElementList: addList
+      })
+    }
+  },
+  [types.m.REDO_SVG_ELEMENT](state, { clipId }) {
+    const clip = state.clipList.find(c => c.id === clipId)
+    const data = clip.svgElementRedoStack.pop()
+    if (!data) return
+    if (data.type === 'ADD') {
+      // 追加をやり直す
+      const addList = []
+      data.svgElementList.forEach(historyElm => {
+        addList.push({ id: historyElm.id })
+        clip.svgElementList.splice(historyElm._index, 0, historyElm)
+        delete historyElm._index
+      })
+      // 追加やり直し対象をundoスタックに追加
+      clip.svgElementUndoStack.push({
+        type: 'ADD',
+        svgElementList: addList
+      })
+    } else if (data.type === 'UPDATE') {
+      // 更新された要素をやり直す
+      const updatedList = []
+      data.svgElementList.forEach(historyElm => {
+        const index = clip.svgElementList.findIndex(
+          elm => elm.id === historyElm.id
+        )
+        const from = clip.svgElementList[index]
+        const dif = { id: from.id }
+        for (let key in historyElm) {
+          if (historyElm[key] !== from[key]) dif[key] = from[key]
+        }
+        updatedList.push(dif)
+        clip.svgElementList.splice(index, 1, {
+          ...clip.svgElementList[index],
+          ...historyElm
+        })
+      })
+      // 差し戻し対象をredoスタックに追加
+      clip.svgElementUndoStack.push({
+        type: 'UPDATE',
+        svgElementList: JSON.parse(JSON.stringify(updatedList))
+      })
+    } else if (data.type === 'REMOVE') {
+      // 削除をやり直す
+      const removedList = []
+      data.svgElementList.forEach(historyElm => {
+        const _index = clip.svgElementList.findIndex(
+          elm => elm.id === historyElm.id
+        )
+        removedList.push({
+          _index,
+          ...clip.svgElementList[_index]
+        })
+        clip.svgElementList.splice(_index, 1)
+      })
+      // 削除やり直し対象をredoスタックに追加
+      clip.svgElementUndoStack.push({
+        type: 'REMOVE',
+        svgElementList: JSON.parse(JSON.stringify(removedList))
+      })
+    }
   }
 }
 

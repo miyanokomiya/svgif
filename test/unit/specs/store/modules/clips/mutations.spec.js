@@ -382,5 +382,209 @@ describe('store/modules/clips/mutations', () => {
     expect(data.type).to.equal('REMOVE')
     expect(data.svgElementList[0].id).to.equal(2)
     expect(data.svgElementList[0].x).to.equal(0)
+    expect(data.svgElementList[0]._index).to.equal(0)
+  })
+  describe('UNDO_SVG_ELEMENT もとに戻す', () => {
+    describe('ADD 追加をもとに戻す', () => {
+      const state = {
+        clipList: [
+          {
+            id: 1,
+            svgElementList: [{ id: 2 }, { id: 3 }],
+            svgElementUndoStack: [
+              { type: 'ADD', svgElementList: [{ id: 3 }] },
+              { type: 'ADD', svgElementList: [{ id: 2 }] }
+            ],
+            svgElementRedoStack: []
+          }
+        ]
+      }
+      mutations[types.m.UNDO_SVG_ELEMENT](state, { clipId: 1 })
+      const clip = state.clipList[0]
+      const undoStack = clip.svgElementUndoStack
+      const redoStack = clip.svgElementRedoStack
+      it('undoスタックの最後に保存されいてる要素が削除されること', () => {
+        expect(clip.svgElementList[0].id).to.equal(3)
+        expect(clip.svgElementList).to.lengthOf(1)
+      })
+      it('undoスタックがpopされていること', () => {
+        expect(undoStack).to.have.lengthOf(1)
+      })
+      it('redoスタックに履歴が追加されること', () => {
+        expect(redoStack).to.have.lengthOf(1)
+        expect(redoStack[0].type).to.equal('ADD')
+        expect(redoStack[0].svgElementList[0].id).to.equal(2)
+      })
+    })
+    describe('UPDATE 更新をもとに戻す', () => {
+      const state = {
+        clipList: [
+          {
+            id: 1,
+            svgElementList: [{ id: 2, x: 20, y: 21 }, { id: 3, x: 30, y: 31 }],
+            svgElementUndoStack: [
+              { type: 'UPDATE', svgElementList: [{ id: 3, x: 300 }] },
+              { type: 'UPDATE', svgElementList: [{ id: 2, x: 200 }] }
+            ],
+            svgElementRedoStack: []
+          }
+        ]
+      }
+      mutations[types.m.UNDO_SVG_ELEMENT](state, { clipId: 1 })
+      const clip = state.clipList[0]
+      const undoStack = clip.svgElementUndoStack
+      const redoStack = clip.svgElementRedoStack
+      it('undoスタックの最後に保存されいてる要素が差し戻されること', () => {
+        expect(clip.svgElementList[0].id).to.equal(2)
+        expect(clip.svgElementList[0].x).to.equal(200)
+        expect(clip.svgElementList[0].y).to.equal(21)
+        expect(clip.svgElementList).to.lengthOf(2)
+      })
+      it('undoスタックがpopされていること', () => {
+        expect(undoStack).to.have.lengthOf(1)
+      })
+      it('redoスタックに履歴が追加されること', () => {
+        expect(redoStack).to.have.lengthOf(1)
+        expect(redoStack[0].type).to.equal('UPDATE')
+        expect(redoStack[0].svgElementList[0].id).to.equal(2)
+        expect(redoStack[0].svgElementList[0].x).to.equal(20)
+        expect(redoStack[0].svgElementList[0].y).to.equal(undefined)
+      })
+    })
+    describe('REMOVE 削除をもとに戻す', () => {
+      const state = {
+        clipList: [
+          {
+            id: 1,
+            svgElementList: [{ id: 1 }],
+            svgElementUndoStack: [
+              { type: 'REMOVE', svgElementList: [{ id: 3, _index: 0 }] },
+              { type: 'REMOVE', svgElementList: [{ id: 2, _index: 0 }] }
+            ],
+            svgElementRedoStack: []
+          }
+        ]
+      }
+      mutations[types.m.UNDO_SVG_ELEMENT](state, { clipId: 1 })
+      const clip = state.clipList[0]
+      const undoStack = clip.svgElementUndoStack
+      const redoStack = clip.svgElementRedoStack
+      it('undoスタックの最後に保存されいてる要素が追加されること', () => {
+        expect(clip.svgElementList[0].id).to.equal(2)
+        expect(clip.svgElementList[1].id).to.equal(1)
+        expect(clip.svgElementList).to.lengthOf(2)
+      })
+      it('undoスタックがpopされていること', () => {
+        expect(undoStack).to.have.lengthOf(1)
+      })
+      it('redoスタックに履歴が追加されること', () => {
+        expect(redoStack).to.have.lengthOf(1)
+        expect(redoStack[0].type).to.equal('REMOVE')
+        expect(redoStack[0].svgElementList[0].id).to.equal(2)
+      })
+    })
+  })
+  describe('REDO_SVG_ELEMENT やり直す', () => {
+    describe('ADD 追加をやり直す', () => {
+      const state = {
+        clipList: [
+          {
+            id: 1,
+            svgElementList: [{ id: 2 }, { id: 3 }],
+            svgElementUndoStack: [],
+            svgElementRedoStack: [
+              { type: 'ADD', svgElementList: [{ id: 4, _index: 0 }] },
+              { type: 'ADD', svgElementList: [{ id: 5, x: 50, _index: 0 }] }
+            ]
+          }
+        ]
+      }
+      mutations[types.m.REDO_SVG_ELEMENT](state, { clipId: 1 })
+      const clip = state.clipList[0]
+      const undoStack = clip.svgElementUndoStack
+      const redoStack = clip.svgElementRedoStack
+      it('redoスタックの最後に保存されいてる要素が追加されること', () => {
+        expect(clip.svgElementList[0].id).to.equal(5)
+        expect(clip.svgElementList[0].x).to.equal(50)
+        expect(clip.svgElementList).to.lengthOf(3)
+      })
+      it('redoスタックがpopされていること', () => {
+        expect(redoStack).to.have.lengthOf(1)
+      })
+      it('undoスタックに履歴が追加されること', () => {
+        expect(undoStack).to.have.lengthOf(1)
+        expect(undoStack[0].type).to.equal('ADD')
+        expect(undoStack[0].svgElementList[0].id).to.equal(5)
+      })
+    })
+    describe('UPDATE 更新をやり直す', () => {
+      const state = {
+        clipList: [
+          {
+            id: 1,
+            svgElementList: [{ id: 2, x: 20, y: 21 }, { id: 3, x: 30, y: 31 }],
+            svgElementUndoStack: [],
+            svgElementRedoStack: [
+              { type: 'UPDATE', svgElementList: [{ id: 3, x: 300 }] },
+              { type: 'UPDATE', svgElementList: [{ id: 2, x: 200 }] }
+            ]
+          }
+        ]
+      }
+      mutations[types.m.REDO_SVG_ELEMENT](state, { clipId: 1 })
+      const clip = state.clipList[0]
+      const undoStack = clip.svgElementUndoStack
+      const redoStack = clip.svgElementRedoStack
+      it('redoスタックの最後に保存されいてる要素がやり直されること', () => {
+        expect(clip.svgElementList[0].id).to.equal(2)
+        expect(clip.svgElementList[0].x).to.equal(200)
+        expect(clip.svgElementList[0].y).to.equal(21)
+        expect(clip.svgElementList).to.lengthOf(2)
+      })
+      it('redoスタックがpopされていること', () => {
+        expect(redoStack).to.have.lengthOf(1)
+      })
+      it('undoスタックに履歴が追加されること', () => {
+        expect(undoStack).to.have.lengthOf(1)
+        expect(undoStack[0].type).to.equal('UPDATE')
+        expect(undoStack[0].svgElementList[0].id).to.equal(2)
+        expect(undoStack[0].svgElementList[0].x).to.equal(20)
+        expect(undoStack[0].svgElementList[0].y).to.equal(undefined)
+        expect(undoStack[0].svgElementList).to.have.lengthOf(1)
+      })
+    })
+    describe('REMOVE 削除をやり直す', () => {
+      const state = {
+        clipList: [
+          {
+            id: 1,
+            svgElementList: [{ id: 2, x: 20 }, { id: 3 }],
+            svgElementUndoStack: [],
+            svgElementRedoStack: [
+              { type: 'REMOVE', svgElementList: [{ id: 3 }] },
+              { type: 'REMOVE', svgElementList: [{ id: 2 }] }
+            ]
+          }
+        ]
+      }
+      mutations[types.m.REDO_SVG_ELEMENT](state, { clipId: 1 })
+      const clip = state.clipList[0]
+      const undoStack = clip.svgElementUndoStack
+      const redoStack = clip.svgElementRedoStack
+      it('redoスタックの最後に保存されいてる要素が削除されること', () => {
+        expect(clip.svgElementList[0].id).to.equal(3)
+        expect(clip.svgElementList).to.lengthOf(1)
+      })
+      it('redoスタックがpopされていること', () => {
+        expect(redoStack).to.have.lengthOf(1)
+      })
+      it('undoスタックに履歴が追加されること', () => {
+        expect(undoStack).to.have.lengthOf(1)
+        expect(undoStack[0].type).to.equal('REMOVE')
+        expect(undoStack[0].svgElementList[0].id).to.equal(2)
+        expect(undoStack[0].svgElementList[0].x).to.equal(20)
+        expect(undoStack[0].svgElementList[0]._index).to.equal(0)
+      })
+    })
   })
 })
