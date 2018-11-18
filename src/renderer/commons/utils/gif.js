@@ -57,17 +57,29 @@ function createImageList(clipList) {
 
 function addGifFrame({ ctx, size, image, clip, gif, rate }) {
   return new Promise((resolve, reject) => {
-    ctx.clearRect(0, 0, size.width * rate, size.height * rate)
+    ctx.rect(0, 0, size.width * rate, size.height * rate)
+    ctx.fillStyle = '#eee'
+    ctx.fill()
+    const imageRect = {
+      x: ((size.width - image.width) / 2) * rate,
+      y: ((size.height - image.height) / 2) * rate,
+      width: image.width * rate,
+      height: image.height * rate
+    }
+    ctx.rect(imageRect.x, imageRect.y, imageRect.width, imageRect.height)
+    ctx.strokeStyle = '#000'
+    ctx.lineWidth = 2
+    ctx.stroke()
     ctx.drawImage(
       image,
       0,
       0,
       image.width,
       image.height,
-      ((size.width - image.width) / 2) * rate,
-      ((size.height - image.height) / 2) * rate,
-      image.width * rate,
-      image.height * rate
+      imageRect.x,
+      imageRect.y,
+      imageRect.width,
+      imageRect.height
     )
 
     if (clip.svgElementList.length === 0) {
