@@ -220,7 +220,14 @@ describe('store/modules/clips/mutations', () => {
   describe('ADD_SVG_ELEMENT', () => {
     it('指定 clipId の clip に svgElement が追加されること', () => {
       const state = {
-        clipList: [{ id: 1, svgElementList: [], svgElementUndoStack: [] }]
+        clipList: [
+          {
+            id: 1,
+            svgElementList: [],
+            svgElementUndoStack: [],
+            svgElementRedoStack: []
+          }
+        ]
       }
       mutations[types.m.ADD_SVG_ELEMENT](state, {
         clipId: 1,
@@ -235,7 +242,8 @@ describe('store/modules/clips/mutations', () => {
           {
             id: 1,
             svgElementList: [{ id: 2 }, { id: 3 }],
-            svgElementUndoStack: []
+            svgElementUndoStack: [],
+            svgElementRedoStack: []
           }
         ]
       }
@@ -251,7 +259,14 @@ describe('store/modules/clips/mutations', () => {
     })
     it('svgElementUndoStack に履歴が追加されること', () => {
       const state = {
-        clipList: [{ id: 1, svgElementList: [], svgElementUndoStack: [] }]
+        clipList: [
+          {
+            id: 1,
+            svgElementList: [],
+            svgElementUndoStack: [],
+            svgElementRedoStack: ['a', 'b']
+          }
+        ]
       }
       mutations[types.m.ADD_SVG_ELEMENT](state, {
         clipId: 1,
@@ -260,6 +275,7 @@ describe('store/modules/clips/mutations', () => {
       const data = state.clipList[0].svgElementUndoStack[0]
       expect(data.type).to.equal('ADD')
       expect(data.svgElementList[0].id).to.equal(10)
+      expect(state.clipList[0].svgElementRedoStack).to.have.lengthOf(0)
     })
   })
   describe('UPDATE_SVG_ELEMENT', () => {
@@ -269,7 +285,8 @@ describe('store/modules/clips/mutations', () => {
           {
             id: 1,
             svgElementList: [{ id: 2, name: 'a', x: 10 }, { id: 3, name: 'c' }],
-            svgElementUndoStack: []
+            svgElementUndoStack: [],
+            svgElementRedoStack: []
           }
         ]
       }
@@ -290,7 +307,8 @@ describe('store/modules/clips/mutations', () => {
           {
             id: 1,
             svgElementList: [{ id: 2, name: 'a', x: 10 }, { id: 3, name: 'c' }],
-            svgElementUndoStack: []
+            svgElementUndoStack: [],
+            svgElementRedoStack: []
           }
         ]
       }
@@ -311,7 +329,8 @@ describe('store/modules/clips/mutations', () => {
           {
             id: 1,
             svgElementList: [{ id: 2, name: 'a', x: 10 }],
-            svgElementUndoStack: []
+            svgElementUndoStack: [],
+            svgElementRedoStack: ['a', 'b']
           }
         ]
       }
@@ -324,6 +343,7 @@ describe('store/modules/clips/mutations', () => {
       expect(data.svgElementList[0].id).to.equal(2)
       expect(data.svgElementList[0].name).to.equal('a')
       expect(data.svgElementList[0].x).to.equal(undefined)
+      expect(state.clipList[0].svgElementRedoStack).to.have.lengthOf(0)
     })
   })
   describe('REMOVE_SVG_ELEMENT', () => {
@@ -333,7 +353,8 @@ describe('store/modules/clips/mutations', () => {
           {
             id: 1,
             svgElementList: [{ id: 2 }, { id: 3 }],
-            svgElementUndoStack: []
+            svgElementUndoStack: [],
+            svgElementRedoStack: []
           }
         ]
       }
@@ -351,7 +372,8 @@ describe('store/modules/clips/mutations', () => {
           {
             id: 1,
             svgElementList: [{ id: 1 }, { id: 2 }, { id: 3 }],
-            svgElementUndoStack: []
+            svgElementUndoStack: [],
+            svgElementRedoStack: []
           }
         ]
       }
@@ -370,7 +392,8 @@ describe('store/modules/clips/mutations', () => {
         {
           id: 1,
           svgElementList: [{ id: 2, x: 0 }, { id: 3 }],
-          svgElementUndoStack: []
+          svgElementUndoStack: [],
+          svgElementRedoStack: ['a', 'b']
         }
       ]
     }
@@ -383,6 +406,7 @@ describe('store/modules/clips/mutations', () => {
     expect(data.svgElementList[0].id).to.equal(2)
     expect(data.svgElementList[0].x).to.equal(0)
     expect(data.svgElementList[0]._index).to.equal(0)
+    expect(state.clipList[0].svgElementRedoStack).to.have.lengthOf(0)
   })
   describe('UNDO_SVG_ELEMENT もとに戻す', () => {
     describe('ADD 追加をもとに戻す', () => {

@@ -82,6 +82,8 @@ const mutations = {
       type: 'ADD',
       svgElementList: svgElementList.map(elm => ({ id: elm.id }))
     })
+    // やり直し履歴はクリア
+    clip.svgElementRedoStack = []
 
     clip.svgElementList = [...clip.svgElementList, ...svgElementList]
   },
@@ -101,6 +103,8 @@ const mutations = {
         return dif
       })
     })
+    // やり直し履歴はクリア
+    clip.svgElementRedoStack = []
 
     svgElementList.forEach(svgElement => {
       const index = clip.svgElementList.findIndex(
@@ -136,6 +140,8 @@ const mutations = {
         )
       )
     })
+    // やり直し履歴はクリア
+    clip.svgElementRedoStack = []
 
     svgElementIdList.forEach(svgElementId => {
       const index = clip.svgElementList.findIndex(
