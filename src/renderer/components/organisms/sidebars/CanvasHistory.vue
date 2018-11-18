@@ -64,6 +64,7 @@ export default {
       _jumpSvgElementHistory: clipTypes.a.JUMP_SVG_ELEMENT_HISTORY
     }),
     jumpSvgElementHistory(to) {
+      this.$svgif.selectedElementIdList = []
       this._jumpSvgElementHistory({
         clipId: this.SELECTED_CLIP.id,
         to

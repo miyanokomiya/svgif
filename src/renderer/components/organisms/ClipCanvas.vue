@@ -277,6 +277,9 @@ export default {
     },
     initLocalSvgElementList() {
       this.localSvgElementList = this.svgElementList.map(elm => ({ ...elm }))
+      this.selectedElementIdList = this.selectedElementIdList.filter(id =>
+        this.localSvgElementList.find(elm => elm.id === id)
+      )
     },
     createSvgElement(svgElementList, commit = false) {
       if (svgElementList.length === 0) return
