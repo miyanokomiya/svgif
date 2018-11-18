@@ -8,6 +8,9 @@ import locale from 'element-ui/lib/locale/lang/en'
 import 'element-ui/lib/theme-chalk/index.css'
 import plugins from './commons/plugins'
 
+if (process.env.BUILD_STAMP)
+  console.log(`Build: ${new Date(process.env.BUILD_STAMP)}`)
+
 document.ondragover = document.ondrop = e => {
   e.preventDefault()
   return false

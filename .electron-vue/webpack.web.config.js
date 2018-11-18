@@ -105,7 +105,8 @@ let webConfig = {
       nodeModules: false
     }),
     new webpack.DefinePlugin({
-      'process.env.IS_WEB': 'true'
+      'process.env.IS_WEB': 'true',
+      'process.env.BUILD_STAMP': Date.now()
     }),
     // new webpack.HotModuleReplacementPlugin(),
     new webpack.NoEmitOnErrorsPlugin()
