@@ -40,7 +40,7 @@
       :cx="resizeArrowItem2.x"
       :cy="resizeArrowItem2.y"
       :radian="radian + Math.PI"
-      @mousedown.native="$emit('startResizeArrow2', svgElement.id)"
+      @mousedown.native="$emit('startResizeArrow2', line.id)"
     />
   </g>
 </LineFrame>
@@ -74,14 +74,14 @@ export default {
     },
     from() {
       return {
-        x: this.svgElement.x1,
-        y: this.svgElement.y1
+        x: this.line.x1,
+        y: this.line.y1
       }
     },
     to() {
       return {
-        x: this.svgElement.x2,
-        y: this.svgElement.y2
+        x: this.line.x2,
+        y: this.line.y2
       }
     },
     radian() {
@@ -96,15 +96,13 @@ export default {
     resizeArrowItem2() {
       return {
         x:
-          this.svgElement.x2 -
-          this.unitVector.x * this.svgElement.depth2 +
-          this.unitCross.x *
-            (this.svgElement.radius2 + this.svgElement.strokeWidth / 2),
+          this.line.x2 -
+          this.unitVector.x * this.line.depth2 +
+          this.unitCross.x * (this.line.radius2 + this.line.strokeWidth / 2),
         y:
-          this.svgElement.y2 -
-          this.unitVector.y * this.svgElement.depth2 +
-          this.unitCross.y *
-            (this.svgElement.radius2 + this.svgElement.strokeWidth / 2)
+          this.line.y2 -
+          this.unitVector.y * this.line.depth2 +
+          this.unitCross.y * (this.line.radius2 + this.line.strokeWidth / 2)
       }
     }
   }
