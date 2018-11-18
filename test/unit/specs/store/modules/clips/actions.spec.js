@@ -245,4 +245,38 @@ describe('store/modules/clips/actions', () => {
       })
     })
   })
+  describe('UNDO_SVG_ELEMENT', () => {
+    it('mutationが正しく実行されること', done => {
+      testAction({
+        done,
+        action: actions[types.a.UNDO_SVG_ELEMENT],
+        payload: { clipId: 1 },
+        mutations: [
+          {
+            type: types.m.UNDO_SVG_ELEMENT,
+            test: ({ clipId }) => {
+              expect(clipId).to.equal(1)
+            }
+          }
+        ]
+      })
+    })
+  })
+  describe('REDO_SVG_ELEMENT', () => {
+    it('mutationが正しく実行されること', done => {
+      testAction({
+        done,
+        action: actions[types.a.REDO_SVG_ELEMENT],
+        payload: { clipId: 1 },
+        mutations: [
+          {
+            type: types.m.REDO_SVG_ELEMENT,
+            test: ({ clipId }) => {
+              expect(clipId).to.equal(1)
+            }
+          }
+        ]
+      })
+    })
+  })
 })

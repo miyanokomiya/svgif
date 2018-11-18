@@ -68,6 +68,18 @@ const actions = {
       svgElementIdList
     })
     return Promise.resolve()
+  },
+  [types.a.UNDO_SVG_ELEMENT]({ commit }, { clipId }) {
+    commit(types.m.UNDO_SVG_ELEMENT, {
+      clipId
+    })
+    return Promise.resolve()
+  },
+  [types.a.REDO_SVG_ELEMENT]({ commit }, { clipId }) {
+    commit(types.m.REDO_SVG_ELEMENT, {
+      clipId
+    })
+    return Promise.resolve()
   }
 }
 
