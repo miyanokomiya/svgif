@@ -59,6 +59,8 @@
         :predefine="predefineColors">
       </el-color-picker>
     </div>
+    <el-button icon="el-icon-question" size="mini" circle @click="showHelpDialog = true" />
+    <HelpDialog v-model="showHelpDialog" />
   </div>
 </template>
 
@@ -70,6 +72,7 @@ import IconCircle from '@/components/atoms/icons/IconCircle'
 import IconLine from '@/components/atoms/icons/IconLine'
 import IconArrow from '@/components/atoms/icons/IconArrow'
 import IconText from '@/components/atoms/icons/IconText'
+import HelpDialog from '@/components/organisms/dialogs/HelpDialog'
 
 export default {
   components: {
@@ -77,7 +80,8 @@ export default {
     IconCircle,
     IconLine,
     IconArrow,
-    IconText
+    IconText,
+    HelpDialog
   },
   data: () => ({
     predefineColors: [
@@ -95,7 +99,8 @@ export default {
       'hsl(181, 100%, 37%)',
       'hsla(209, 100%, 56%, 0.73)',
       '#c7158577'
-    ]
+    ],
+    showHelpDialog: false
   }),
   computed: {
     ...mapGetters({
