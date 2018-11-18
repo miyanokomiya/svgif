@@ -217,9 +217,6 @@ export default {
     this.rescale()
     this.initLocalSvgElementList()
   },
-  updated() {
-    this.rescale()
-  },
   watch: {
     windowInfo() {
       this.rescale()
