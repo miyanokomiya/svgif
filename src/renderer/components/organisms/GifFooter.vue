@@ -5,13 +5,12 @@
       type="primary"
       size="mini"
       icon="el-icon-download"
-      class="save-gif-button"
       :disabled="!gif"
       @click="saveGifFile"
     >
       Export Gif
     </el-button>
-    <div>
+    <div class="input-max-size">
       <span>Max Size(px): </span>
       <el-input
         class="max-size-input"
@@ -95,8 +94,8 @@ export default {
       margin-left: 0;
     }
   }
-  .save-gif-button {
-    margin-right: auto;
+  .input-max-size {
+    margin-left: auto;
   }
   .max-size-input {
     width: 10rem;
