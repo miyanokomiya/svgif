@@ -1,6 +1,9 @@
 import types from './types'
 
 const getters = {
+  [types.g.MAX_SIZE](state) {
+    return state.maxSize
+  },
   [types.g.CLIP_LIST](state) {
     return state.clipList
   },

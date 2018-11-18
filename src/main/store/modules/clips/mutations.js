@@ -143,6 +143,9 @@ function redo({ clip }) {
 }
 
 const mutations = {
+  [types.m.SET_MAX_SIZE](state, maxSize) {
+    state.maxSize = maxSize
+  },
   [types.m.ADD_CLIP](state, { clip, index = -1 }) {
     adjustSvgElementPositions({
       state,

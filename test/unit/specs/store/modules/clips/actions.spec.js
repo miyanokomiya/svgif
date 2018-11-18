@@ -31,6 +31,23 @@ function testAction({
 }
 
 describe('store/modules/clips/actions', () => {
+  describe('SET_MAX_SIZE', () => {
+    it('mutationが正しく実行されること', done => {
+      testAction({
+        done,
+        action: actions[types.a.SET_MAX_SIZE],
+        payload: 1,
+        mutations: [
+          {
+            type: types.m.SET_MAX_SIZE,
+            test: maxSize => {
+              expect(maxSize).to.equal(1)
+            }
+          }
+        ]
+      })
+    })
+  })
   describe('CREATE_CLIP', () => {
     it('mutationが正しく実行されること', done => {
       testAction({

@@ -2,6 +2,13 @@ import types from '@main/store/modules/clips/types'
 import getters from '@main/store/modules/clips/getters'
 
 describe('store/modules/clips/getters', () => {
+  describe('MAX_SIZE', () => {
+    it('maxSize が取得されること', () => {
+      const state = { maxSize: 1 }
+      const maxSize = getters[types.g.MAX_SIZE](state)
+      expect(maxSize).to.equal(1)
+    })
+  })
   describe('CLIP_LIST', () => {
     it('clipList が取得されること', () => {
       const state = {

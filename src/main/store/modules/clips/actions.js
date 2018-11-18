@@ -2,6 +2,10 @@ import { getClip } from '@/commons/models/clip'
 import types from './types'
 
 const actions = {
+  [types.a.SET_MAX_SIZE]({ commit }, maxSize) {
+    commit(types.m.SET_MAX_SIZE, maxSize)
+    return Promise.resolve()
+  },
   [types.a.CREATE_CLIP]({ commit }, { clip, index }) {
     commit(types.m.ADD_CLIP, {
       clip: getClip(clip),

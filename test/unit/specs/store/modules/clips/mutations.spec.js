@@ -38,6 +38,13 @@ describe('store/modules/clips/mutations', () => {
       expect(state.clipList[0].svgElementList[0].y).to.equal(100)
     })
   })
+  describe('SET_MAX_SIZE maxSizeセット', () => {
+    it('selectedId が -1 の場合、末尾に追加されること', () => {
+      const state = { maxSize: 1 }
+      mutations[types.m.SET_MAX_SIZE](state, 2)
+      expect(state.maxSize).to.equal(2)
+    })
+  })
   describe('ADD_CLIP', () => {
     context('index省略の場合', () => {
       it('selectedId が -1 の場合、末尾に追加されること', () => {
