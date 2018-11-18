@@ -151,7 +151,7 @@ export default {
   hr {
     height: 0.1rem;
     width: 80%;
-    margin: 0.6rem 0 0.6rem 10%;
+    margin: 0 0 0.4rem 10%;
     background-color: rgba(gray, 0.5);
     border: 0;
   }

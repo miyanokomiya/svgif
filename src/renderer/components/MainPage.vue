@@ -21,7 +21,7 @@
             <el-main>
               <ClipCanvas v-if="tabValue === 'Canvas'"/>
             </el-main>
-            <el-footer>
+            <el-footer height="40px">
               <CanvasFooter
                 @createGif="createGif"
               />
@@ -36,7 +36,7 @@
                 @selectClip="selectClip"
               />
             </el-main>
-            <el-footer>
+            <el-footer height="40px">
               <GifFooter
                 :gif="gif"
                 @createGif="createGif"
@@ -168,10 +168,7 @@ export default {
       .el-tab-pane {
         height: 100%;
         .el-main {
-          height: calc(100% - 60px);
-        }
-        .el-footer {
-          height: 60px;
+          height: calc(100% - 40px);
         }
       }
     }
