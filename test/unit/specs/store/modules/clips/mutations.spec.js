@@ -292,7 +292,7 @@ describe('store/modules/clips/mutations', () => {
       }
       mutations[types.m.UPDATE_SVG_ELEMENT](state, {
         clipId: 1,
-        svgElement: { id: 2, name: 'b' }
+        svgElementList: [{ id: 2, name: 'b' }]
       })
       const elmList = state.clipList[0].svgElementList
       expect(elmList[0].id).to.equal(2)
@@ -336,7 +336,7 @@ describe('store/modules/clips/mutations', () => {
       }
       mutations[types.m.UPDATE_SVG_ELEMENT](state, {
         clipId: 1,
-        svgElement: { id: 2, name: 'b' }
+        svgElementList: [{ id: 2, name: 'b' }]
       })
       const data = state.clipList[0].svgElementUndoStack[0]
       expect(data.type).to.equal('UPDATE')
@@ -399,7 +399,7 @@ describe('store/modules/clips/mutations', () => {
     }
     mutations[types.m.REMOVE_SVG_ELEMENT](state, {
       clipId: 1,
-      svgElementId: 2
+      svgElementIdList: [2]
     })
     const data = state.clipList[0].svgElementUndoStack[0]
     expect(data.type).to.equal('REMOVE')
@@ -639,7 +639,7 @@ describe('store/modules/clips/mutations', () => {
     })
     it('末端ジャンプが正しく行えること', () => {
       const state = getState()
-      mutations[types.m.JUMP_SVG_ELEMENT_HISTORY](state, { clipId: 1, to: 3 })
+      mutations[types.m.JUMP_SVG_ELEMENT_HISTORY](state, { clipId: 1, to: 4 })
       const clip = state.clipList[0]
       const undoStack = clip.svgElementUndoStack
       const redoStack = clip.svgElementRedoStack
@@ -657,12 +657,21 @@ describe('store/modules/clips/mutations', () => {
     })
     it('undo途中へのジャンプが正しく行えること', () => {
       const state = getState()
-      mutations[types.m.JUMP_SVG_ELEMENT_HISTORY](state, { clipId: 1, to: 2 })
+      mutations[types.m.JUMP_SVG_ELEMENT_HISTORY](state, { clipId: 1, to: 3 })
       const clip = state.clipList[0]
       const undoStack = clip.svgElementUndoStack
       const redoStack = clip.svgElementRedoStack
       expect(undoStack).to.lengthOf(1)
       expect(redoStack).to.lengthOf(3)
+    })
+    it('現在位置のジャンプが正しく行えること', () => {
+      const state = getState()
+      mutations[types.m.JUMP_SVG_ELEMENT_HISTORY](state, { clipId: 1, to: 2 })
+      const clip = state.clipList[0]
+      const undoStack = clip.svgElementUndoStack
+      const redoStack = clip.svgElementRedoStack
+      expect(undoStack).to.lengthOf(2)
+      expect(redoStack).to.lengthOf(2)
     })
   })
 })

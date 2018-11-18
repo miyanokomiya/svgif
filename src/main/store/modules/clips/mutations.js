@@ -248,10 +248,8 @@ const mutations = {
       type: 'REMOVE',
       svgElementList: JSON.parse(
         JSON.stringify(
-          svgElementIdList.map(elm => {
-            const _index = clip.svgElementList.findIndex(
-              elm => elm.id === svgElementId
-            )
+          svgElementIdList.map(id => {
+            const _index = clip.svgElementList.findIndex(elm => elm.id === id)
             return {
               _index,
               ...clip.svgElementList[_index]
@@ -287,7 +285,7 @@ const mutations = {
         redo({ clip })
       }
     } else {
-      for (let i = redoStack.length; i <= to; i++) {
+      for (let i = redoStack.length + 1; i <= to; i++) {
         undo({ clip })
       }
     }
