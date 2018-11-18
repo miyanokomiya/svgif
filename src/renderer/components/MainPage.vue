@@ -149,7 +149,7 @@ export default {
   text-align: center;
   padding: 0.4rem 0 0;
   .tool-box {
-    height: calc(100% - 32px);
+    height: calc(100% - 32px - 0.1rem);
     .draw-tools {
       height: calc(50%);
     }
