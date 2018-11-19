@@ -559,7 +559,6 @@ export default {
             elm.y -= elm.height / 2
             this.createSvgElement([elm], true)
             this.selectElement(elm.id)
-            this.drawMode = elementUtils.getModeAfterCreateElement(elm)
           })
           .catch(e => {
             this.$notify.error({

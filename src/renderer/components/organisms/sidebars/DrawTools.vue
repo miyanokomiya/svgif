@@ -22,6 +22,17 @@
           </div>
         </el-button>
         <el-button
+          :type="$svgif.elementType === 'text' && isDrawMode ? 'primary' : ''"
+          size="mini"
+          @click="setElementType('text')"
+        >
+          <div class="button-content">
+            <IconText class="button-icon"/>
+          </div>
+        </el-button>
+      </el-button-group>
+      <el-button-group>
+        <el-button
           :type="$svgif.elementType === 'line' && isDrawMode ? 'primary' : ''"
           size="mini"
           @click="setElementType('line')"
@@ -30,8 +41,6 @@
             <IconLine class="button-icon"/>
           </div>
         </el-button>
-      </el-button-group>
-      <el-button-group>
         <el-button
           :type="$svgif.elementType === 'arrow' && isDrawMode ? 'primary' : ''"
           size="mini"
@@ -39,15 +48,6 @@
         >
           <div class="button-content">
             <IconArrow class="button-icon"/>
-          </div>
-        </el-button>
-        <el-button
-          :type="$svgif.elementType === 'text' && isDrawMode ? 'primary' : ''"
-          size="mini"
-          @click="setElementType('text')"
-        >
-          <div class="button-content">
-            <IconText class="button-icon"/>
           </div>
         </el-button>
       </el-button-group>
@@ -59,6 +59,19 @@
         :predefine="predefineColors">
       </el-color-picker>
     </div>
+    <el-button
+      size="mini"
+      icon="el-icon-picture"
+      @click="selectPicture()"
+    />
+    <input
+      v-show="false"
+      ref="fileInput"
+      multiple
+      type="file"
+      accept="image/*"
+      @change="addPicture"
+    />
     <el-button icon="el-icon-question" size="mini" circle @click="showHelpDialog = true" />
     <HelpDialog v-model="showHelpDialog" />
   </div>
@@ -67,6 +80,8 @@
 <script>
 import { mapGetters, mapActions } from 'vuex'
 import clipTypes from '@/store/modules/clips/types'
+import { readImageFile } from '@/commons/utils/file'
+import { createElement } from '@/commons/utils/element'
 import IconRectangle from '@/components/atoms/icons/IconRectangle'
 import IconCircle from '@/components/atoms/icons/IconCircle'
 import IconLine from '@/components/atoms/icons/IconLine'
@@ -104,7 +119,8 @@ export default {
   }),
   computed: {
     ...mapGetters({
-      SELECTED_CLIP: clipTypes.g.SELECTED_CLIP
+      SELECTED_CLIP: clipTypes.g.SELECTED_CLIP,
+      WHOLE_SIZE: clipTypes.g.WHOLE_SIZE
     }),
     selectedElementList() {
       return this.$svgif.selectedElementIdList
@@ -117,6 +133,7 @@ export default {
   },
   methods: {
     ...mapActions({
+      _createSvgElement: clipTypes.a.CREATE_SVG_ELEMENT,
       _updateSvgElement: clipTypes.a.UPDATE_SVG_ELEMENT
     }),
     setCanvasMode(mode) {
@@ -138,6 +155,41 @@ export default {
           ...elm,
           stroke: val
         }))
+      })
+    },
+    selectPicture() {
+      this.$refs.fileInput.click()
+    },
+    addPicture(e) {
+      const files = [...e.target.files]
+      files.forEach(file => {
+        readImageFile(file)
+          .then(({ base64, width, height }) => {
+            // キャンバス中心に追加する
+            const elm = createElement({
+              elementType: 'rectangle',
+              elementColor: this.$svgif.elementColor,
+              x: this.WHOLE_SIZE.width / 2,
+              y: this.WHOLE_SIZE.height / 2
+            })
+            elm.base64 = base64
+            elm.defaultAspect = width / height
+            elm.width = Math.min(width, this.WHOLE_SIZE.width / 3)
+            elm.height = elm.width / elm.defaultAspect
+            elm.x -= elm.width / 2
+            elm.y -= elm.height / 2
+            this._createSvgElement({
+              clipId: this.SELECTED_CLIP.id,
+              svgElement: elm
+            })
+            this.$svgif.selectedElementIdList = [elm.id]
+          })
+          .catch(e => {
+            this.$notify.error({
+              title: 'Error',
+              message: e.message
+            })
+          })
       })
     }
   }
