@@ -20,24 +20,33 @@ export function readImageFile(file) {
 }
 
 export function saveGifFile(gif) {
-  if (process.env.IS_WEB) return
-  const remote = require('electron').remote
-  const { dialog } = require('electron').remote
-  var fs = remote.require('fs')
-  var window = remote.getCurrentWindow()
-  var options = {
-    filters: [
-      { name: 'Gif File', extensions: ['gif'] },
-      { name: 'All Files', extensions: ['*'] }
-    ],
-    properties: ['openFile', 'createDirectory']
-  }
-  dialog.showSaveDialog(window, options, filename => {
-    if (filename) {
-      var dataUrl = gif.replace(/^data:image\/gif;base64,/, '')
-      fs.writeFile(filename, dataUrl, 'base64', err => {
-        if (err) console.log(err)
-      })
+  if (process.env.IS_WEB) {
+    const a = document.createElement('a')
+    a.href = gif
+    a.download = `${Date.now()}.gif`
+    a.style.display = 'none'
+    document.body.appendChild(a)
+    a.click()
+    document.body.removeChild(a)
+  } else {
+    const remote = require('electron').remote
+    const { dialog } = require('electron').remote
+    var fs = remote.require('fs')
+    var window = remote.getCurrentWindow()
+    var options = {
+      filters: [
+        { name: 'Gif File', extensions: ['gif'] },
+        { name: 'All Files', extensions: ['*'] }
+      ],
+      properties: ['openFile', 'createDirectory']
     }
-  })
+    dialog.showSaveDialog(window, options, filename => {
+      if (filename) {
+        var dataUrl = gif.replace(/^data:image\/gif;base64,/, '')
+        fs.writeFile(filename, dataUrl, 'base64', err => {
+          if (err) console.log(err)
+        })
+      }
+    })
+  }
 }

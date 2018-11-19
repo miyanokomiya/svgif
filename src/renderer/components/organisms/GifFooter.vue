@@ -1,7 +1,6 @@
 <template>
   <div class="canvas-footer">
     <el-button
-      v-if="!$svgif.isWeb"
       type="primary"
       size="mini"
       icon="el-icon-download"
