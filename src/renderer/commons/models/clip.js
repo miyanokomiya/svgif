@@ -1,9 +1,10 @@
 import { createId, createDate } from './base'
+import { completeElement } from './svgElements'
 
 export function getClip(clip) {
   return {
-    id: createId(),
-    createdAt: createDate(new Date()),
+    id: clip.id || createId(),
+    createdAt: clip.createdAt || createDate(new Date()),
     delay: 1000,
     base64: '',
     width: 0,
@@ -18,5 +19,36 @@ export function getClip(clip) {
     svgElementRedoStack: clip.svgElementRedoStack
       ? clip.svgElementRedoStack.map(data => JSON.parse(JSON.stringify(data)))
       : []
+  }
+}
+
+// 過去データを考慮してデータを補完する
+export function completeClip(clip = {}) {
+  const svgElementList = (clip.svgElementList || []).map(completeElement)
+  const svgElementUndoStack = (clip.svgElementUndoStack || []).map(
+    completeSvgElementHistoryStack
+  )
+  const svgElementRedoStack = (clip.svgElementRedoStack || []).map(
+    completeSvgElementHistoryStack
+  )
+  return {
+    id: clip.id || createId(),
+    createdAt: clip.createdAt || createDate(new Date()),
+    delay: 1000,
+    base64: '',
+    width: 0,
+    height: 0,
+    ...clip,
+    svgElementList,
+    svgElementUndoStack,
+    svgElementRedoStack
+  }
+}
+
+function completeSvgElementHistoryStack(stack = {}) {
+  const svgElementList = (stack.svgElementList || []).map(completeElement)
+  return {
+    ...stack,
+    svgElementList
   }
 }

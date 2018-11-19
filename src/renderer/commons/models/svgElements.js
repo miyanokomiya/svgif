@@ -1,16 +1,17 @@
 import { createId } from './base'
 
-function getBaseProps() {
+function getBaseProps(arg = {}) {
   return {
-    id: createId(),
+    id: arg.id || createId(),
     stroke: 'tomato',
-    strokeWidth: 5
+    strokeWidth: 10,
+    ...arg
   }
 }
 
 export function getRectangle(arg = {}) {
   return {
-    ...getBaseProps(),
+    ...getBaseProps(arg),
     name: 'rectangle',
     x: 0,
     y: 0,
@@ -25,7 +26,7 @@ export function getRectangle(arg = {}) {
 
 export function getCircle(arg = {}) {
   return {
-    ...getRectangle(),
+    ...getRectangle(arg),
     name: 'circle',
     ...arg
   }
@@ -33,7 +34,7 @@ export function getCircle(arg = {}) {
 
 export function getText(arg = {}) {
   return {
-    ...getBaseProps(),
+    ...getBaseProps(arg),
     name: 'text',
     text: '',
     fontSize: 10,
@@ -43,7 +44,7 @@ export function getText(arg = {}) {
 
 export function getLine(arg = {}) {
   return {
-    ...getBaseProps(),
+    ...getBaseProps(arg),
     name: 'line',
     x1: 0,
     y1: 0,
@@ -56,10 +57,32 @@ export function getLine(arg = {}) {
 
 export function getArrow(arg = {}) {
   return {
-    ...getLine(),
+    ...getLine(arg),
     name: 'arrow',
     radius2: 30,
     depth2: 50,
     ...arg
+  }
+}
+
+export function completeElement(elm = {}) {
+  const getter = getElementGetter(elm.name)
+  return getter(elm)
+}
+
+function getElementGetter(name) {
+  switch (name) {
+    case 'rectangle':
+      return getRectangle
+    case 'circle':
+      return getCircle
+    case 'text':
+      return getText
+    case 'line':
+      return getLine
+    case 'arrow':
+      return getArrow
+    default:
+      throw new Error('invalid element name: ' + name)
   }
 }
