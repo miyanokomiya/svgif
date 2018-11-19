@@ -51,7 +51,7 @@
 
 <script>
 import { mapActions, mapGetters } from 'vuex'
-import clipTypes from '@main/store/modules/clips/types'
+import clipTypes from '@/store/modules/clips/types'
 import DrawTools from '@/components/organisms/sidebars/DrawTools'
 import CanvasHistory from '@/components/organisms/sidebars/CanvasHistory'
 import ClipCanvas from '@/components/organisms/ClipCanvas'

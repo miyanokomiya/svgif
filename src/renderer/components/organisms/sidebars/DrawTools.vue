@@ -66,7 +66,7 @@
 
 <script>
 import { mapGetters, mapActions } from 'vuex'
-import clipTypes from '@main/store/modules/clips/types'
+import clipTypes from '@/store/modules/clips/types'
 import IconRectangle from '@/components/atoms/icons/IconRectangle'
 import IconCircle from '@/components/atoms/icons/IconCircle'
 import IconLine from '@/components/atoms/icons/IconLine'

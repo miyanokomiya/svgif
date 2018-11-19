@@ -14,9 +14,8 @@
 </template>
 
 <script>
-import electron from 'electron'
-import { mapActions } from 'vuex'
-import clipTypes from '@main/store/modules/clips/types'
+import electron, { ipcRenderer } from 'electron'
+import clipTypes from '@/store/modules/clips/types'
 import { screenshot } from '@/commons/utils/screenCapture'
 
 const VORDER_SIZE = 6
@@ -27,10 +26,6 @@ export default {
     shooting: false
   }),
   methods: {
-    ...mapActions({
-      _createClip: clipTypes.a.CREATE_CLIP,
-      _deleteClip: clipTypes.a.DELETE_CLIP
-    }),
     getScreenshotRange() {
       const workArea = electron.screen.getPrimaryDisplay().workArea
       const frameRect = this.$refs.frame.$el.getBoundingClientRect()
@@ -51,7 +46,10 @@ export default {
           setTimeout(() => {
             this.flash = false
           }, 100)
-          this._createClip({ clip: { base64, width, height } })
+          ipcRenderer.send('app-dispatch', {
+            type: clipTypes.a.CREATE_CLIP,
+            payload: { clip: { base64, width, height } }
+          })
         })
         .catch(e => {
           this.shooting = false

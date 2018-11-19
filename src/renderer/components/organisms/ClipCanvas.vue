@@ -113,7 +113,7 @@
 
 <script>
 import { mapGetters, mapActions } from 'vuex'
-import clipTypes from '@main/store/modules/clips/types'
+import clipTypes from '@/store/modules/clips/types'
 import { getPoint } from '@/commons/utils/canvas'
 import { readImageFile } from '@/commons/utils/file'
 import * as geo from '@/commons/utils/geo'

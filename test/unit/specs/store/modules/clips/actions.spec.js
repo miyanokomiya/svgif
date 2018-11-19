@@ -1,5 +1,5 @@
-import types from '@main/store/modules/clips/types'
-import actions from '@main/store/modules/clips/actions'
+import types from '@/store/modules/clips/types'
+import actions from '@/store/modules/clips/actions'
 
 function testAction({
   done,

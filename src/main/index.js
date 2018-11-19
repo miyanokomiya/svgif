@@ -1,7 +1,6 @@
 'use strict'
 
 import { app, BrowserWindow, ipcMain } from 'electron'
-import './store'
 
 /**
  * Set `__static` path to static files in production
@@ -91,4 +90,8 @@ app.on('ready', () => {
 ipcMain.on('show-recorder-window', () => {
   if (recorderWindow) return recorderWindow.show()
   createRecorderWindow()
+})
+
+ipcMain.on('app-dispatch', (event, arg) => {
+  mainWindow.send('app-dispatch', arg)
 })

@@ -1,7 +1,7 @@
-import types from '@main/store/modules/clips/types'
+import types from '@/store/modules/clips/types'
 import mutations, {
   adjustSvgElementPositions
-} from '@main/store/modules/clips/mutations'
+} from '@/store/modules/clips/mutations'
 import { getRectangle } from '@/commons/models/svgElements'
 
 describe('store/modules/clips/mutations', () => {

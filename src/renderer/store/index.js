@@ -9,9 +9,6 @@ export default new Vuex.Store({
   },
   plugins: process.env.IS_WEB
     ? []
-    : [
-        require('vuex-electron').createPersistedState(),
-        require('vuex-electron').createSharedMutations()
-      ],
+    : [require('vuex-electron').createPersistedState()],
   strict: process.env.NODE_ENV !== 'production'
 })

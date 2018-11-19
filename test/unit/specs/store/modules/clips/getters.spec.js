@@ -1,5 +1,5 @@
-import types from '@main/store/modules/clips/types'
-import getters from '@main/store/modules/clips/getters'
+import types from '@/store/modules/clips/types'
+import getters from '@/store/modules/clips/getters'
 
 describe('store/modules/clips/getters', () => {
   describe('MAX_SIZE', () => {

@@ -40,7 +40,7 @@
 
 <script>
 import { mapActions, mapGetters } from 'vuex'
-import clipTypes from '@main/store/modules/clips/types'
+import clipTypes from '@/store/modules/clips/types'
 
 export default {
   computed: {

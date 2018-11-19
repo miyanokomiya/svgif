@@ -10,7 +10,7 @@
 
 <script>
 import { mapGetters } from 'vuex'
-import clipTypes from '@main/store/modules/clips/types'
+import clipTypes from '@/store/modules/clips/types'
 import ImagePanel from '@/components/atoms/ImagePanel'
 
 export default {

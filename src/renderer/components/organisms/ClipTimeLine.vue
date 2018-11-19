@@ -32,7 +32,7 @@
 
 <script>
 import { mapGetters, mapActions } from 'vuex'
-import clipTypes from '@main/store/modules/clips/types'
+import clipTypes from '@/store/modules/clips/types'
 import draggable from 'vuedraggable'
 import SvgRender from '@/components/organisms/SvgRender'
 import ImagePanel from '@/components/atoms/ImagePanel'
