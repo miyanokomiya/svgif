@@ -3,6 +3,22 @@
     <el-aside width="200px">
       <el-button
         v-if="!$svgif.isWeb"
+        icon="el-icon-download"
+        size="mini"
+        @click="saveState"
+      >
+        Save
+      </el-button>
+      <el-button
+        v-if="!$svgif.isWeb"
+        icon="el-icon-upload2"
+        size="mini"
+        @click="selectFile"
+      >
+        Load
+      </el-button>
+      <el-button
+        v-if="!$svgif.isWeb"
         icon="el-icon-picture"
         size="mini"
         @click="showRecorderWindow"
@@ -46,6 +62,14 @@
         </el-tabs>
       </el-main>
     </el-container>
+    <input
+      v-if="!clearFileInputFlag"
+      v-show="false"
+      ref="fileInput"
+      type="file"
+      accept="application/json"
+      @change="importState"
+    />
   </el-container>
 </template>
 
@@ -60,6 +84,7 @@ import CanvasFooter from '@/components/organisms/CanvasFooter'
 import GifFooter from '@/components/organisms/GifFooter'
 import ImagePanel from '@/components/atoms/ImagePanel'
 import { createGif } from '@/commons/utils/gif'
+import { saveJsonFile } from '@/commons/utils/file'
 
 export default {
   components: {
@@ -73,14 +98,16 @@ export default {
   },
   data: () => ({
     tabValue: 'Canvas',
-    gif: ''
+    gif: '',
+    clearFileInputFlag: false
   }),
   computed: {
     ...mapGetters({
       CLIP_LIST: clipTypes.g.CLIP_LIST,
       SELECTED_CLIP: clipTypes.g.SELECTED_CLIP,
       WHOLE_SIZE: clipTypes.g.WHOLE_SIZE,
-      MAX_SIZE: clipTypes.g.MAX_SIZE
+      MAX_SIZE: clipTypes.g.MAX_SIZE,
+      STATE: clipTypes.g.STATE
     })
   },
   methods: {
@@ -89,7 +116,8 @@ export default {
       _deleteAllClip: clipTypes.a.DELETE_ALL_CLIP,
       _selectClip: clipTypes.a.SELECT_CLIP,
       _swapClipOrder: clipTypes.a.SWAP_CLIP_ORDER,
-      _updateDelay: clipTypes.a.UPDATE_DELAY
+      _updateDelay: clipTypes.a.UPDATE_DELAY,
+      _importState: clipTypes.a.IMPORT_STATE
     }),
     removeClip(id) {
       this._deleteClip(id)
@@ -139,6 +167,34 @@ export default {
     showRecorderWindow() {
       const ipcRenderer = require('electron').ipcRenderer
       ipcRenderer.send('show-recorder-window')
+    },
+    saveState() {
+      saveJsonFile(this.STATE)
+    },
+    importState(e) {
+      if (e.target.files.length === 0) return
+      const file = e.target.files[0]
+      const reader = new FileReader()
+      reader.readAsText(file)
+      reader.onload = () => {
+        this._importState(JSON.parse(reader.result))
+        this.clearFileInput()
+      }
+      reader.onerror = err => {
+        this.$notify.error({
+          title: 'Error',
+          message: err.message
+        })
+      }
+    },
+    selectFile() {
+      this.$refs.fileInput.click()
+    },
+    clearFileInput() {
+      this.clearFileInputFlag = true
+      this.$nextTick(() => {
+        this.clearFileInputFlag = false
+      })
     }
   }
 }
@@ -153,6 +209,9 @@ export default {
   color: #333;
   text-align: center;
   padding: 0.4rem 0 0;
+  .el-button.el-button {
+    margin-left: 0;
+  }
   .tool-box {
     height: calc(100% - 32px - 0.1rem);
     .draw-tools {

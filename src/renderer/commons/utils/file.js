@@ -21,13 +21,7 @@ export function readImageFile(file) {
 
 export function saveGifFile(gif) {
   if (process.env.IS_WEB) {
-    const a = document.createElement('a')
-    a.href = gif
-    a.download = `${Date.now()}.gif`
-    a.style.display = 'none'
-    document.body.appendChild(a)
-    a.click()
-    document.body.removeChild(a)
+    saveFileInWeb({ file: gif, ex: 'gif' })
   } else {
     const remote = require('electron').remote
     const { dialog } = require('electron').remote
@@ -49,4 +43,40 @@ export function saveGifFile(gif) {
       }
     })
   }
+}
+
+export function saveJsonFile(json) {
+  const text = JSON.stringify(json)
+  if (process.env.IS_WEB) {
+    saveFileInWeb({ file: text, ex: 'json' })
+  } else {
+    const remote = require('electron').remote
+    const { dialog } = require('electron').remote
+    var fs = remote.require('fs')
+    var window = remote.getCurrentWindow()
+    var options = {
+      filters: [
+        { name: 'Json Files', extensions: ['json'] },
+        { name: 'All Files', extensions: ['*'] }
+      ],
+      properties: ['openFile', 'createDirectory']
+    }
+    dialog.showSaveDialog(window, options, filename => {
+      if (filename) {
+        fs.writeFile(filename, text, 'utf8', err => {
+          if (err) console.log(err)
+        })
+      }
+    })
+  }
+}
+
+function saveFileInWeb({ file, ex }) {
+  const a = document.createElement('a')
+  a.href = file
+  a.download = `${Date.now()}.${ex}`
+  a.style.display = 'none'
+  document.body.appendChild(a)
+  a.click()
+  document.body.removeChild(a)
 }
