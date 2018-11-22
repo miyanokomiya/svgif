@@ -26,10 +26,11 @@ export function getClip(clip) {
 export function completeClip(clip = {}) {
   const svgElementList = (clip.svgElementList || []).map(completeElement)
   const svgElementUndoStack = (clip.svgElementUndoStack || []).map(
-    completeSvgElementHistoryStack
+    data =>
+      data.type === 'REMOVE' ? completeSvgElementHistoryStack(data) : data
   )
   const svgElementRedoStack = (clip.svgElementRedoStack || []).map(
-    completeSvgElementHistoryStack
+    data => (data.type === 'ADD' ? completeSvgElementHistoryStack(data) : data)
   )
   return {
     id: clip.id || createId(),

@@ -47,16 +47,37 @@ describe('clip', () => {
         const after = clip.completeClip({})
         expect(after.svgElementUndoStack).to.have.lengthOf(0)
       })
-      it('svgElementUndoStack の中身が補完されること', () => {
-        const after = clip.completeClip({
-          svgElementUndoStack: [
-            { type: 'ADD', svgElementList: [{ name: 'rectangle' }] }
-          ]
+      context('type === REMOVE の場合', () => {
+        it('svgElementUndoStack の中身が補完されること', () => {
+          const after = clip.completeClip({
+            svgElementUndoStack: [
+              { type: 'REMOVE', svgElementList: [{ name: 'rectangle' }] }
+            ]
+          })
+          expect(after.svgElementUndoStack).to.have.lengthOf(1)
+          expect(after.svgElementUndoStack[0].type).to.equal('REMOVE')
+          expect(after.svgElementUndoStack[0].svgElementList).to.have.lengthOf(
+            1
+          )
+          expect(after.svgElementUndoStack[0].svgElementList[0].x).to.equal(0)
         })
-        expect(after.svgElementUndoStack).to.have.lengthOf(1)
-        expect(after.svgElementUndoStack[0].type).to.equal('ADD')
-        expect(after.svgElementUndoStack[0].svgElementList).to.have.lengthOf(1)
-        expect(after.svgElementUndoStack[0].svgElementList[0].x).to.equal(0)
+      })
+      context('type !== REMOVE の場合', () => {
+        it('svgElementUndoStack の中身が補完されないこと', () => {
+          const after = clip.completeClip({
+            svgElementUndoStack: [
+              { type: 'ADD', svgElementList: [{ name: 'rectangle' }] }
+            ]
+          })
+          expect(after.svgElementUndoStack).to.have.lengthOf(1)
+          expect(after.svgElementUndoStack[0].type).to.equal('ADD')
+          expect(after.svgElementUndoStack[0].svgElementList).to.have.lengthOf(
+            1
+          )
+          expect(after.svgElementUndoStack[0].svgElementList[0].x).to.equal(
+            undefined
+          )
+        })
       })
     })
     describe('svgElementRedoStack 補完', () => {
@@ -64,16 +85,37 @@ describe('clip', () => {
         const after = clip.completeClip({})
         expect(after.svgElementRedoStack).to.have.lengthOf(0)
       })
-      it('svgElementRedoStack の中身が補完されること', () => {
-        const after = clip.completeClip({
-          svgElementRedoStack: [
-            { type: 'UPDATE', svgElementList: [{ name: 'line' }] }
-          ]
+      context('type === ADD の場合', () => {
+        it('svgElementRedoStack の中身が補完されること', () => {
+          const after = clip.completeClip({
+            svgElementRedoStack: [
+              { type: 'ADD', svgElementList: [{ name: 'line' }] }
+            ]
+          })
+          expect(after.svgElementRedoStack).to.have.lengthOf(1)
+          expect(after.svgElementRedoStack[0].type).to.equal('ADD')
+          expect(after.svgElementRedoStack[0].svgElementList).to.have.lengthOf(
+            1
+          )
+          expect(after.svgElementRedoStack[0].svgElementList[0].x1).to.equal(0)
         })
-        expect(after.svgElementRedoStack).to.have.lengthOf(1)
-        expect(after.svgElementRedoStack[0].type).to.equal('UPDATE')
-        expect(after.svgElementRedoStack[0].svgElementList).to.have.lengthOf(1)
-        expect(after.svgElementRedoStack[0].svgElementList[0].x1).to.equal(0)
+      })
+      context('type !== ADD の場合', () => {
+        it('svgElementRedoStack の中身が補完されないこと', () => {
+          const after = clip.completeClip({
+            svgElementRedoStack: [
+              { type: 'UPDATE', svgElementList: [{ name: 'line' }] }
+            ]
+          })
+          expect(after.svgElementRedoStack).to.have.lengthOf(1)
+          expect(after.svgElementRedoStack[0].type).to.equal('UPDATE')
+          expect(after.svgElementRedoStack[0].svgElementList).to.have.lengthOf(
+            1
+          )
+          expect(after.svgElementRedoStack[0].svgElementList[0].x1).to.equal(
+            undefined
+          )
+        })
       })
     })
   })
