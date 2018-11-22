@@ -25,6 +25,9 @@ const getters = {
     return state.clipList.reduce((sum, c) => {
       return sum + c.delay
     }, 0)
+  },
+  [types.g.STATE](state) {
+    return state
   }
 }
 

@@ -99,6 +99,10 @@ const actions = {
       clipId
     })
     return Promise.resolve()
+  },
+  [types.a.IMPORT_STATE]({ commit }, state) {
+    commit(types.m.IMPORT_STATE, state)
+    return Promise.resolve()
   }
 }
 

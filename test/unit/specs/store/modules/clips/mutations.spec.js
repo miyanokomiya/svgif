@@ -707,4 +707,61 @@ describe('store/modules/clips/mutations', () => {
       expect(redoStack).to.lengthOf(0)
     })
   })
+  describe('IMPORT_STATE state復元', () => {
+    const getState = () => ({
+      clipList: [
+        {
+          id: 1,
+
+          svgElementUndoStack: [
+            {
+              type: 'UPDATE',
+              svgElementList: [{ id: 2, x: 2, name: 'rectangle' }]
+            },
+            {
+              type: 'UPDATE',
+              svgElementList: [{ id: 2, x: 3, name: 'rectangle' }]
+            }
+          ],
+          svgElementRedoStack: [
+            {
+              type: 'UPDATE',
+              svgElementList: [{ id: 2, x: 4, name: 'circle' }]
+            },
+            {
+              type: 'UPDATE',
+              svgElementList: [{ id: 2, x: 5, name: 'circle' }]
+            }
+          ]
+        },
+        { id: 2 }
+      ],
+      selectedId: 2,
+      maxSize: 300
+    })
+    it('clipList が復元されること', () => {
+      const state = {}
+      mutations[types.m.IMPORT_STATE](state, getState())
+      expect(state.clipList).to.lengthOf(2)
+      expect(state.clipList[1].id).to.equal(2)
+      expect(state.clipList[1].svgElementUndoStack).to.have.lengthOf(0)
+    })
+    it('clipList 以外が復元されること', () => {
+      const state = {}
+      mutations[types.m.IMPORT_STATE](state, getState())
+      expect(state.selectedId).to.equal(2)
+      expect(state.maxSize).to.equal(300)
+    })
+    it('省略されたプロパティはデフォルトのままであること', () => {
+      const state = {
+        clipList: [],
+        selectedId: -1,
+        maxSize: 1200
+      }
+      mutations[types.m.IMPORT_STATE](state, {})
+      expect(state.clipList).to.lengthOf(0)
+      expect(state.selectedId).to.equal(-1)
+      expect(state.maxSize).to.equal(1200)
+    })
+  })
 })

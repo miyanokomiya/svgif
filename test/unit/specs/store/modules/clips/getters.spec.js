@@ -69,4 +69,11 @@ describe('store/modules/clips/getters', () => {
       expect(val).to.equal(51)
     })
   })
+  describe('STATE', () => {
+    it('state が取得されること', () => {
+      const state = 1
+      const val = getters[types.g.STATE](state)
+      expect(val).to.equal(1)
+    })
+  })
 })

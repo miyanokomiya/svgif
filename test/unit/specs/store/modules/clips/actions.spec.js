@@ -331,4 +331,21 @@ describe('store/modules/clips/actions', () => {
       })
     })
   })
+  describe('IMPORT_STATE', () => {
+    it('mutationが正しく実行されること', done => {
+      testAction({
+        done,
+        action: actions[types.a.IMPORT_STATE],
+        payload: 1,
+        mutations: [
+          {
+            type: types.m.IMPORT_STATE,
+            test: state => {
+              expect(state).to.equal(1)
+            }
+          }
+        ]
+      })
+    })
+  })
 })

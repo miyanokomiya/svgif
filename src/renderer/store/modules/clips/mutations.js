@@ -1,6 +1,7 @@
 import types from './types'
 import getters from './getters'
 import * as elementUtils from '@/commons/utils/element'
+import { completeClip } from '@/commons/models/clip'
 
 // キャンバス全体サイズの変更に伴い、各clip上のsvgElementの位置が変化しなよう調整する
 export function adjustSvgElementPositions({
@@ -297,6 +298,11 @@ const mutations = {
     const clip = state.clipList.find(c => c.id === clipId)
     clip.svgElementUndoStack = []
     clip.svgElementRedoStack = []
+  },
+  [types.m.IMPORT_STATE](state, data = {}) {
+    state.clipList = (data.clipList || []).map(completeClip)
+    state.selectedId = data.selectedId || state.selectedId
+    state.maxSize = data.maxSize || state.maxSize
   }
 }
 
