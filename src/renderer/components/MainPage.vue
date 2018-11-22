@@ -2,7 +2,6 @@
   <el-container class="main-page">
     <el-aside width="200px">
       <el-button
-        v-if="!$svgif.isWeb"
         icon="el-icon-download"
         size="mini"
         @click="saveState"
@@ -10,7 +9,6 @@
         Save
       </el-button>
       <el-button
-        v-if="!$svgif.isWeb"
         icon="el-icon-upload2"
         size="mini"
         @click="selectFile"
