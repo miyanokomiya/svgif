@@ -36,31 +36,13 @@
       @change="swapLayerOrder"
     >
       <transition-group type="transition" class="layer-list" name="layer-list">
-        <div
+        <LayerItem
           v-for="layer in LAYER_LIST"
           :key="layer.id"
-          class="layer-item"
-        >
-          <el-button
-            type="danger"
-            size="mini"
-            icon="el-icon-delete"
-            class="delete-layer-button"
-            @click="deleteLayer(layer.id)"
-          />
-          <div class="right">
-            <div class="box" :style="{width: `${(layer.to - layer.from) / WHOLE_DELAY * 100}%`}" >
-              <div class="from" />
-              <div class="range" />
-              <div class="to" />
-            </div>
-          </div>
-          <!-- <SvgRender
-            class="svg"
-            :svgElementList="layer.svgElementList"
-            :size="WHOLE_SIZE"
-          /> -->
-        </div>
+          :layer="layer"
+          :wholeDelay="WHOLE_DELAY"
+          @deleteLayer="deleteLayer"
+        />
       </transition-group>
     </draggable>
     <div>
@@ -81,12 +63,14 @@ import clipTypes from '@/store/modules/clips/types'
 import draggable from 'vuedraggable'
 import SvgRender from '@/components/organisms/SvgRender'
 import ImagePanel from '@/components/atoms/ImagePanel'
+import LayerItem from '@/components/molecules/LayerItem'
 
 export default {
   components: {
     draggable,
     SvgRender,
-    ImagePanel
+    ImagePanel,
+    LayerItem
   },
   computed: {
     ...mapGetters({
@@ -185,42 +169,6 @@ $button-width: 2rem;
   }
   .layer-list-move {
     transition: transform 0.5s;
-  }
-  .layer-item {
-    display: flex;
-    height: 3rem;
-    width: 100%;
-    border-bottom: 0.1rem solid gray;
-    cursor: pointer;
-    .delete-layer-button {
-      width: $button-width;
-      padding-right: 0;
-      padding-left: 0;
-    }
-    .right {
-      width: calc(100% - #{$button-width});
-      .box {
-        $edge-width: 0.6rem;
-        display: flex;
-        height: 100%;
-        border: 0.1rem solid gray;
-        border-radius: 0.2rem;
-        overflow: hidden;
-        .from,
-        .to {
-          height: 100%;
-          width: $edge-width;
-          background-color: #aaa;
-          border: 0.1rem solid #666;
-          cursor: move;
-        }
-        .range {
-          height: 100%;
-          width: calc(100% - 2 * #{$edge-width});
-          background-color: #eee;
-        }
-      }
-    }
   }
 }
 .add-layer-button {
