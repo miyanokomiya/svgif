@@ -401,4 +401,23 @@ describe('store/modules/clips/actions', () => {
       })
     })
   })
+  describe('UPDATE_LAYER_RANGE', () => {
+    it('mutationが正しく実行されること', done => {
+      testAction({
+        done,
+        action: actions[types.a.UPDATE_LAYER_RANGE],
+        payload: { id: 1, from: 2, to: 3 },
+        mutations: [
+          {
+            type: types.m.UPDATE_LAYER_RANGE,
+            test: ({ id, from, to }) => {
+              expect(id).to.equal(1)
+              expect(from).to.equal(2)
+              expect(to).to.equal(3)
+            }
+          }
+        ]
+      })
+    })
+  })
 })

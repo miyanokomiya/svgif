@@ -843,4 +843,15 @@ describe('store/modules/clips/mutations', () => {
       })
     })
   })
+  describe('UPDATE_LAYER_RANGE', () => {
+    it('対象レイヤーの from と to が変更されること', () => {
+      const state = {
+        layerList: [{ id: 1, from: 0, to: 0 }, { id: 2 }, { id: 3 }]
+      }
+      mutations[types.m.UPDATE_LAYER_RANGE](state, { id: 1, from: 2, to: 3 })
+      expect(state.layerList[0].id).to.equal(1)
+      expect(state.layerList[0].from).to.equal(2)
+      expect(state.layerList[0].to).to.equal(3)
+    })
+  })
 })

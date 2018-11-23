@@ -119,6 +119,10 @@ const actions = {
   [types.a.SELECT_LAYER]({ commit }, id) {
     commit(types.m.SELECT_LAYER, id)
     return Promise.resolve()
+  },
+  [types.a.UPDATE_LAYER_RANGE]({ commit }, { id, from, to }) {
+    commit(types.m.UPDATE_LAYER_RANGE, { id, from, to })
+    return Promise.resolve()
   }
 }
 

@@ -331,6 +331,12 @@ const mutations = {
       current += clip.delay
       return layer.from < current
     })
+  },
+  [types.m.UPDATE_LAYER_RANGE](state, { id, from, to }) {
+    const layer = state.layerList.find(c => c.id === id)
+    if (!layer) return
+    layer.from = from
+    layer.to = to
   }
 }
 
