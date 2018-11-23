@@ -155,4 +155,24 @@ describe('store/modules/clips/getters', () => {
       expect(val).to.equal('clip')
     })
   })
+  describe('EDIT_TARGET_SVG_ELEMENT_CONTAINER', () => {
+    it('editTargetType が clip のとき SELECTED_CLIP が取得されること', () => {
+      const state = {
+        editTargetType: 'clip',
+        clipList: [{ id: 1 }],
+        selectedId: 1
+      }
+      const val = getters[types.g.EDIT_TARGET_SVG_ELEMENT_CONTAINER](state)
+      expect(val.id).to.equal(1)
+    })
+    it('editTargetType が layer のとき SELECTED_LAYER が取得されること', () => {
+      const state = {
+        editTargetType: 'layer',
+        layerList: [{ id: 1 }],
+        selectedLayerId: 1
+      }
+      const val = getters[types.g.EDIT_TARGET_SVG_ELEMENT_CONTAINER](state)
+      expect(val.id).to.equal(1)
+    })
+  })
 })

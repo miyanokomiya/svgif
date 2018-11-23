@@ -1,6 +1,6 @@
 <template>
   <div
-    v-if="SELECTED_CLIP"
+    v-if="EDIT_TARGET_SVG_ELEMENT_CONTAINER"
     class="canvas-history"
   >
     <el-card class="title-card" :body-style="{padding: '0.4rem'}">
@@ -53,15 +53,18 @@ export default {
   },
   computed: {
     ...mapGetters({
-      SELECTED_CLIP: clipTypes.g.SELECTED_CLIP
+      EDIT_TARGET_SVG_ELEMENT_CONTAINER:
+        clipTypes.g.EDIT_TARGET_SVG_ELEMENT_CONTAINER
     }),
     undoStackReverse() {
-      if (!this.SELECTED_CLIP) return []
-      return this.SELECTED_CLIP.svgElementUndoStack.concat().reverse()
+      if (!this.EDIT_TARGET_SVG_ELEMENT_CONTAINER) return []
+      return this.EDIT_TARGET_SVG_ELEMENT_CONTAINER.svgElementUndoStack
+        .concat()
+        .reverse()
     },
     redoStack() {
-      if (!this.SELECTED_CLIP) return []
-      return this.SELECTED_CLIP.svgElementRedoStack
+      if (!this.EDIT_TARGET_SVG_ELEMENT_CONTAINER) return []
+      return this.EDIT_TARGET_SVG_ELEMENT_CONTAINER.svgElementRedoStack
     },
     allHistory() {
       return [...this.redoStack, ...this.undoStackReverse]
@@ -83,17 +86,16 @@ export default {
     jumpSvgElementHistory(to) {
       this.$svgif.selectedElementIdList = []
       this._jumpSvgElementHistory({
-        clipId: this.SELECTED_CLIP.id,
         to
       })
     },
     undoSvgElement() {
       this.$svgif.selectedElementIdList = []
-      this._undoSvgElement({ clipId: this.SELECTED_CLIP.id })
+      this._undoSvgElement()
     },
     redoSvgElement() {
       this.$svgif.selectedElementIdList = []
-      this._redoSvgElement({ clipId: this.SELECTED_CLIP.id })
+      this._redoSvgElement()
     },
     cleaeSvgElementHistory() {
       this.$confirm(
@@ -105,7 +107,7 @@ export default {
           type: 'warning'
         }
       ).then(() => {
-        this._cleaeSvgElementHistory({ clipId: this.SELECTED_CLIP.id })
+        this._cleaeSvgElementHistory()
         this.$message({
           type: 'success',
           message: 'Delete completed'

@@ -43,6 +43,13 @@
           @drop.native.prevent.stop="dropFileInCanvas"
         >
           <SvgElement
+            v-for="svgElement in svgElementListBackGround"
+            class="svg-element-background"
+            :key="svgElement.id"
+            :svgElement="svgElement"
+            :scale="scale"
+          />
+          <SvgElement
             v-for="svgElement in localSvgElementList"
             class="svg-element"
             :key="svgElement.id"
@@ -152,7 +159,12 @@ export default {
   computed: {
     ...mapGetters({
       SELECTED_CLIP: clipTypes.g.SELECTED_CLIP,
-      WHOLE_SIZE: clipTypes.g.WHOLE_SIZE
+      WHOLE_SIZE: clipTypes.g.WHOLE_SIZE,
+      CURRENT_LAYER_LIST: clipTypes.g.CURRENT_LAYER_LIST,
+      SELECTED_LAYER: clipTypes.g.SELECTED_LAYER,
+      EDIT_TARGET_TYPE: clipTypes.g.EDIT_TARGET_TYPE,
+      EDIT_TARGET_SVG_ELEMENT_CONTAINER:
+        clipTypes.g.EDIT_TARGET_SVG_ELEMENT_CONTAINER
     }),
     windowInfo() {
       return this.$svgif.windowInfo
@@ -174,8 +186,26 @@ export default {
         height: this.SELECTED_CLIP.height * this.scale * rate
       }
     },
+    isEditClip() {
+      return this.EDIT_TARGET_TYPE === 'clip'
+    },
+    svgElementListBackGround() {
+      if (this.isEditClip) {
+        return this.CURRENT_LAYER_LIST.reduce(
+          (list, layer) => [...list, ...layer.svgElementList],
+          []
+        )
+      } else {
+        return this.CURRENT_LAYER_LIST.filter(
+          layer => layer.id !== this.SELECTED_LAYER.id
+        ).reduce(
+          (list, layer) => [...list, ...layer.svgElementList],
+          this.SELECTED_CLIP.svgElementList
+        )
+      }
+    },
     svgElementList() {
-      return this.SELECTED_CLIP ? this.SELECTED_CLIP.svgElementList : []
+      return this.EDIT_TARGET_SVG_ELEMENT_CONTAINER.svgElementList
     },
     selectedElementList() {
       return this.selectedElementIdList
@@ -223,6 +253,8 @@ export default {
     },
     SELECTED_CLIP() {
       this.rescale()
+    },
+    EDIT_TARGET_SVG_ELEMENT_CONTAINER() {
       this.selectedElementIdList = []
       this.focusCanvas()
     },
@@ -296,7 +328,7 @@ export default {
       })
       if (commit) {
         this._createSvgElement({
-          clipId: this.SELECTED_CLIP.id,
+          clipId: this.EDIT_TARGET_SVG_ELEMENT_CONTAINER.id,
           svgElementList
         })
       }
@@ -311,7 +343,7 @@ export default {
       })
       if (commit) {
         this._updateSvgElement({
-          clipId: this.SELECTED_CLIP.id,
+          clipId: this.EDIT_TARGET_SVG_ELEMENT_CONTAINER.id,
           svgElementList: toList
         })
       }
@@ -327,7 +359,7 @@ export default {
       })
       if (commit) {
         this._deleteSvgElement({
-          clipId: this.SELECTED_CLIP.id,
+          clipId: this.EDIT_TARGET_SVG_ELEMENT_CONTAINER.id,
           svgElementIdList
         })
       }
@@ -510,11 +542,15 @@ export default {
     },
     undoSvgElement() {
       this.clearSelectElement()
-      this._undoSvgElement({ clipId: this.SELECTED_CLIP.id })
+      this._undoSvgElement({
+        clipId: this.EDIT_TARGET_SVG_ELEMENT_CONTAINER.id
+      })
     },
     redoSvgElement() {
       this.clearSelectElement()
-      this._redoSvgElement({ clipId: this.SELECTED_CLIP.id })
+      this._redoSvgElement({
+        clipId: this.EDIT_TARGET_SVG_ELEMENT_CONTAINER.id
+      })
     },
     dropFile(e) {
       const files = e.target.files
@@ -594,6 +630,9 @@ $time-line-height: 30%;
       border: 0.1rem solid black;
       user-select: none;
       outline-offset: -0.2rem;
+      .svg-element-background {
+        opacity: 0.3;
+      }
       .svg-element {
         cursor: pointer;
       }

@@ -225,29 +225,29 @@ const mutations = {
     if (!clip) return
     clip.delay = delay
   },
-  [types.m.ADD_SVG_ELEMENT](state, { clipId, svgElement, svgElementList }) {
-    const clip = state.clipList.find(c => c.id === clipId)
+  [types.m.ADD_SVG_ELEMENT](state, { svgElement, svgElementList }) {
+    const target = getters[types.g.EDIT_TARGET_SVG_ELEMENT_CONTAINER](state)
     svgElementList = svgElementList || [svgElement]
 
     // 追加した要素リストのidを保存
-    clip.svgElementUndoStack.push({
+    target.svgElementUndoStack.push({
       type: 'ADD',
       svgElementList: svgElementList.map(elm => ({ id: elm.id }))
     })
     // やり直し履歴はクリア
-    clip.svgElementRedoStack = []
+    target.svgElementRedoStack = []
 
-    clip.svgElementList = [...clip.svgElementList, ...svgElementList]
+    target.svgElementList = [...target.svgElementList, ...svgElementList]
   },
-  [types.m.UPDATE_SVG_ELEMENT](state, { clipId, svgElement, svgElementList }) {
-    const clip = state.clipList.find(c => c.id === clipId)
+  [types.m.UPDATE_SVG_ELEMENT](state, { svgElement, svgElementList }) {
+    const target = getters[types.g.EDIT_TARGET_SVG_ELEMENT_CONTAINER](state)
     svgElementList = svgElementList || [svgElement]
 
     // 更新した要素リストの更新前情報を保存
-    clip.svgElementUndoStack.push({
+    target.svgElementUndoStack.push({
       type: 'UPDATE',
       svgElementList: svgElementList.map(to => {
-        const from = clip.svgElementList.find(elm => elm.id === to.id)
+        const from = target.svgElementList.find(elm => elm.id === to.id)
         const dif = { id: from.id }
         for (let key in to) {
           if (to[key] !== from[key]) dif[key] = from[key]
@@ -256,76 +256,73 @@ const mutations = {
       })
     })
     // やり直し履歴はクリア
-    clip.svgElementRedoStack = []
+    target.svgElementRedoStack = []
 
     svgElementList.forEach(svgElement => {
-      const index = clip.svgElementList.findIndex(
+      const index = target.svgElementList.findIndex(
         elm => elm.id === svgElement.id
       )
-      clip.svgElementList.splice(index, 1, {
-        ...clip.svgElementList[index],
+      target.svgElementList.splice(index, 1, {
+        ...target.svgElementList[index],
         ...svgElement
       })
     })
   },
-  [types.m.REMOVE_SVG_ELEMENT](
-    state,
-    { clipId, svgElementId, svgElementIdList }
-  ) {
+  [types.m.REMOVE_SVG_ELEMENT](state, { svgElementId, svgElementIdList }) {
     svgElementIdList = svgElementIdList || [svgElementId]
-    const clip = state.clipList.find(c => c.id === clipId)
+    const target = getters[types.g.EDIT_TARGET_SVG_ELEMENT_CONTAINER](state)
 
     // 削除した要素リストを保存
-    clip.svgElementUndoStack.push({
+    target.svgElementUndoStack.push({
       type: 'REMOVE',
       svgElementList: JSON.parse(
         JSON.stringify(
           svgElementIdList.map(id => {
-            const _index = clip.svgElementList.findIndex(elm => elm.id === id)
+            const _index = target.svgElementList.findIndex(elm => elm.id === id)
             return {
               _index,
-              ...clip.svgElementList[_index]
+              ...target.svgElementList[_index]
             }
           })
         )
       )
     })
     // やり直し履歴はクリア
-    clip.svgElementRedoStack = []
+    target.svgElementRedoStack = []
 
     svgElementIdList.forEach(svgElementId => {
-      const index = clip.svgElementList.findIndex(
+      const index = target.svgElementList.findIndex(
         elm => elm.id === svgElementId
       )
-      clip.svgElementList.splice(index, 1)
+      target.svgElementList.splice(index, 1)
     })
   },
-  [types.m.UNDO_SVG_ELEMENT](state, { clipId }) {
-    const clip = state.clipList.find(c => c.id === clipId)
-    undo({ clip })
+  [types.m.UNDO_SVG_ELEMENT](state) {
+    const target = getters[types.g.EDIT_TARGET_SVG_ELEMENT_CONTAINER](state)
+    undo({ clip: target })
   },
-  [types.m.REDO_SVG_ELEMENT](state, { clipId }) {
-    const clip = state.clipList.find(c => c.id === clipId)
-    redo({ clip })
+  [types.m.REDO_SVG_ELEMENT](state) {
+    const target = getters[types.g.EDIT_TARGET_SVG_ELEMENT_CONTAINER](state)
+    redo({ clip: target })
   },
-  [types.m.JUMP_SVG_ELEMENT_HISTORY](state, { clipId, to = 0 }) {
-    const clip = state.clipList.find(c => c.id === clipId)
-    const redoStack = clip.svgElementRedoStack
+  [types.m.JUMP_SVG_ELEMENT_HISTORY](state, { to = 0 }) {
+    const target = getters[types.g.EDIT_TARGET_SVG_ELEMENT_CONTAINER](state)
+    const redoStack = target.svgElementRedoStack
     if (to < redoStack.length) {
       // redoStack.length は redo() によって変化する前の値を使う
       for (let i = 0, count = redoStack.length - to; i < count; i++) {
-        redo({ clip })
+        redo({ clip: target })
       }
     } else {
       for (let i = redoStack.length + 1; i <= to; i++) {
-        undo({ clip })
+        undo({ clip: target })
       }
     }
   },
-  [types.m.CLEAR_SVG_ELEMENT_HISTORY](state, { clipId }) {
-    const clip = state.clipList.find(c => c.id === clipId)
-    clip.svgElementUndoStack = []
-    clip.svgElementRedoStack = []
+  [types.m.CLEAR_SVG_ELEMENT_HISTORY](state) {
+    const target = getters[types.g.EDIT_TARGET_SVG_ELEMENT_CONTAINER](state)
+    target.svgElementUndoStack = []
+    target.svgElementRedoStack = []
   },
   [types.m.IMPORT_STATE](state, data = {}) {
     state.clipList = (data.clipList || []).map(completeClip)

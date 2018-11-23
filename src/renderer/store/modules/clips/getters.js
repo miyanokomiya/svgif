@@ -46,6 +46,11 @@ const getters = {
   },
   [types.g.EDIT_TARGET_TYPE](state) {
     return state.editTargetType
+  },
+  [types.g.EDIT_TARGET_SVG_ELEMENT_CONTAINER](state) {
+    return state.editTargetType === 'clip'
+      ? state.clipList.find(c => c.id === state.selectedId) || null
+      : state.layerList.find(l => l.id === state.selectedLayerId) || null
   }
 }
 

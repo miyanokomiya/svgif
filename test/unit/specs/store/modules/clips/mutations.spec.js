@@ -255,6 +255,8 @@ describe('store/modules/clips/mutations', () => {
   describe('ADD_SVG_ELEMENT', () => {
     it('指定 clipId の clip に svgElement が追加されること', () => {
       const state = {
+        editTargetType: 'clip',
+        selectedId: 1,
         clipList: [
           {
             id: 1,
@@ -265,7 +267,6 @@ describe('store/modules/clips/mutations', () => {
         ]
       }
       mutations[types.m.ADD_SVG_ELEMENT](state, {
-        clipId: 1,
         svgElement: 'abc'
       })
       expect(state.clipList[0].svgElementList[0]).to.equal('abc')
@@ -273,6 +274,8 @@ describe('store/modules/clips/mutations', () => {
     })
     it('svgElementList を渡すと複数要素が追加されること', () => {
       const state = {
+        editTargetType: 'clip',
+        selectedId: 1,
         clipList: [
           {
             id: 1,
@@ -283,7 +286,6 @@ describe('store/modules/clips/mutations', () => {
         ]
       }
       mutations[types.m.ADD_SVG_ELEMENT](state, {
-        clipId: 1,
         svgElementList: [{ id: 4 }, { id: 5 }]
       })
       const elmList = state.clipList[0].svgElementList
@@ -294,6 +296,8 @@ describe('store/modules/clips/mutations', () => {
     })
     it('svgElementUndoStack に履歴が追加されること', () => {
       const state = {
+        editTargetType: 'clip',
+        selectedId: 1,
         clipList: [
           {
             id: 1,
@@ -304,7 +308,6 @@ describe('store/modules/clips/mutations', () => {
         ]
       }
       mutations[types.m.ADD_SVG_ELEMENT](state, {
-        clipId: 1,
         svgElement: { id: 10 }
       })
       const data = state.clipList[0].svgElementUndoStack[0]
@@ -316,6 +319,8 @@ describe('store/modules/clips/mutations', () => {
   describe('UPDATE_SVG_ELEMENT', () => {
     it('指定 clipId の clip の svgElement が差分更新されること', () => {
       const state = {
+        editTargetType: 'clip',
+        selectedId: 1,
         clipList: [
           {
             id: 1,
@@ -326,7 +331,6 @@ describe('store/modules/clips/mutations', () => {
         ]
       }
       mutations[types.m.UPDATE_SVG_ELEMENT](state, {
-        clipId: 1,
         svgElementList: [{ id: 2, name: 'b' }]
       })
       const elmList = state.clipList[0].svgElementList
@@ -338,6 +342,8 @@ describe('store/modules/clips/mutations', () => {
     })
     it('svgElementList を渡すと複数要素が更新されること', () => {
       const state = {
+        editTargetType: 'clip',
+        selectedId: 1,
         clipList: [
           {
             id: 1,
@@ -348,7 +354,6 @@ describe('store/modules/clips/mutations', () => {
         ]
       }
       mutations[types.m.UPDATE_SVG_ELEMENT](state, {
-        clipId: 1,
         svgElementList: [{ id: 2, name: 'b' }, { id: 3, name: 'bb' }]
       })
       const elmList = state.clipList[0].svgElementList
@@ -360,6 +365,8 @@ describe('store/modules/clips/mutations', () => {
     })
     it('更新された要素の前回状態が差分として履歴に追加されること', () => {
       const state = {
+        editTargetType: 'clip',
+        selectedId: 1,
         clipList: [
           {
             id: 1,
@@ -370,7 +377,6 @@ describe('store/modules/clips/mutations', () => {
         ]
       }
       mutations[types.m.UPDATE_SVG_ELEMENT](state, {
-        clipId: 1,
         svgElementList: [{ id: 2, name: 'b' }]
       })
       const data = state.clipList[0].svgElementUndoStack[0]
@@ -384,6 +390,8 @@ describe('store/modules/clips/mutations', () => {
   describe('REMOVE_SVG_ELEMENT', () => {
     it('指定 clipId の clip の svgElement が削除されること', () => {
       const state = {
+        editTargetType: 'clip',
+        selectedId: 1,
         clipList: [
           {
             id: 1,
@@ -394,7 +402,6 @@ describe('store/modules/clips/mutations', () => {
         ]
       }
       mutations[types.m.REMOVE_SVG_ELEMENT](state, {
-        clipId: 1,
         svgElementId: 2
       })
       const elm = state.clipList[0].svgElementList[0]
@@ -403,6 +410,8 @@ describe('store/modules/clips/mutations', () => {
     })
     it('svgElementIdList を渡すと複数要素が削除されること', () => {
       const state = {
+        editTargetType: 'clip',
+        selectedId: 1,
         clipList: [
           {
             id: 1,
@@ -413,7 +422,6 @@ describe('store/modules/clips/mutations', () => {
         ]
       }
       mutations[types.m.REMOVE_SVG_ELEMENT](state, {
-        clipId: 1,
         svgElementIdList: [1, 3]
       })
       const elmList = state.clipList[0].svgElementList
@@ -423,6 +431,8 @@ describe('store/modules/clips/mutations', () => {
   })
   it('削除した要素が履歴に追加されること', () => {
     const state = {
+      editTargetType: 'clip',
+      selectedId: 1,
       clipList: [
         {
           id: 1,
@@ -433,7 +443,6 @@ describe('store/modules/clips/mutations', () => {
       ]
     }
     mutations[types.m.REMOVE_SVG_ELEMENT](state, {
-      clipId: 1,
       svgElementIdList: [2]
     })
     const data = state.clipList[0].svgElementUndoStack[0]
@@ -446,6 +455,8 @@ describe('store/modules/clips/mutations', () => {
   describe('UNDO_SVG_ELEMENT もとに戻す', () => {
     describe('ADD 追加をもとに戻す', () => {
       const state = {
+        editTargetType: 'clip',
+        selectedId: 1,
         clipList: [
           {
             id: 1,
@@ -458,7 +469,7 @@ describe('store/modules/clips/mutations', () => {
           }
         ]
       }
-      mutations[types.m.UNDO_SVG_ELEMENT](state, { clipId: 1 })
+      mutations[types.m.UNDO_SVG_ELEMENT](state)
       const clip = state.clipList[0]
       const undoStack = clip.svgElementUndoStack
       const redoStack = clip.svgElementRedoStack
@@ -477,6 +488,8 @@ describe('store/modules/clips/mutations', () => {
     })
     describe('UPDATE 更新をもとに戻す', () => {
       const state = {
+        editTargetType: 'clip',
+        selectedId: 1,
         clipList: [
           {
             id: 1,
@@ -489,7 +502,7 @@ describe('store/modules/clips/mutations', () => {
           }
         ]
       }
-      mutations[types.m.UNDO_SVG_ELEMENT](state, { clipId: 1 })
+      mutations[types.m.UNDO_SVG_ELEMENT](state)
       const clip = state.clipList[0]
       const undoStack = clip.svgElementUndoStack
       const redoStack = clip.svgElementRedoStack
@@ -512,6 +525,8 @@ describe('store/modules/clips/mutations', () => {
     })
     describe('REMOVE 削除をもとに戻す', () => {
       const state = {
+        editTargetType: 'clip',
+        selectedId: 1,
         clipList: [
           {
             id: 1,
@@ -524,7 +539,7 @@ describe('store/modules/clips/mutations', () => {
           }
         ]
       }
-      mutations[types.m.UNDO_SVG_ELEMENT](state, { clipId: 1 })
+      mutations[types.m.UNDO_SVG_ELEMENT](state)
       const clip = state.clipList[0]
       const undoStack = clip.svgElementUndoStack
       const redoStack = clip.svgElementRedoStack
@@ -546,6 +561,8 @@ describe('store/modules/clips/mutations', () => {
   describe('REDO_SVG_ELEMENT やり直す', () => {
     describe('ADD 追加をやり直す', () => {
       const state = {
+        editTargetType: 'clip',
+        selectedId: 1,
         clipList: [
           {
             id: 1,
@@ -558,7 +575,7 @@ describe('store/modules/clips/mutations', () => {
           }
         ]
       }
-      mutations[types.m.REDO_SVG_ELEMENT](state, { clipId: 1 })
+      mutations[types.m.REDO_SVG_ELEMENT](state)
       const clip = state.clipList[0]
       const undoStack = clip.svgElementUndoStack
       const redoStack = clip.svgElementRedoStack
@@ -578,6 +595,8 @@ describe('store/modules/clips/mutations', () => {
     })
     describe('UPDATE 更新をやり直す', () => {
       const state = {
+        editTargetType: 'clip',
+        selectedId: 1,
         clipList: [
           {
             id: 1,
@@ -590,7 +609,7 @@ describe('store/modules/clips/mutations', () => {
           }
         ]
       }
-      mutations[types.m.REDO_SVG_ELEMENT](state, { clipId: 1 })
+      mutations[types.m.REDO_SVG_ELEMENT](state)
       const clip = state.clipList[0]
       const undoStack = clip.svgElementUndoStack
       const redoStack = clip.svgElementRedoStack
@@ -614,6 +633,8 @@ describe('store/modules/clips/mutations', () => {
     })
     describe('REMOVE 削除をやり直す', () => {
       const state = {
+        editTargetType: 'clip',
+        selectedId: 1,
         clipList: [
           {
             id: 1,
@@ -626,7 +647,7 @@ describe('store/modules/clips/mutations', () => {
           }
         ]
       }
-      mutations[types.m.REDO_SVG_ELEMENT](state, { clipId: 1 })
+      mutations[types.m.REDO_SVG_ELEMENT](state)
       const clip = state.clipList[0]
       const undoStack = clip.svgElementUndoStack
       const redoStack = clip.svgElementRedoStack
@@ -648,6 +669,8 @@ describe('store/modules/clips/mutations', () => {
   })
   describe('JUMP_SVG_ELEMENT_HISTORY 履歴ジャンプ', () => {
     const getState = () => ({
+      editTargetType: 'clip',
+      selectedId: 1,
       clipList: [
         {
           id: 1,
@@ -665,7 +688,7 @@ describe('store/modules/clips/mutations', () => {
     })
     it('先頭ジャンプが正しく行えること', () => {
       const state = getState()
-      mutations[types.m.JUMP_SVG_ELEMENT_HISTORY](state, { clipId: 1, to: 0 })
+      mutations[types.m.JUMP_SVG_ELEMENT_HISTORY](state, { to: 0 })
       const clip = state.clipList[0]
       const undoStack = clip.svgElementUndoStack
       const redoStack = clip.svgElementRedoStack
@@ -674,7 +697,7 @@ describe('store/modules/clips/mutations', () => {
     })
     it('末端ジャンプが正しく行えること', () => {
       const state = getState()
-      mutations[types.m.JUMP_SVG_ELEMENT_HISTORY](state, { clipId: 1, to: 4 })
+      mutations[types.m.JUMP_SVG_ELEMENT_HISTORY](state, { to: 4 })
       const clip = state.clipList[0]
       const undoStack = clip.svgElementUndoStack
       const redoStack = clip.svgElementRedoStack
@@ -683,7 +706,7 @@ describe('store/modules/clips/mutations', () => {
     })
     it('redo途中へのジャンプが正しく行えること', () => {
       const state = getState()
-      mutations[types.m.JUMP_SVG_ELEMENT_HISTORY](state, { clipId: 1, to: 1 })
+      mutations[types.m.JUMP_SVG_ELEMENT_HISTORY](state, { to: 1 })
       const clip = state.clipList[0]
       const undoStack = clip.svgElementUndoStack
       const redoStack = clip.svgElementRedoStack
@@ -692,7 +715,7 @@ describe('store/modules/clips/mutations', () => {
     })
     it('undo途中へのジャンプが正しく行えること', () => {
       const state = getState()
-      mutations[types.m.JUMP_SVG_ELEMENT_HISTORY](state, { clipId: 1, to: 3 })
+      mutations[types.m.JUMP_SVG_ELEMENT_HISTORY](state, { to: 3 })
       const clip = state.clipList[0]
       const undoStack = clip.svgElementUndoStack
       const redoStack = clip.svgElementRedoStack
@@ -701,7 +724,7 @@ describe('store/modules/clips/mutations', () => {
     })
     it('現在位置のジャンプが正しく行えること', () => {
       const state = getState()
-      mutations[types.m.JUMP_SVG_ELEMENT_HISTORY](state, { clipId: 1, to: 2 })
+      mutations[types.m.JUMP_SVG_ELEMENT_HISTORY](state, { to: 2 })
       const clip = state.clipList[0]
       const undoStack = clip.svgElementUndoStack
       const redoStack = clip.svgElementRedoStack
@@ -711,6 +734,8 @@ describe('store/modules/clips/mutations', () => {
   })
   describe('CLEAR_SVG_ELEMENT_HISTORY 履歴クリア', () => {
     const getState = () => ({
+      editTargetType: 'clip',
+      selectedId: 1,
       clipList: [
         {
           id: 1,
@@ -727,7 +752,7 @@ describe('store/modules/clips/mutations', () => {
     })
     it('履歴がクリアされること', () => {
       const state = getState()
-      mutations[types.m.CLEAR_SVG_ELEMENT_HISTORY](state, { clipId: 1 })
+      mutations[types.m.CLEAR_SVG_ELEMENT_HISTORY](state)
       const clip = state.clipList[0]
       const undoStack = clip.svgElementUndoStack
       const redoStack = clip.svgElementRedoStack
