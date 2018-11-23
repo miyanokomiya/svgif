@@ -7,23 +7,29 @@
       class="delete-layer-button"
       @click="$emit('deleteLayer', layer.id)"
     />
-    <div class="right" :class="{ current, editing }" @click="$emit('selectLayer', layer.id)">
+    <div class="right" :class="{ current, editing }">
       <div class="box" :style="{left: `${localFrom / wholeDelay * 100}%`, right: `${(wholeDelay - localTo) / wholeDelay * 100}%`}" >
         <div class="from" @mousedown="startChangeFrom" />
-        <div class="range" />
+        <div class="range"  @click="$emit('selectLayer', layer.id)">
+          <SvgRender
+            class="svg"
+            :svgElementList="layer.svgElementList"
+            :size="wholeSize"
+          />
+        </div>
         <div class="to" @mousedown="startChangeTo" />
       </div>
     </div>
-    <!-- <SvgRender
-      class="svg"
-      :svgElementList="layer.svgElementList"
-      :size="WHOLE_SIZE"
-    /> -->
   </div>
 </template>
 
 <script>
+import SvgRender from '@/components/organisms/SvgRender'
+
 export default {
+  components: {
+    SvgRender
+  },
   data: () => ({
     startXFrom: 0,
     moveDelayFrom: 0,
@@ -37,6 +43,10 @@ export default {
     },
     wholeDelay: {
       type: Number,
+      required: true
+    },
+    wholeSize: {
+      type: Object,
       required: true
     },
     current: {
@@ -145,9 +155,17 @@ $edge-width: 0.8rem;
         cursor: move;
       }
       .range {
+        position: relative;
         height: 100%;
         width: calc(100% - 2 * #{$edge-width});
         background-color: #eee;
+        .svg {
+          position: absolute;
+          width: 100%;
+          height: 100%;
+          left: 0;
+          top: 0;
+        }
       }
     }
     &.current {

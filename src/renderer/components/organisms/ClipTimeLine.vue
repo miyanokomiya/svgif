@@ -43,6 +43,7 @@
             :key="layer.id"
             :layer="layer"
             :wholeDelay="WHOLE_DELAY"
+            :wholeSize="WHOLE_SIZE"
             :current="isCurrentLayer(layer.id)"
             :editing="isEditTargetLayer(layer.id)"
             @deleteLayer="deleteLayer"
