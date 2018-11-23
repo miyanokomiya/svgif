@@ -43,6 +43,9 @@ const getters = {
   },
   [types.g.CURRENT_TIME](state) {
     return state.currentTime
+  },
+  [types.g.EDIT_TARGET_TYPE](state) {
+    return state.editTargetType
   }
 }
 

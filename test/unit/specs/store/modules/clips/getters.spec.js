@@ -148,4 +148,11 @@ describe('store/modules/clips/getters', () => {
       expect(val).to.equal(1)
     })
   })
+  describe('EDIT_TARGET_TYPE', () => {
+    it('currentTime が取得されること', () => {
+      const state = { editTargetType: 'clip' }
+      const val = getters[types.g.EDIT_TARGET_TYPE](state)
+      expect(val).to.equal('clip')
+    })
+  })
 })
