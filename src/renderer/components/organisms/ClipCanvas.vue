@@ -205,7 +205,9 @@ export default {
       }
     },
     svgElementList() {
-      return this.EDIT_TARGET_SVG_ELEMENT_CONTAINER.svgElementList
+      return this.EDIT_TARGET_SVG_ELEMENT_CONTAINER
+        ? this.EDIT_TARGET_SVG_ELEMENT_CONTAINER.svgElementList
+        : []
     },
     selectedElementList() {
       return this.selectedElementIdList
