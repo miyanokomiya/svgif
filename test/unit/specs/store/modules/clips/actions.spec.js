@@ -420,4 +420,39 @@ describe('store/modules/clips/actions', () => {
       })
     })
   })
+  describe('SET_CURRENT_TIME', () => {
+    it('mutationが正しく実行されること', done => {
+      testAction({
+        done,
+        action: actions[types.a.SET_CURRENT_TIME],
+        payload: 1,
+        mutations: [
+          {
+            type: types.m.SET_CURRENT_TIME,
+            test: currentTime => {
+              expect(currentTime).to.equal(1)
+            }
+          }
+        ]
+      })
+    })
+  })
+  describe('SET_EDIT_TARGET', () => {
+    it('mutationが正しく実行されること', done => {
+      testAction({
+        done,
+        action: actions[types.a.SET_EDIT_TARGET],
+        payload: { type: 'clip', id: 1 },
+        mutations: [
+          {
+            type: types.m.SET_EDIT_TARGET,
+            test: ({ type, id }) => {
+              expect(type).to.equal('clip')
+              expect(id).to.equal(1)
+            }
+          }
+        ]
+      })
+    })
+  })
 })

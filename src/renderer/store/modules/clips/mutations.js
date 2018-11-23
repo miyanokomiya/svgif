@@ -3,7 +3,7 @@ import getters from './getters'
 import * as elementUtils from '@/commons/utils/element'
 import { completeClip } from '@/commons/models/clip'
 
-// キャンバス全体サイズの変更に伴い、各clip上のsvgElementの位置が変化しなよう調整する
+// キャンバス全体サイズの変更に伴い、各clip上のsvgElementの位置が変化しないよう調整する
 export function adjustSvgElementPositions({
   state,
   getters,
@@ -337,6 +337,24 @@ const mutations = {
     if (!layer) return
     layer.from = from
     layer.to = to
+  },
+  [types.m.SET_CURRENT_TIME](state, currentTime) {
+    state.currentTime = currentTime
+    let current = 0
+    state.clipList.some(clip => {
+      state.selectedId = clip.id
+      current += clip.delay
+      return currentTime < current
+    })
+    const selectedLayer = getters[types.g.SELECTED_LAYER](state)
+    if (!selectedLayer) return
+    if (selectedLayer.from <= currentTime && currentTime < selectedLayer.to)
+      return
+    state.selectedLayerId = -1
+  },
+  [types.m.SET_EDIT_TARGET](state, { type, id }) {
+    state.editTarget.type = type
+    state.editTarget.id = id
   }
 }
 

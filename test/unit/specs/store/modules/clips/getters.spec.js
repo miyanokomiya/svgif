@@ -142,12 +142,9 @@ describe('store/modules/clips/getters', () => {
     })
   })
   describe('CURRENT_TIME', () => {
-    it('layerList が取得されること', () => {
-      const state = {}
-      const mockGetters = {
-        [types.g.SELECTED_LAYER]: { from: 1 }
-      }
-      const val = getters[types.g.CURRENT_TIME](state, mockGetters)
+    it('currentTime が取得されること', () => {
+      const state = { currentTime: 1 }
+      const val = getters[types.g.CURRENT_TIME](state)
       expect(val).to.equal(1)
     })
   })

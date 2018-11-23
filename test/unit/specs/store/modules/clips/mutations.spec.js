@@ -854,4 +854,75 @@ describe('store/modules/clips/mutations', () => {
       expect(state.layerList[0].to).to.equal(3)
     })
   })
+  describe('SET_CURRENT_TIME', () => {
+    it('currentTime が変更されること', () => {
+      const state = {
+        selectedId: -1,
+        currentTime: 0,
+        clipList: [],
+        selectedLayerId: -1,
+        layerList: []
+      }
+      mutations[types.m.SET_CURRENT_TIME](state, 1)
+      expect(state.currentTime).to.equal(1)
+    })
+    describe('selectedId 更新', () => {
+      it('時間に対応するクリップが選択されること', () => {
+        const state = {
+          selectedId: -1,
+          clipList: [{ id: 1, delay: 100 }, { id: 2, delay: 100 }],
+          currentTime: 0,
+          selectedLayerId: -1,
+          layerList: []
+        }
+        mutations[types.m.SET_CURRENT_TIME](state, 1)
+        expect(state.selectedId).to.equal(1)
+      })
+      it('境界値は後方要素が選択されること', () => {
+        const state = {
+          selectedId: -1,
+          clipList: [{ id: 1, delay: 100 }, { id: 2, delay: 100 }],
+          currentTime: 0,
+          selectedLayerId: -1,
+          layerList: []
+        }
+        mutations[types.m.SET_CURRENT_TIME](state, 100)
+        expect(state.selectedId).to.equal(2)
+      })
+    })
+    describe('selectedLayerId 更新', () => {
+      it('選択レイヤーの範囲に収まっていないなら、選択解除されること', () => {
+        const state = {
+          selectedId: -1,
+          clipList: [{ id: 1, delay: 100 }, { id: 2, delay: 100 }],
+          currentTime: 0,
+          selectedLayerId: 1,
+          layerList: [{ id: 1, from: 0, to: 10 }, { id: 2 }, { id: 3 }]
+        }
+        mutations[types.m.SET_CURRENT_TIME](state, 100)
+        expect(state.selectedLayerId).to.equal(-1)
+      })
+      it('選択レイヤーの範囲に収まっているなら、変更されないこと', () => {
+        const state = {
+          selectedId: -1,
+          clipList: [{ id: 1, delay: 100 }, { id: 2, delay: 100 }],
+          currentTime: 0,
+          selectedLayerId: 1,
+          layerList: [{ id: 1, from: 0, to: 10 }, { id: 2 }, { id: 3 }]
+        }
+        mutations[types.m.SET_CURRENT_TIME](state, 5)
+        expect(state.selectedLayerId).to.equal(1)
+      })
+    })
+  })
+  describe('SET_EDIT_TARGET', () => {
+    it('editTarget が変更されること', () => {
+      const state = {
+        editTarget: {}
+      }
+      mutations[types.m.SET_EDIT_TARGET](state, { type: 'clip', id: 1 })
+      expect(state.editTarget.type).to.equal('clip')
+      expect(state.editTarget.id).to.equal(1)
+    })
+  })
 })

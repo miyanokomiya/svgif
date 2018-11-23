@@ -123,6 +123,14 @@ const actions = {
   [types.a.UPDATE_LAYER_RANGE]({ commit }, { id, from, to }) {
     commit(types.m.UPDATE_LAYER_RANGE, { id, from, to })
     return Promise.resolve()
+  },
+  [types.a.SET_CURRENT_TIME]({ commit }, currentTime) {
+    commit(types.m.SET_CURRENT_TIME, currentTime)
+    return Promise.resolve()
+  },
+  [types.a.SET_EDIT_TARGET]({ commit }, { type, id }) {
+    commit(types.m.SET_EDIT_TARGET, { type, id })
+    return Promise.resolve()
   }
 }
 
