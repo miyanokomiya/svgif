@@ -209,6 +209,8 @@ const mutations = {
   [types.m.REMOVE_ALL_CLIP](state) {
     state.clipList = []
     state.selectedId = -1
+    state.selectedLayerId = -1
+    state.currentTime = 0
   },
   [types.m.SELECT_CLIP](state, id) {
     if (!state.clipList.find(c => c.id === id)) return

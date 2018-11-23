@@ -158,7 +158,9 @@ describe('store/modules/clips/mutations', () => {
   describe('REMOVE_ALL_CLIP', () => {
     const state = {
       clipList: [{ id: 1 }, { id: 2 }, { id: 3 }],
-      selectedId: 1
+      selectedId: 1,
+      selectedLayerId: 2,
+      currentTime: 3
     }
     mutations[types.m.REMOVE_ALL_CLIP](state, 1)
     it('clipList が 空になること', () => {
@@ -166,6 +168,12 @@ describe('store/modules/clips/mutations', () => {
     })
     it('selectedId が -1 になること', () => {
       expect(state.selectedId).to.equal(-1)
+    })
+    it('selectedLayerId が -1 になること', () => {
+      expect(state.selectedLayerId).to.equal(-1)
+    })
+    it('currentTime が 0 になること', () => {
+      expect(state.currentTime).to.equal(0)
     })
   })
   describe('SELECT_CLIP', () => {
