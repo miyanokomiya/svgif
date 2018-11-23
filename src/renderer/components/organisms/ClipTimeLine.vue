@@ -1,33 +1,78 @@
 <template>
-  <draggable
-    class="clip-time-line"
-    :value="CLIP_LIST"
-    @change="swapClipOrder"
-  >
-    <transition-group type="transition" class="clip-list" name="clip-list">
-      <div
-        v-for="clip in CLIP_LIST"
-        :key="clip.id"
-        :style="{width: `${clip.delay / WHOLE_DELAY * 100}%`}"
-        class="clip-item"
-        :class="{ selected: isSelected(clip.id) }"
-        @click="selectClip(clip.id)"
-      >
-        <div class="image">
-          <img
-            :src="clip.base64"
-            :style="{ width: `${clip.width / WHOLE_SIZE.width * 100}%`, height: `${clip.height / WHOLE_SIZE.height * 100}%` }"
-          />
-          <SvgRender
-            class="svg"
-            :svgElementList="clip.svgElementList"
-            :size="WHOLE_SIZE"
-          />
+  <div class="time-line-wrapper">
+    <draggable
+      class="clip-time-line"
+      :value="CLIP_LIST"
+      @change="swapClipOrder"
+    >
+      <transition-group type="transition" class="clip-list" name="clip-list">
+        <div
+          v-for="clip in CLIP_LIST"
+          :key="clip.id"
+          :style="{width: `${clip.delay / WHOLE_DELAY * 100}%`}"
+          class="clip-item"
+          :class="{ selected: isSelected(clip.id) }"
+          @click="selectClip(clip.id)"
+        >
+          <div class="image">
+            <img
+              :src="clip.base64"
+              :style="{ width: `${clip.width / WHOLE_SIZE.width * 100}%`, height: `${clip.height / WHOLE_SIZE.height * 100}%` }"
+            />
+            <SvgRender
+              class="svg"
+              :svgElementList="clip.svgElementList"
+              :size="WHOLE_SIZE"
+            />
+          </div>
+          <div class="split" />
         </div>
-        <div class="split" />
-      </div>
-    </transition-group>
-  </draggable>
+      </transition-group>
+    </draggable>
+
+    <draggable
+      class="layer-time-line"
+      :value="LAYER_LIST"
+      @change="swapLayerOrder"
+    >
+      <transition-group type="transition" class="layer-list" name="layer-list">
+        <div
+          v-for="layer in LAYER_LIST"
+          :key="layer.id"
+          class="layer-item"
+        >
+          <el-button
+            type="danger"
+            size="mini"
+            icon="el-icon-delete"
+            class="delete-layer-button"
+            @click="deleteLayer(layer.id)"
+          />
+          <div class="right">
+            <div class="box" :style="{width: `${(layer.to - layer.from) / WHOLE_DELAY * 100}%`}" >
+              <div class="from" />
+              <div class="range" />
+              <div class="to" />
+            </div>
+          </div>
+          <!-- <SvgRender
+            class="svg"
+            :svgElementList="layer.svgElementList"
+            :size="WHOLE_SIZE"
+          /> -->
+        </div>
+      </transition-group>
+    </draggable>
+    <div>
+      <el-button
+        type="primary"
+        size="mini"
+        icon="el-icon-circle-plus"
+        class="add-layer-button"
+        @click="createLayer"
+      />
+    </div>
+  </div>
 </template>
 
 <script>
@@ -48,13 +93,16 @@ export default {
       CLIP_LIST: clipTypes.g.CLIP_LIST,
       SELECTED_CLIP: clipTypes.g.SELECTED_CLIP,
       WHOLE_SIZE: clipTypes.g.WHOLE_SIZE,
-      WHOLE_DELAY: clipTypes.g.WHOLE_DELAY
+      WHOLE_DELAY: clipTypes.g.WHOLE_DELAY,
+      LAYER_LIST: clipTypes.g.LAYER_LIST
     })
   },
   methods: {
     ...mapActions({
       _selectClip: clipTypes.a.SELECT_CLIP,
-      _swapClipOrder: clipTypes.a.SWAP_CLIP_ORDER
+      _swapClipOrder: clipTypes.a.SWAP_CLIP_ORDER,
+      _createLayer: clipTypes.a.CREATE_LAYER,
+      _deleteLayer: clipTypes.a.DELETE_LAYER
     }),
     selectClip(id) {
       this._selectClip(id)
@@ -65,13 +113,29 @@ export default {
     },
     swapClipOrder({ moved: { newIndex, oldIndex } }) {
       this._swapClipOrder({ to: newIndex, from: oldIndex })
+    },
+    swapLayerOrder({ moved: { newIndex, oldIndex } }) {
+      console.log({ to: newIndex, from: oldIndex })
+      // this._swapClipOrder({ to: newIndex, from: oldIndex })
+    },
+    createLayer() {
+      this._createLayer()
+    },
+    deleteLayer(id) {
+      this._deleteLayer(id)
     }
   }
 }
 </script>
 
 <style lang="scss" scoped>
+$button-width: 2rem;
+
+.time-line-wrapper {
+  overflow: auto;
+}
 .clip-time-line {
+  padding-left: $button-width;
   .clip-list {
     display: flex;
     height: 8rem;
@@ -114,5 +178,54 @@ export default {
       border-radius: 0.2rem;
     }
   }
+}
+.layer-time-line {
+  .layer-list {
+    user-select: none;
+  }
+  .layer-list-move {
+    transition: transform 0.5s;
+  }
+  .layer-item {
+    display: flex;
+    height: 3rem;
+    width: 100%;
+    border-bottom: 0.1rem solid gray;
+    cursor: pointer;
+    .delete-layer-button {
+      width: $button-width;
+      padding-right: 0;
+      padding-left: 0;
+    }
+    .right {
+      width: calc(100% - #{$button-width});
+      .box {
+        $edge-width: 0.6rem;
+        display: flex;
+        height: 100%;
+        border: 0.1rem solid gray;
+        border-radius: 0.2rem;
+        overflow: hidden;
+        .from,
+        .to {
+          height: 100%;
+          width: $edge-width;
+          background-color: #aaa;
+          border: 0.1rem solid #666;
+          cursor: move;
+        }
+        .range {
+          height: 100%;
+          width: calc(100% - 2 * #{$edge-width});
+          background-color: #eee;
+        }
+      }
+    }
+  }
+}
+.add-layer-button {
+  width: $button-width;
+  padding-right: 0;
+  padding-left: 0;
 }
 </style>

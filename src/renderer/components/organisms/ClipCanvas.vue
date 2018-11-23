@@ -576,10 +576,12 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+$time-line-height: 30%;
+
 .clip-canvas {
   height: 100%;
   .canvas {
-    height: calc(100% - 8rem);
+    height: calc(100% - #{$time-line-height});
     position: relative;
     user-select: none;
     .svg {
@@ -596,6 +598,9 @@ export default {
         cursor: pointer;
       }
     }
+  }
+  .time-line {
+    height: $time-line-height;
   }
   .empty-board {
     display: flex;

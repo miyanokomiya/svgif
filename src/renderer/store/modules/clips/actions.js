@@ -105,7 +105,7 @@ const actions = {
     commit(types.m.IMPORT_STATE, state)
     return Promise.resolve()
   },
-  [types.a.CREATE_LAYER]({ commit }, { layer, index }) {
+  [types.a.CREATE_LAYER]({ commit }, { layer, index } = {}) {
     commit(types.m.ADD_LAYER, {
       layer: getLayer(layer),
       index
