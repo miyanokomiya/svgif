@@ -4,6 +4,7 @@ import mutations from './mutations'
 
 const state = {
   clipList: [],
+  layerList: [],
   selectedId: -1,
   maxSize: 1200
 }

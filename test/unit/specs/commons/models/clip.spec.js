@@ -1,34 +1,74 @@
 import * as clip from '@/commons/models/clip'
 
 describe('clip', () => {
-  describe('completeClip クリップデータ補完', () => {
-    describe('単純プロパティ補完', () => {
-      it('補完されること', () => {
-        const after = clip.completeClip({})
-        expect(after.id).is.a('number')
-        expect(after.createdAt).is.a('string')
-        expect(after.delay).is.a('number')
-        expect(after.base64).is.a('string')
-        expect(after.width).is.a('number')
-        expect(after.height).is.a('number')
-      })
-      it('上書きはされないこと', () => {
-        const after = clip.completeClip({
-          id: 1,
-          createdAt: 'abc',
-          delay: 2,
-          base64: 'def',
-          width: 3,
-          height: 4
-        })
-        expect(after.id).to.equal(1)
-        expect(after.createdAt).to.equal('abc')
-        expect(after.delay).to.equal(2)
-        expect(after.base64).to.equal('def')
-        expect(after.width).to.equal(3)
-        expect(after.height).to.equal(4)
-      })
+  const getClip = () => ({
+    id: 1,
+    createdAt: 'abc',
+    delay: 2,
+    base64: 'def',
+    width: 3,
+    height: 4,
+    svgElementList: [{ id: 1, name: 'rectangle' }],
+    svgElementUndoStack: [
+      { type: 'ADD', svgElementList: [{ id: 1, name: 'rectangle' }] }
+    ],
+    svgElementRedoStack: [
+      { type: 'ADD', svgElementList: [{ id: 1, name: 'rectangle' }] }
+    ]
+  })
+  describe('getClip クリップデータ取得', () => {
+    it('初期値が入っていること', () => {
+      const after = clip.getClip({})
+      expect(after.id).is.a('number')
+      expect(after.createdAt).is.a('string')
+      expect(after.delay).is.a('number')
+      expect(after.base64).is.a('string')
+      expect(after.width).is.a('number')
+      expect(after.height).is.a('number')
+      expect(after.svgElementList).to.have.lengthOf(0)
+      expect(after.svgElementUndoStack).to.have.lengthOf(0)
+      expect(after.svgElementRedoStack).to.have.lengthOf(0)
     })
+    it('初期値を指定できること', () => {
+      const after = clip.getClip(getClip())
+      expect(after.id).to.equal(1)
+      expect(after.createdAt).to.equal('abc')
+      expect(after.delay).to.equal(2)
+      expect(after.base64).to.equal('def')
+      expect(after.width).to.equal(3)
+      expect(after.height).to.equal(4)
+      expect(after.svgElementList).to.have.lengthOf(1)
+      expect(after.svgElementUndoStack).to.have.lengthOf(1)
+      expect(after.svgElementRedoStack).to.have.lengthOf(1)
+    })
+  })
+  describe('completeClip クリップデータ補完', () => {
+    it('補完されること', () => {
+      const after = clip.completeClip({})
+      expect(after.id).is.a('number')
+      expect(after.createdAt).is.a('string')
+      expect(after.delay).is.a('number')
+      expect(after.base64).is.a('string')
+      expect(after.width).is.a('number')
+      expect(after.height).is.a('number')
+      expect(after.svgElementList).to.have.lengthOf(0)
+      expect(after.svgElementUndoStack).to.have.lengthOf(0)
+      expect(after.svgElementRedoStack).to.have.lengthOf(0)
+    })
+    it('上書きはされないこと', () => {
+      const after = clip.completeClip(getClip())
+      expect(after.id).to.equal(1)
+      expect(after.createdAt).to.equal('abc')
+      expect(after.delay).to.equal(2)
+      expect(after.base64).to.equal('def')
+      expect(after.width).to.equal(3)
+      expect(after.height).to.equal(4)
+      expect(after.svgElementList).to.have.lengthOf(1)
+      expect(after.svgElementUndoStack).to.have.lengthOf(1)
+      expect(after.svgElementRedoStack).to.have.lengthOf(1)
+    })
+  })
+  describe('copleteSvgElementProps svgElementList関連の補完', () => {
     describe('svgElementList 補完', () => {
       it('svgElementList が補完されること', () => {
         const after = clip.completeClip({})
