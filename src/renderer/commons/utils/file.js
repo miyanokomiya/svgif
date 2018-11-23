@@ -48,7 +48,10 @@ export function saveGifFile(gif) {
 export function saveJsonFile(json) {
   const text = JSON.stringify(json)
   if (process.env.IS_WEB) {
-    saveFileInWeb({ file: text, ex: 'json' })
+    saveFileInWeb({
+      file: URL.createObjectURL(new Blob([text], { type: 'text/plain' })),
+      ex: 'json'
+    })
   } else {
     const remote = require('electron').remote
     const { dialog } = require('electron').remote
