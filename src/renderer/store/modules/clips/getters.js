@@ -28,6 +28,9 @@ const getters = {
   },
   [types.g.STATE](state) {
     return state
+  },
+  [types.g.LAYER_LIST](state) {
+    return state.layerList
   }
 }
 

@@ -1,4 +1,5 @@
 import { getClip } from '@/commons/models/clip'
+import { getLayer } from '@/commons/models/layer'
 import types from './types'
 
 const actions = {
@@ -102,6 +103,17 @@ const actions = {
   },
   [types.a.IMPORT_STATE]({ commit }, state) {
     commit(types.m.IMPORT_STATE, state)
+    return Promise.resolve()
+  },
+  [types.a.CREATE_LAYER]({ commit }, { layer, index }) {
+    commit(types.m.ADD_LAYER, {
+      layer: getLayer(layer),
+      index
+    })
+    return Promise.resolve()
+  },
+  [types.a.DELETE_LAYER]({ commit }, id) {
+    commit(types.m.REMOVE_LAYER, id)
     return Promise.resolve()
   }
 }

@@ -348,4 +348,40 @@ describe('store/modules/clips/actions', () => {
       })
     })
   })
+  describe('CREATE_LAYER', () => {
+    it('mutationが正しく実行されること', done => {
+      testAction({
+        done,
+        action: actions[types.a.CREATE_LAYER],
+        payload: { layer: { id: 2 }, index: 1 },
+        mutations: [
+          {
+            type: types.m.ADD_LAYER,
+            test: ({ layer, index }) => {
+              expect(layer.id).to.equal(2)
+              expect(layer.from).to.equal(0)
+              expect(index).to.equal(1)
+            }
+          }
+        ]
+      })
+    })
+  })
+  describe('DELETE_LAYER', () => {
+    it('mutationが正しく実行されること', done => {
+      testAction({
+        done,
+        action: actions[types.a.DELETE_LAYER],
+        payload: 1,
+        mutations: [
+          {
+            type: types.m.REMOVE_LAYER,
+            test: id => {
+              expect(id).to.equal(1)
+            }
+          }
+        ]
+      })
+    })
+  })
 })

@@ -76,4 +76,14 @@ describe('store/modules/clips/getters', () => {
       expect(val).to.equal(1)
     })
   })
+  describe('LAYER_LIST', () => {
+    it('layerList が取得されること', () => {
+      const state = {
+        layerList: [1]
+      }
+      const val = getters[types.g.LAYER_LIST](state)
+      expect(val).to.have.lengthOf(1)
+      expect(val[0]).to.equal(1)
+    })
+  })
 })

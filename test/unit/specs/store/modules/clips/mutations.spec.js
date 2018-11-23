@@ -764,4 +764,41 @@ describe('store/modules/clips/mutations', () => {
       expect(state.maxSize).to.equal(1200)
     })
   })
+  describe('ADD_LAYER', () => {
+    context('index省略の場合', () => {
+      it('末尾に追加されること', () => {
+        const state = {
+          layerList: [{ id: 1 }, { id: 2 }]
+        }
+        mutations[types.m.ADD_LAYER](state, {
+          layer: { id: 3 }
+        })
+        expect(state.layerList).to.have.lengthOf(3)
+        expect(state.layerList[2].id).to.equal(3)
+      })
+    })
+    context('index指定の場合', () => {
+      it('index の位置に追加されること', () => {
+        const state = {
+          layerList: [{ id: 1 }, { id: 2 }]
+        }
+        mutations[types.m.ADD_LAYER](state, {
+          layer: { id: 3 },
+          index: 1
+        })
+        expect(state.layerList).to.have.lengthOf(3)
+        expect(state.layerList[1].id).to.equal(3)
+      })
+    })
+  })
+  describe('REMOVE_LAYER', () => {
+    it('引数で指定した id の要素が削除されること', () => {
+      const state = {
+        layerList: [{ id: 1 }, { id: 2 }]
+      }
+      mutations[types.m.REMOVE_LAYER](state, 1)
+      expect(state.layerList).to.have.lengthOf(1)
+      expect(state.layerList[0].id).to.equal(2)
+    })
+  })
 })

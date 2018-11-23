@@ -303,6 +303,22 @@ const mutations = {
     state.clipList = (data.clipList || []).map(completeClip)
     state.selectedId = data.selectedId || state.selectedId
     state.maxSize = data.maxSize || state.maxSize
+  },
+  [types.m.ADD_LAYER](state, { layer, index = -1 }) {
+    if (index === -1) {
+      index = state.layerList.length
+    }
+    state.layerList.splice(index, 0, layer)
+  },
+  [types.m.REMOVE_LAYER](state, id) {
+    const index = state.layerList.findIndex(c => c.id === id)
+    if (index === -1) return
+    state.layerList.splice(index, 1)
+    if (state.selectedId !== id) return
+    if (index > 0) state.selectedId = state.layerList[index - 1].id
+    else if (index === 0 && state.layerList.length > 0)
+      state.selectedId = state.layerList[0].id
+    else state.selectedId = -1
   }
 }
 
