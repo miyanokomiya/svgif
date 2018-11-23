@@ -185,6 +185,34 @@ describe('store/modules/clips/mutations', () => {
       mutations[types.m.SELECT_CLIP](state, 4)
       expect(state.selectedId).to.equal(2)
     })
+    describe('currentTime 更新', () => {
+      it('currentTime が選択クリップの範囲に収まらない場合、from に移動すること', () => {
+        const state = {
+          clipList: [
+            { id: 1, delay: 10 },
+            { id: 2, delay: 10 },
+            { id: 3, delay: 10 }
+          ],
+          selectedId: 2,
+          currentTime: 20
+        }
+        mutations[types.m.SELECT_CLIP](state, 2)
+        expect(state.currentTime).to.equal(10)
+      })
+      it('currentTime が選択クリップの範囲に収まる場合、更新されないこと', () => {
+        const state = {
+          clipList: [
+            { id: 1, delay: 10 },
+            { id: 2, delay: 10 },
+            { id: 3, delay: 10 }
+          ],
+          selectedId: 2,
+          currentTime: 15
+        }
+        mutations[types.m.SELECT_CLIP](state, 2)
+        expect(state.currentTime).to.equal(15)
+      })
+    })
   })
   describe('SWAP_CLIP_ORDER', () => {
     context('from < to のとき', () => {
@@ -806,7 +834,8 @@ describe('store/modules/clips/mutations', () => {
       const state = {
         clipList: [],
         layerList: [{ id: 1 }, { id: 2 }, { id: 3 }],
-        selectedLayerId: 2
+        selectedLayerId: 2,
+        currentTime: 5
       }
       mutations[types.m.SELECT_LAYER](state, 1)
       expect(state.selectedLayerId).to.equal(1)
@@ -815,7 +844,8 @@ describe('store/modules/clips/mutations', () => {
       const state = {
         clipList: [],
         layerList: [{ id: 1 }, { id: 2 }, { id: 3 }],
-        selectedLayerId: 2
+        selectedLayerId: 2,
+        currentTime: 5
       }
       mutations[types.m.SELECT_LAYER](state, 4)
       expect(state.selectedLayerId).to.equal(2)
@@ -826,7 +856,8 @@ describe('store/modules/clips/mutations', () => {
           selectedId: 1,
           clipList: [{ id: 1, delay: 100 }, { id: 2, delay: 100 }],
           selectedLayerId: -1,
-          layerList: [{ id: 1, from: 0 }, { id: 2 }, { id: 3 }]
+          layerList: [{ id: 1, from: 0 }, { id: 2 }, { id: 3 }],
+          currentTime: 5
         }
         mutations[types.m.SELECT_LAYER](state, 1)
         expect(state.selectedId).to.equal(1)
@@ -836,10 +867,35 @@ describe('store/modules/clips/mutations', () => {
           selectedId: 1,
           clipList: [{ id: 1, delay: 100 }, { id: 2, delay: 100 }],
           selectedLayerId: -1,
-          layerList: [{ id: 1, from: 100 }, { id: 2 }, { id: 3 }]
+          layerList: [{ id: 1, from: 100 }, { id: 2 }, { id: 3 }],
+          currentTime: 5
         }
         mutations[types.m.SELECT_LAYER](state, 1)
         expect(state.selectedId).to.equal(2)
+      })
+    })
+    describe('currentTime 更新', () => {
+      it('currentTime が選択レイヤーに包含されていない場合、 from に変更されること', () => {
+        const state = {
+          selectedId: -1,
+          clipList: [],
+          selectedLayerId: -1,
+          layerList: [{ id: 1, from: 0, to: 10 }],
+          currentTime: 20
+        }
+        mutations[types.m.SELECT_LAYER](state, 1)
+        expect(state.currentTime).to.equal(0)
+      })
+      it('currentTime が選択レイヤーに包含されている場合、 変更されないこと', () => {
+        const state = {
+          selectedId: -1,
+          clipList: [],
+          selectedLayerId: -1,
+          layerList: [{ id: 1, from: 0, to: 10 }],
+          currentTime: 5
+        }
+        mutations[types.m.SELECT_LAYER](state, 1)
+        expect(state.currentTime).to.equal(5)
       })
     })
   })

@@ -12,7 +12,7 @@
             :key="clip.id"
             :style="{width: `${clip.delay / WHOLE_DELAY * 100}%`}"
             class="clip-item"
-            :class="{ selected: isSelected(clip.id) }"
+            :class="{ current: isSelectedClip(clip.id), editing: isEditTargetClip(clip.id) }"
             @click="selectClip(clip.id)"
           >
             <div class="image">
@@ -44,7 +44,7 @@
             :layer="layer"
             :wholeDelay="WHOLE_DELAY"
             :current="isCurrentLayer(layer.id)"
-            :selected="isSelectedLayer(layer.id)"
+            :editing="isEditTargetLayer(layer.id)"
             @deleteLayer="deleteLayer"
             @selectLayer="selectLayer"
             @changeRange="changeRange"
@@ -92,7 +92,8 @@ export default {
       LAYER_LIST: clipTypes.g.LAYER_LIST,
       CURRENT_LAYER_LIST: clipTypes.g.CURRENT_LAYER_LIST,
       SELECTED_LAYER: clipTypes.g.SELECTED_LAYER,
-      CURRENT_TIME: clipTypes.g.CURRENT_TIME
+      CURRENT_TIME: clipTypes.g.CURRENT_TIME,
+      EDIT_TARGET_TYPE: clipTypes.g.EDIT_TARGET_TYPE
     })
   },
   methods: {
@@ -104,6 +105,10 @@ export default {
       _selectLayer: clipTypes.a.SELECT_LAYER,
       _updateLayerRange: clipTypes.a.UPDATE_LAYER_RANGE
     }),
+    isEditTargetLayer(id) {
+      if (this.EDIT_TARGET_TYPE !== 'layer') return false
+      return this.isSelectedLayer(id)
+    },
     isCurrentLayer(id) {
       return !!this.CURRENT_LAYER_LIST.find(l => l.id === id)
     },
@@ -113,7 +118,11 @@ export default {
     selectClip(id) {
       this._selectClip(id)
     },
-    isSelected(id) {
+    isEditTargetClip(id) {
+      if (this.EDIT_TARGET_TYPE !== 'clip') return false
+      return this.isSelectedClip(id)
+    },
+    isSelectedClip(id) {
       if (!this.SELECTED_CLIP) return false
       return this.SELECTED_CLIP.id === id
     },
@@ -173,8 +182,12 @@ $button-width: 2rem;
   .clip-item {
     display: flex;
     cursor: pointer;
-    &.selected {
-      border: 0.4rem solid tomato;
+    opacity: 0.3;
+    &.current {
+      opacity: 1;
+    }
+    &.editing {
+      border: 0.4rem solid lime;
     }
     .image {
       display: flex;

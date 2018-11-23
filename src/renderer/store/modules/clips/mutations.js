@@ -143,6 +143,32 @@ function redo({ clip }) {
   }
 }
 
+function adjustSelectedIdForCurrentTime(state) {
+  let current = 0
+  state.clipList.some(clip => {
+    state.selectedId = clip.id
+    current += clip.delay
+    return state.currentTime < current
+  })
+}
+
+function adjustCurrentTimeForSelectedId(state) {
+  // currentTime が選択クリップに包含されてなければ移動する
+  let from = 0
+  let to = 0
+  state.clipList.some(clip => {
+    if (clip.id === state.selectedId) {
+      to = from + clip.delay
+      return true
+    }
+    from += clip.delay
+  })
+  if (state.currentTime < from || to <= state.currentTime) {
+    state.currentTime = from
+    return true
+  }
+}
+
 const mutations = {
   [types.m.SET_MAX_SIZE](state, maxSize) {
     state.maxSize = maxSize
@@ -186,6 +212,8 @@ const mutations = {
   [types.m.SELECT_CLIP](state, id) {
     if (!state.clipList.find(c => c.id === id)) return
     state.selectedId = id
+    state.editTargetType = 'clip'
+    adjustCurrentTimeForSelectedId(state)
   },
   [types.m.SWAP_CLIP_ORDER](state, { from, to }) {
     const clip = state.clipList[from]
@@ -325,12 +353,12 @@ const mutations = {
     const layer = state.layerList.find(c => c.id === id)
     if (!layer) return
     state.selectedLayerId = id
-    let current = 0
-    state.clipList.some(clip => {
-      state.selectedId = clip.id
-      current += clip.delay
-      return layer.from < current
-    })
+    state.editTargetType = 'layer'
+    // currentTime が選択レイヤーに包含されてなければ移動する
+    if (state.currentTime < layer.from || layer.to <= state.currentTime) {
+      state.currentTime = layer.from
+    }
+    adjustSelectedIdForCurrentTime(state)
   },
   [types.m.UPDATE_LAYER_RANGE](state, { id, from, to }) {
     const layer = state.layerList.find(c => c.id === id)
@@ -340,12 +368,7 @@ const mutations = {
   },
   [types.m.SET_CURRENT_TIME](state, currentTime) {
     state.currentTime = currentTime
-    let current = 0
-    state.clipList.some(clip => {
-      state.selectedId = clip.id
-      current += clip.delay
-      return currentTime < current
-    })
+    adjustSelectedIdForCurrentTime(state)
     const selectedLayer = getters[types.g.SELECTED_LAYER](state)
     if (!selectedLayer) return
     if (selectedLayer.from <= currentTime && currentTime < selectedLayer.to)

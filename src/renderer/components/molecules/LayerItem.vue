@@ -7,7 +7,7 @@
       class="delete-layer-button"
       @click="$emit('deleteLayer', layer.id)"
     />
-    <div class="right" :class="{ current, selected }" @click="$emit('selectLayer', layer.id)">
+    <div class="right" :class="{ current, editing }" @click="$emit('selectLayer', layer.id)">
       <div class="box" :style="{left: `${localFrom / wholeDelay * 100}%`, right: `${(wholeDelay - localTo) / wholeDelay * 100}%`}" >
         <div class="from" @mousedown="startChangeFrom" />
         <div class="range" />
@@ -43,7 +43,7 @@ export default {
       type: Boolean,
       default: false
     },
-    selected: {
+    editing: {
       type: Boolean,
       default: false
     }
@@ -153,9 +153,9 @@ $edge-width: 0.8rem;
     &.current {
       opacity: 1;
     }
-    &.selected {
+    &.editing {
       .box {
-        border: 0.3rem solid tomato;
+        border: 0.3rem solid lime;
       }
     }
   }
