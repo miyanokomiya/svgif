@@ -761,36 +761,45 @@ describe('store/modules/clips/mutations', () => {
     })
   })
   describe('IMPORT_STATE state復元', () => {
+    const getSvgElementProps = () => ({
+      svgElementUndoStack: [
+        {
+          type: 'UPDATE',
+          svgElementList: [{ id: 2, x: 2, name: 'rectangle' }]
+        },
+        {
+          type: 'UPDATE',
+          svgElementList: [{ id: 2, x: 3, name: 'rectangle' }]
+        }
+      ],
+      svgElementRedoStack: [
+        {
+          type: 'UPDATE',
+          svgElementList: [{ id: 2, x: 4, name: 'circle' }]
+        },
+        {
+          type: 'UPDATE',
+          svgElementList: [{ id: 2, x: 5, name: 'circle' }]
+        }
+      ]
+    })
     const getState = () => ({
       clipList: [
         {
           id: 1,
-
-          svgElementUndoStack: [
-            {
-              type: 'UPDATE',
-              svgElementList: [{ id: 2, x: 2, name: 'rectangle' }]
-            },
-            {
-              type: 'UPDATE',
-              svgElementList: [{ id: 2, x: 3, name: 'rectangle' }]
-            }
-          ],
-          svgElementRedoStack: [
-            {
-              type: 'UPDATE',
-              svgElementList: [{ id: 2, x: 4, name: 'circle' }]
-            },
-            {
-              type: 'UPDATE',
-              svgElementList: [{ id: 2, x: 5, name: 'circle' }]
-            }
-          ]
+          ...getSvgElementProps()
         },
         { id: 2 }
       ],
       selectedId: 2,
-      maxSize: 300
+      maxSize: 300,
+      layerList: [
+        {
+          id: 1,
+          ...getSvgElementProps()
+        },
+        { id: 2 }
+      ]
     })
     it('clipList が復元されること', () => {
       const state = {}
@@ -799,7 +808,14 @@ describe('store/modules/clips/mutations', () => {
       expect(state.clipList[1].id).to.equal(2)
       expect(state.clipList[1].svgElementUndoStack).to.have.lengthOf(0)
     })
-    it('clipList 以外が復元されること', () => {
+    it('layerList が復元されること', () => {
+      const state = {}
+      mutations[types.m.IMPORT_STATE](state, getState())
+      expect(state.layerList).to.lengthOf(2)
+      expect(state.layerList[1].id).to.equal(2)
+      expect(state.layerList[1].svgElementUndoStack).to.have.lengthOf(0)
+    })
+    it('clipList layerList 以外が復元されること', () => {
       const state = {}
       mutations[types.m.IMPORT_STATE](state, getState())
       expect(state.selectedId).to.equal(2)
@@ -809,7 +825,8 @@ describe('store/modules/clips/mutations', () => {
       const state = {
         clipList: [],
         selectedId: -1,
-        maxSize: 1200
+        maxSize: 1200,
+        layerList: []
       }
       mutations[types.m.IMPORT_STATE](state, {})
       expect(state.clipList).to.lengthOf(0)

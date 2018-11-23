@@ -2,6 +2,7 @@ import types from './types'
 import getters from './getters'
 import * as elementUtils from '@/commons/utils/element'
 import { completeClip } from '@/commons/models/clip'
+import { completeLayer } from '@/commons/models/layer'
 
 // キャンバス全体サイズの変更に伴い、各clip上のsvgElementの位置が変化しないよう調整する
 export function adjustSvgElementPositions({
@@ -328,6 +329,7 @@ const mutations = {
     state.clipList = (data.clipList || []).map(completeClip)
     state.selectedId = data.selectedId || state.selectedId
     state.maxSize = data.maxSize || state.maxSize
+    state.layerList = (data.layerList || []).map(completeLayer)
   },
   [types.m.ADD_LAYER](state, { layer, index = -1 }) {
     if (index === -1) {
