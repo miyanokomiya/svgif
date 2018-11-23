@@ -105,7 +105,8 @@ export default {
       SELECTED_CLIP: clipTypes.g.SELECTED_CLIP,
       WHOLE_SIZE: clipTypes.g.WHOLE_SIZE,
       MAX_SIZE: clipTypes.g.MAX_SIZE,
-      STATE: clipTypes.g.STATE
+      STATE: clipTypes.g.STATE,
+      LAYER_LIST: clipTypes.g.LAYER_LIST
     })
   },
   methods: {
@@ -139,7 +140,8 @@ export default {
       createGif({
         clipList: this.CLIP_LIST,
         size: this.WHOLE_SIZE,
-        maxSize: this.MAX_SIZE
+        maxSize: this.MAX_SIZE,
+        layerList: this.LAYER_LIST
       })
         .then(blob => {
           const fileReader = new FileReader()
