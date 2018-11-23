@@ -33,6 +33,7 @@
     <draggable
       class="layer-time-line"
       :value="LAYER_LIST"
+      :options="{ handle: '.handle' }"
       @change="swapLayerOrder"
     >
       <transition-group type="transition" class="layer-list" name="layer-list">
@@ -41,7 +42,10 @@
           :key="layer.id"
           :layer="layer"
           :wholeDelay="WHOLE_DELAY"
+          :current="isCurrentLayer(layer.id)"
+          :selected="isSelectedLayer(layer.id)"
           @deleteLayer="deleteLayer"
+          @selectLayer="selectLayer"
         />
       </transition-group>
     </draggable>
@@ -54,6 +58,10 @@
         @click="createLayer"
       />
     </div>
+    <div
+      class="current-time"
+      :style="{ left: `${CURRENT_TIME / WHOLE_DELAY * 100}%` }"
+    />
   </div>
 </template>
 
@@ -78,7 +86,10 @@ export default {
       SELECTED_CLIP: clipTypes.g.SELECTED_CLIP,
       WHOLE_SIZE: clipTypes.g.WHOLE_SIZE,
       WHOLE_DELAY: clipTypes.g.WHOLE_DELAY,
-      LAYER_LIST: clipTypes.g.LAYER_LIST
+      LAYER_LIST: clipTypes.g.LAYER_LIST,
+      CURRENT_LAYER_LIST: clipTypes.g.CURRENT_LAYER_LIST,
+      SELECTED_LAYER: clipTypes.g.SELECTED_LAYER,
+      CURRENT_TIME: clipTypes.g.CURRENT_TIME
     })
   },
   methods: {
@@ -86,8 +97,15 @@ export default {
       _selectClip: clipTypes.a.SELECT_CLIP,
       _swapClipOrder: clipTypes.a.SWAP_CLIP_ORDER,
       _createLayer: clipTypes.a.CREATE_LAYER,
-      _deleteLayer: clipTypes.a.DELETE_LAYER
+      _deleteLayer: clipTypes.a.DELETE_LAYER,
+      _selectLayer: clipTypes.a.SELECT_LAYER
     }),
+    isCurrentLayer(id) {
+      return !!this.CURRENT_LAYER_LIST.find(l => l.id === id)
+    },
+    isSelectedLayer(id) {
+      return this.SELECTED_LAYER.id === id
+    },
     selectClip(id) {
       this._selectClip(id)
     },
@@ -107,6 +125,9 @@ export default {
     },
     deleteLayer(id) {
       this._deleteLayer(id)
+    },
+    selectLayer(id) {
+      this._selectLayer(id)
     }
   }
 }
@@ -117,6 +138,16 @@ $button-width: 2rem;
 
 .time-line-wrapper {
   overflow: auto;
+  position: relative;
+}
+.current-time {
+  position: absolute;
+  height: 100%;
+  top: 0;
+  width: 0.3rem;
+  margin-left: $button-width;
+  background-color: lime;
+  border-radius: 0.2rem;
 }
 .clip-time-line {
   padding-left: $button-width;

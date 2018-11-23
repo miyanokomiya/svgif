@@ -7,7 +7,7 @@
       class="delete-layer-button"
       @click="$emit('deleteLayer', layer.id)"
     />
-    <div class="right">
+    <div class="right" :class="{ current, selected }" @click="$emit('selectLayer', layer.id)">
       <div class="box" :style="{width: `${(layer.to - layer.from) / wholeDelay * 100}%`}" >
         <div class="from" />
         <div class="range" />
@@ -32,6 +32,14 @@ export default {
     wholeDelay: {
       type: Number,
       required: true
+    },
+    current: {
+      type: Boolean,
+      default: false
+    },
+    selected: {
+      type: Boolean,
+      default: false
     }
   }
 }
@@ -54,6 +62,7 @@ $edge-width: 0.6rem;
   }
   .right {
     width: calc(100% - #{$button-width});
+    opacity: 0.5;
     .box {
       display: flex;
       height: 100%;
@@ -72,6 +81,14 @@ $edge-width: 0.6rem;
         height: 100%;
         width: calc(100% - 2 * #{$edge-width});
         background-color: #eee;
+      }
+    }
+    &.current {
+      opacity: 1;
+    }
+    &.selected {
+      .box {
+        border: 0.3rem solid tomato;
       }
     }
   }
