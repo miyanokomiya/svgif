@@ -60,6 +60,7 @@ describe('store/modules/clips/mutations', () => {
         })
         expect(state.clipList).to.have.lengthOf(3)
         expect(state.clipList[2].id).to.equal(3)
+        expect(state.editTargetType).to.equal('clip')
       })
       it('selectedId が -1 ではない場合、 selectedId の次に追加されること', () => {
         const state = {
@@ -74,6 +75,7 @@ describe('store/modules/clips/mutations', () => {
         })
         expect(state.clipList).to.have.lengthOf(3)
         expect(state.clipList[1].id).to.equal(3)
+        expect(state.editTargetType).to.equal('clip')
       })
     })
     context('index指定の場合', () => {
@@ -91,6 +93,7 @@ describe('store/modules/clips/mutations', () => {
         })
         expect(state.clipList).to.have.lengthOf(3)
         expect(state.clipList[1].id).to.equal(3)
+        expect(state.editTargetType).to.equal('clip')
       })
     })
   })
@@ -168,6 +171,9 @@ describe('store/modules/clips/mutations', () => {
     })
     it('selectedId が -1 になること', () => {
       expect(state.selectedId).to.equal(-1)
+    })
+    it('layerList が 空になること', () => {
+      expect(state.layerList).to.be.lengthOf(0)
     })
     it('selectedLayerId が -1 になること', () => {
       expect(state.selectedLayerId).to.equal(-1)
@@ -853,6 +859,7 @@ describe('store/modules/clips/mutations', () => {
         })
         expect(state.layerList).to.have.lengthOf(3)
         expect(state.layerList[2].id).to.equal(3)
+        expect(state.editTargetType).to.equal('layer')
       })
     })
     context('index指定の場合', () => {
@@ -866,6 +873,7 @@ describe('store/modules/clips/mutations', () => {
         })
         expect(state.layerList).to.have.lengthOf(3)
         expect(state.layerList[1].id).to.equal(3)
+        expect(state.editTargetType).to.equal('layer')
       })
     })
   })

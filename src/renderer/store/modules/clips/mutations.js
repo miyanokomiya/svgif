@@ -187,6 +187,7 @@ const mutations = {
         }
         state.clipList.splice(index, 0, clip)
         state.selectedId = clip.id
+        state.editTargetType = 'clip'
       }
     })
   },
@@ -209,6 +210,7 @@ const mutations = {
   [types.m.REMOVE_ALL_CLIP](state) {
     state.clipList = []
     state.selectedId = -1
+    state.layerList = []
     state.selectedLayerId = -1
     state.currentTime = 0
   },
@@ -339,6 +341,7 @@ const mutations = {
     }
     state.layerList.splice(index, 0, layer)
     state.selectedLayerId = layer.id
+    state.editTargetType = 'layer'
   },
   [types.m.REMOVE_LAYER](state, id) {
     const index = state.layerList.findIndex(c => c.id === id)
