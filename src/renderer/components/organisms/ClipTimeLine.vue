@@ -154,7 +154,7 @@ $button-width: 2rem;
   height: 100%;
   top: 0;
   width: 0.3rem;
-  margin-left: $button-width;
+  margin-left: $button-width; // FIXME 削除ボタン部分の幅を含めた％計算になってしまっている
   background-color: lime;
   border-radius: 0.2rem;
   opacity: 0.8;

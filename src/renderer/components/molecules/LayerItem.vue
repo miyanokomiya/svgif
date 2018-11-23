@@ -8,7 +8,7 @@
       @click="$emit('deleteLayer', layer.id)"
     />
     <div class="right" :class="{ current, selected }" @click="$emit('selectLayer', layer.id)">
-      <div class="box" :style="{left: `${localFrom / wholeDelay * 100}%`, right: `${localTo / wholeDelay * 100}%`}" >
+      <div class="box" :style="{left: `${localFrom / wholeDelay * 100}%`, right: `${(wholeDelay - localTo) / wholeDelay * 100}%`}" >
         <div class="from" @mousedown="startChangeFrom" />
         <div class="range" />
         <div class="to" @mousedown="startChangeTo" />
@@ -50,10 +50,16 @@ export default {
   },
   computed: {
     localFrom() {
-      return Math.min(this.layer.from + this.moveDelayFrom, this.layer.to)
+      return Math.max(
+        Math.min(this.layer.from + this.moveDelayFrom, this.layer.to),
+        0
+      )
     },
     localTo() {
-      return Math.max(this.layer.to - this.moveDelayTo, this.layer.from)
+      return Math.min(
+        Math.max(this.layer.to + this.moveDelayTo, this.layer.from),
+        this.wholeDelay
+      )
     }
   },
   methods: {
