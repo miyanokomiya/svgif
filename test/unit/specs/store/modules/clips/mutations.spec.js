@@ -801,4 +801,46 @@ describe('store/modules/clips/mutations', () => {
       expect(state.layerList[0].id).to.equal(2)
     })
   })
+  describe('SELECT_LAYER', () => {
+    it('選択対象が存在する場合、 selectedLayerId が変更されること', () => {
+      const state = {
+        clipList: [],
+        layerList: [{ id: 1 }, { id: 2 }, { id: 3 }],
+        selectedLayerId: 2
+      }
+      mutations[types.m.SELECT_LAYER](state, 1)
+      expect(state.selectedLayerId).to.equal(1)
+    })
+    it('選択対象が存在しない場合、 selectedLayerId が変更されないこと', () => {
+      const state = {
+        clipList: [],
+        layerList: [{ id: 1 }, { id: 2 }, { id: 3 }],
+        selectedLayerId: 2
+      }
+      mutations[types.m.SELECT_LAYER](state, 4)
+      expect(state.selectedLayerId).to.equal(2)
+    })
+    describe('selectedId 更新', () => {
+      it('時間に対応するクリップが選択されること', () => {
+        const state = {
+          selectedId: 1,
+          clipList: [{ id: 1, delay: 100 }, { id: 2, delay: 100 }],
+          selectedLayerId: -1,
+          layerList: [{ id: 1, from: 0 }, { id: 2 }, { id: 3 }]
+        }
+        mutations[types.m.SELECT_LAYER](state, 1)
+        expect(state.selectedId).to.equal(1)
+      })
+      it('境界値は後方要素が選択されること', () => {
+        const state = {
+          selectedId: 1,
+          clipList: [{ id: 1, delay: 100 }, { id: 2, delay: 100 }],
+          selectedLayerId: -1,
+          layerList: [{ id: 1, from: 100 }, { id: 2 }, { id: 3 }]
+        }
+        mutations[types.m.SELECT_LAYER](state, 1)
+        expect(state.selectedId).to.equal(2)
+      })
+    })
+  })
 })

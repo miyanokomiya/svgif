@@ -309,16 +309,28 @@ const mutations = {
       index = state.layerList.length
     }
     state.layerList.splice(index, 0, layer)
+    state.selectedLayerId = layer.id
   },
   [types.m.REMOVE_LAYER](state, id) {
     const index = state.layerList.findIndex(c => c.id === id)
     if (index === -1) return
     state.layerList.splice(index, 1)
-    if (state.selectedId !== id) return
-    if (index > 0) state.selectedId = state.layerList[index - 1].id
+    if (state.selectedLayerId !== id) return
+    if (index > 0) state.selectedLayerId = state.layerList[index - 1].id
     else if (index === 0 && state.layerList.length > 0)
-      state.selectedId = state.layerList[0].id
-    else state.selectedId = -1
+      state.selectedLayerId = state.layerList[0].id
+    else state.selectedLayerId = -1
+  },
+  [types.m.SELECT_LAYER](state, id) {
+    const layer = state.layerList.find(c => c.id === id)
+    if (!layer) return
+    state.selectedLayerId = id
+    let current = 0
+    state.clipList.some(clip => {
+      state.selectedId = clip.id
+      current += clip.delay
+      return layer.from < current
+    })
   }
 }
 

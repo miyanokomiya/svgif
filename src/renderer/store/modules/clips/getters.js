@@ -31,6 +31,19 @@ const getters = {
   },
   [types.g.LAYER_LIST](state) {
     return state.layerList
+  },
+  [types.g.CURRENT_LAYER_LIST](state, getters) {
+    const currentTime = getters[types.g.CURRENT_TIME]
+    return state.layerList.filter(layer => {
+      return layer.from <= currentTime && currentTime < layer.to
+    })
+  },
+  [types.g.SELECTED_LAYER](state) {
+    return state.layerList.find(l => l.id === state.selectedLayerId) || null
+  },
+  [types.g.CURRENT_TIME](state, getters) {
+    const selectedLayer = getters[types.g.SELECTED_LAYER]
+    return selectedLayer ? selectedLayer.from : 0
   }
 }
 

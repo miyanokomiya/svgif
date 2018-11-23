@@ -6,6 +6,7 @@ const state = {
   clipList: [],
   layerList: [],
   selectedId: -1,
+  selectedLayerId: -1,
   maxSize: 1200
 }
 

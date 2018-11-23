@@ -86,4 +86,69 @@ describe('store/modules/clips/getters', () => {
       expect(val[0]).to.equal(1)
     })
   })
+  describe('CURRENT_LAYER_LIST', () => {
+    describe('currentTime を包含する layerList 取得', () => {
+      it('from 側は境界を含むこと', () => {
+        const state = {
+          layerList: [
+            { from: 0, to: 10 },
+            { from: 5, to: 15 },
+            { from: 10, to: 20 }
+          ]
+        }
+        const mockGetters = {
+          [types.g.CURRENT_TIME]: 5
+        }
+        const val = getters[types.g.CURRENT_LAYER_LIST](state, mockGetters)
+        expect(val[1].from).to.equal(5)
+      })
+      it('to 側は境界を含まないこと', () => {
+        const state = {
+          layerList: [
+            { from: 0, to: 10 },
+            { from: 5, to: 15 },
+            { from: 10, to: 20 }
+          ]
+        }
+        const mockGetters = {
+          [types.g.CURRENT_TIME]: 15
+        }
+        const val = getters[types.g.CURRENT_LAYER_LIST](state, mockGetters)
+        expect(val).to.have.lengthOf(1)
+        expect(val[0].from).to.equal(10)
+      })
+    })
+  })
+  describe('SELECTED_LAYER', () => {
+    context('selectedLayerId に対応した要素が存在する場合', () => {
+      it('selectedLayerId に対応した要素 が取得されること', () => {
+        const state = {
+          layerList: [{ id: 1 }, { id: 2 }, { id: 3 }],
+          selectedLayerId: 2
+        }
+        const layer = getters[types.g.SELECTED_LAYER](state)
+        expect(layer.id).to.equal(2)
+      })
+    })
+    context('selectedLayerId に対応した要素が存在しない場合', () => {
+      it('null が取得されること', () => {
+        const state = {
+          layerList: [{ id: 1 }, { id: 2 }, { id: 3 }],
+          selectedLayerId: 4
+        }
+        const layer = getters[types.g.SELECTED_LAYER](state)
+        expect(layer).to.equal(null)
+      })
+    })
+  })
+  describe('CURRENT_TIME', () => {
+    it('layerList が取得されること', () => {
+      const state = {}
+      const mockGetters = {
+        [types.g.SELECTED_LAYER]: { from: 1 }
+      }
+      const val = getters[types.g.CURRENT_TIME](state, mockGetters)
+      expect(val).to.equal(1)
+    })
+  })
 })

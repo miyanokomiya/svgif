@@ -384,4 +384,21 @@ describe('store/modules/clips/actions', () => {
       })
     })
   })
+  describe('SELECT_LAYER', () => {
+    it('mutationが正しく実行されること', done => {
+      testAction({
+        done,
+        action: actions[types.a.SELECT_LAYER],
+        payload: 1,
+        mutations: [
+          {
+            type: types.m.SELECT_LAYER,
+            test: id => {
+              expect(id).to.equal(1)
+            }
+          }
+        ]
+      })
+    })
+  })
 })

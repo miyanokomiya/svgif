@@ -115,6 +115,10 @@ const actions = {
   [types.a.DELETE_LAYER]({ commit }, id) {
     commit(types.m.REMOVE_LAYER, id)
     return Promise.resolve()
+  },
+  [types.a.SELECT_LAYER]({ commit }, id) {
+    commit(types.m.SELECT_LAYER, id)
+    return Promise.resolve()
   }
 }
 
