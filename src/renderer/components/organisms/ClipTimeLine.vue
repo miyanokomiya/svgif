@@ -1,67 +1,70 @@
 <template>
   <div class="time-line-wrapper">
-    <draggable
-      class="clip-time-line"
-      :value="CLIP_LIST"
-      @change="swapClipOrder"
-    >
-      <transition-group type="transition" class="clip-list" name="clip-list">
-        <div
-          v-for="clip in CLIP_LIST"
-          :key="clip.id"
-          :style="{width: `${clip.delay / WHOLE_DELAY * 100}%`}"
-          class="clip-item"
-          :class="{ selected: isSelected(clip.id) }"
-          @click="selectClip(clip.id)"
-        >
-          <div class="image">
-            <img
-              :src="clip.base64"
-              :style="{ width: `${clip.width / WHOLE_SIZE.width * 100}%`, height: `${clip.height / WHOLE_SIZE.height * 100}%` }"
-            />
-            <SvgRender
-              class="svg"
-              :svgElementList="clip.svgElementList"
-              :size="WHOLE_SIZE"
-            />
+    <div class="time-line-body">
+      <draggable
+        class="clip-time-line"
+        :value="CLIP_LIST"
+        @change="swapClipOrder"
+      >
+        <transition-group type="transition" class="clip-list" name="clip-list">
+          <div
+            v-for="clip in CLIP_LIST"
+            :key="clip.id"
+            :style="{width: `${clip.delay / WHOLE_DELAY * 100}%`}"
+            class="clip-item"
+            :class="{ selected: isSelected(clip.id) }"
+            @click="selectClip(clip.id)"
+          >
+            <div class="image">
+              <img
+                :src="clip.base64"
+                :style="{ width: `${clip.width / WHOLE_SIZE.width * 100}%`, height: `${clip.height / WHOLE_SIZE.height * 100}%` }"
+              />
+              <SvgRender
+                class="svg"
+                :svgElementList="clip.svgElementList"
+                :size="WHOLE_SIZE"
+              />
+            </div>
+            <div class="split" />
           </div>
-          <div class="split" />
-        </div>
-      </transition-group>
-    </draggable>
+        </transition-group>
+      </draggable>
 
-    <draggable
-      class="layer-time-line"
-      :value="LAYER_LIST"
-      :options="{ handle: '.handle' }"
-      @change="swapLayerOrder"
-    >
-      <transition-group type="transition" class="layer-list" name="layer-list">
-        <LayerItem
-          v-for="layer in LAYER_LIST"
-          :key="layer.id"
-          :layer="layer"
-          :wholeDelay="WHOLE_DELAY"
-          :current="isCurrentLayer(layer.id)"
-          :selected="isSelectedLayer(layer.id)"
-          @deleteLayer="deleteLayer"
-          @selectLayer="selectLayer"
+      <draggable
+        class="layer-time-line"
+        :value="LAYER_LIST"
+        :options="{ handle: '.handle' }"
+        @change="swapLayerOrder"
+      >
+        <transition-group type="transition" class="layer-list" name="layer-list">
+          <LayerItem
+            v-for="layer in LAYER_LIST"
+            :key="layer.id"
+            :layer="layer"
+            :wholeDelay="WHOLE_DELAY"
+            :current="isCurrentLayer(layer.id)"
+            :selected="isSelectedLayer(layer.id)"
+            @deleteLayer="deleteLayer"
+            @selectLayer="selectLayer"
+            @changeRange="changeRange"
+          />
+        </transition-group>
+      </draggable>
+      <div>
+        <el-button
+          type="primary"
+          size="mini"
+          icon="el-icon-circle-plus"
+          class="add-layer-button"
+          @click="createLayer"
         />
-      </transition-group>
-    </draggable>
-    <div>
-      <el-button
-        type="primary"
-        size="mini"
-        icon="el-icon-circle-plus"
-        class="add-layer-button"
-        @click="createLayer"
+      </div>
+      <div
+        class="current-time"
+        :style="{ left: `${CURRENT_TIME / WHOLE_DELAY * 100}%` }"
       />
     </div>
-    <div
-      class="current-time"
-      :style="{ left: `${CURRENT_TIME / WHOLE_DELAY * 100}%` }"
-    />
   </div>
 </template>
 
@@ -98,7 +101,8 @@ export default {
       _swapClipOrder: clipTypes.a.SWAP_CLIP_ORDER,
       _createLayer: clipTypes.a.CREATE_LAYER,
       _deleteLayer: clipTypes.a.DELETE_LAYER,
-      _selectLayer: clipTypes.a.SELECT_LAYER
+      _selectLayer: clipTypes.a.SELECT_LAYER,
+      _updateLayerRange: clipTypes.a.UPDATE_LAYER_RANGE
     }),
     isCurrentLayer(id) {
       return !!this.CURRENT_LAYER_LIST.find(l => l.id === id)
@@ -128,6 +132,9 @@ export default {
     },
     selectLayer(id) {
       this._selectLayer(id)
+    },
+    changeRange({ id, from, to }) {
+      this._updateLayerRange({ id, from, to })
     }
   }
 }
@@ -138,6 +145,8 @@ $button-width: 2rem;
 
 .time-line-wrapper {
   overflow: auto;
+}
+.time-line-body {
   position: relative;
 }
 .current-time {
@@ -148,6 +157,8 @@ $button-width: 2rem;
   margin-left: $button-width;
   background-color: lime;
   border-radius: 0.2rem;
+  opacity: 0.8;
+  pointer-events: none;
 }
 .clip-time-line {
   padding-left: $button-width;
