@@ -128,8 +128,8 @@ const actions = {
     commit(types.m.SET_CURRENT_TIME, currentTime)
     return Promise.resolve()
   },
-  [types.a.SET_EDIT_TARGET]({ commit }, { type, id }) {
-    commit(types.m.SET_EDIT_TARGET, { type, id })
+  [types.a.SET_EDIT_TARGET_TYPE]({ commit }, type) {
+    commit(types.m.SET_EDIT_TARGET_TYPE, type)
     return Promise.resolve()
   }
 }

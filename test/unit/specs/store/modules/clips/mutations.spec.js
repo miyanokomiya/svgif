@@ -915,14 +915,13 @@ describe('store/modules/clips/mutations', () => {
       })
     })
   })
-  describe('SET_EDIT_TARGET', () => {
-    it('editTarget が変更されること', () => {
+  describe('SET_EDIT_TARGET_TYPE', () => {
+    it('editTargetType が変更されること', () => {
       const state = {
-        editTarget: {}
+        editTargetType: ''
       }
-      mutations[types.m.SET_EDIT_TARGET](state, { type: 'clip', id: 1 })
-      expect(state.editTarget.type).to.equal('clip')
-      expect(state.editTarget.id).to.equal(1)
+      mutations[types.m.SET_EDIT_TARGET_TYPE](state, 'clip')
+      expect(state.editTargetType).to.equal('clip')
     })
   })
 })

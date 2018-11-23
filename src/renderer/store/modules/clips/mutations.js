@@ -352,9 +352,8 @@ const mutations = {
       return
     state.selectedLayerId = -1
   },
-  [types.m.SET_EDIT_TARGET](state, { type, id }) {
-    state.editTarget.type = type
-    state.editTarget.id = id
+  [types.m.SET_EDIT_TARGET_TYPE](state, type) {
+    state.editTargetType = type
   }
 }
 

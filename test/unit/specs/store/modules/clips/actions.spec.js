@@ -437,18 +437,17 @@ describe('store/modules/clips/actions', () => {
       })
     })
   })
-  describe('SET_EDIT_TARGET', () => {
+  describe('SET_EDIT_TARGET_TYPE', () => {
     it('mutationが正しく実行されること', done => {
       testAction({
         done,
-        action: actions[types.a.SET_EDIT_TARGET],
-        payload: { type: 'clip', id: 1 },
+        action: actions[types.a.SET_EDIT_TARGET_TYPE],
+        payload: 'clip',
         mutations: [
           {
-            type: types.m.SET_EDIT_TARGET,
-            test: ({ type, id }) => {
+            type: types.m.SET_EDIT_TARGET_TYPE,
+            test: type => {
               expect(type).to.equal('clip')
-              expect(id).to.equal(1)
             }
           }
         ]

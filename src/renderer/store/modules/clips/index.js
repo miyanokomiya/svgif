@@ -7,7 +7,7 @@ const state = {
   layerList: [],
   selectedId: -1,
   selectedLayerId: -1,
-  editTarget: { type: ['clip', 'layer'][0], id: -1 },
+  editTargetType: ['clip', 'layer'][0],
   currentTime: 0,
   maxSize: 1200
 }
