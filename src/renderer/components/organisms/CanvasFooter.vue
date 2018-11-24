@@ -25,7 +25,7 @@
     >
       Clone
     </el-button>
-    <span class="total-delay">Total Time(s): {{WHOLE_DELAY / 1000}}</span>
+    <div class="total-delay"><span>Frame(ms): </span><span class="current-time">{{trimNumber(CURRENT_TIME)}}</span><span>/ {{trimNumber(WHOLE_DELAY)}}</span></div>
     <el-button
       type="primary"
       size="mini"
@@ -46,7 +46,8 @@ export default {
   computed: {
     ...mapGetters({
       SELECTED_CLIP: clipTypes.g.SELECTED_CLIP,
-      WHOLE_DELAY: clipTypes.g.WHOLE_DELAY
+      WHOLE_DELAY: clipTypes.g.WHOLE_DELAY,
+      CURRENT_TIME: clipTypes.g.CURRENT_TIME
     })
   },
   methods: {
@@ -56,6 +57,9 @@ export default {
       _updateDelay: clipTypes.a.UPDATE_DELAY,
       _cloneClip: clipTypes.a.CLONE_CLIP
     }),
+    trimNumber(num) {
+      return Math.floor(num)
+    },
     createGif() {
       this.$emit('createGif')
     },
@@ -134,7 +138,13 @@ export default {
     width: 10rem;
   }
   .total-delay {
+    display: flex;
     margin-left: auto;
+    .current-time {
+      min-width: 8rem;
+      text-align: right;
+      margin-right: 0.6rem;
+    }
   }
 }
 </style>
