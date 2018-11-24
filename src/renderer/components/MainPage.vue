@@ -15,16 +15,9 @@
       >
         Load
       </el-button>
-      <el-button
-        v-if="!$svgif.isWeb"
-        icon="el-icon-picture"
-        size="mini"
-        @click="showRecorderWindow"
-      >
-        Capture
-      </el-button>
       <div class="tool-box">
         <DrawTools class="draw-tools"/>
+        <ContainerProps class="container-props" />
         <CanvasHistory class="canvas-history"/>
       </div>
     </el-aside>
@@ -38,6 +31,7 @@
             <el-footer height="40px">
               <CanvasFooter
                 @createGif="createGif"
+                @showRecorderWindow="showRecorderWindow"
               />
             </el-footer>
           </el-tab-pane>
@@ -76,6 +70,7 @@ import { mapActions, mapGetters } from 'vuex'
 import clipTypes from '@/store/modules/clips/types'
 import DrawTools from '@/components/organisms/sidebars/DrawTools'
 import CanvasHistory from '@/components/organisms/sidebars/CanvasHistory'
+import ContainerProps from '@/components/organisms/sidebars/ContainerProps'
 import ClipCanvas from '@/components/organisms/ClipCanvas'
 import GifCanvas from '@/components/organisms/GifCanvas'
 import CanvasFooter from '@/components/organisms/CanvasFooter'
@@ -88,6 +83,7 @@ export default {
   components: {
     DrawTools,
     CanvasHistory,
+    ContainerProps,
     ClipCanvas,
     GifCanvas,
     CanvasFooter,
@@ -215,7 +211,10 @@ export default {
   .tool-box {
     height: calc(100% - 32px - 0.1rem);
     .draw-tools {
-      height: calc(50%);
+      height: calc(25%);
+    }
+    .container-props {
+      height: calc(25%);
     }
     .canvas-history {
       height: calc(50%);
