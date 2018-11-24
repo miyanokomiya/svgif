@@ -353,6 +353,12 @@ const mutations = {
     if (!layer) return
     layer.from = from
     layer.to = to
+    // 選択中レイヤだった場合は currentTime を収める
+    if (state.selectedLayerId === id) {
+      if (state.currentTime < layer.from) state.currentTime = layer.from
+      // layer を選択させておきたいので to - 1 にしておく
+      else if (state.currentTime >= layer.to) state.currentTime = layer.to - 1
+    }
   },
   [types.m.SET_CURRENT_TIME](state, currentTime) {
     state.currentTime = currentTime

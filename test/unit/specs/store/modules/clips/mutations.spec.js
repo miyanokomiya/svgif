@@ -867,12 +867,60 @@ describe('store/modules/clips/mutations', () => {
   describe('UPDATE_LAYER_RANGE', () => {
     it('対象レイヤーの from と to が変更されること', () => {
       const state = {
-        layerList: [{ id: 1, from: 0, to: 0 }, { id: 2 }, { id: 3 }]
+        layerList: [{ id: 1, from: 0, to: 0 }, { id: 2 }, { id: 3 }],
+        selectedLayerId: -1
       }
       mutations[types.m.UPDATE_LAYER_RANGE](state, { id: 1, from: 2, to: 3 })
       expect(state.layerList[0].id).to.equal(1)
       expect(state.layerList[0].from).to.equal(2)
       expect(state.layerList[0].to).to.equal(3)
+    })
+    context('対象レイヤーが選択中だった場合', () => {
+      context('currentTime が対象レイヤーの from 以上 to 以下の場合', () => {
+        it('currentTime が変化しないこと', () => {
+          const state = {
+            layerList: [{ id: 1, from: 0, to: 0 }, { id: 2 }, { id: 3 }],
+            selectedLayerId: 1,
+            currentTime: 3
+          }
+          mutations[types.m.UPDATE_LAYER_RANGE](state, {
+            id: 1,
+            from: 2,
+            to: 5
+          })
+          expect(state.currentTime).to.equal(3)
+        })
+      })
+      context('currentTime が対象レイヤーの from 未満の場合', () => {
+        it('currentTime が対象レイヤーの from　になること', () => {
+          const state = {
+            layerList: [{ id: 1, from: 0, to: 0 }, { id: 2 }, { id: 3 }],
+            selectedLayerId: 1,
+            currentTime: 0
+          }
+          mutations[types.m.UPDATE_LAYER_RANGE](state, {
+            id: 1,
+            from: 2,
+            to: 3
+          })
+          expect(state.currentTime).to.equal(2)
+        })
+      })
+    })
+    context('currentTime が対象レイヤーの to 以上の場合', () => {
+      it('currentTime が対象レイヤーの to - 1　になること', () => {
+        const state = {
+          layerList: [{ id: 1, from: 0, to: 0 }, { id: 2 }, { id: 3 }],
+          selectedLayerId: 1,
+          currentTime: 4
+        }
+        mutations[types.m.UPDATE_LAYER_RANGE](state, {
+          id: 1,
+          from: 2,
+          to: 4
+        })
+        expect(state.currentTime).to.equal(3)
+      })
     })
   })
   describe('SET_CURRENT_TIME', () => {
