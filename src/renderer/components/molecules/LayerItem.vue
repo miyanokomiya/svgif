@@ -9,7 +9,7 @@
     />
     <div class="right" :class="{ current, editing }">
       <div class="box" :style="{left: `${localFrom / wholeDelay * 100}%`, right: `${(wholeDelay - localTo) / wholeDelay * 100}%`}" >
-        <div class="from" @mousedown="startChangeFrom" />
+        <DragHandler class="from" @drag="changeFrom" @dragEnd="changeRange" />
         <div class="range"  @click="$emit('selectLayer', layer.id)">
           <SvgRender
             class="svg"
@@ -17,7 +17,7 @@
             :size="wholeSize"
           />
         </div>
-        <div class="to" @mousedown="startChangeTo" />
+        <DragHandler class="to" @drag="changeTo" @dragEnd="changeRange" />
       </div>
     </div>
   </div>
@@ -25,15 +25,15 @@
 
 <script>
 import SvgRender from '@/components/organisms/SvgRender'
+import DragHandler from '@/components/atoms/DragHandler'
 
 export default {
   components: {
-    SvgRender
+    SvgRender,
+    DragHandler
   },
   data: () => ({
-    startXFrom: 0,
     moveDelayFrom: 0,
-    startXTo: 0,
     moveDelayTo: 0
   }),
   props: {
@@ -73,40 +73,16 @@ export default {
     }
   },
   methods: {
-    startChangeFrom(e) {
-      this.startXFrom = e.pageX
-      window.addEventListener('mousemove', this.changeFrom, true)
-      window.addEventListener('mouseup', this.endChangeFrom, true)
-    },
-    endChangeFrom() {
-      window.removeEventListener('mousemove', this.changeFrom, true)
-      window.removeEventListener('mouseup', this.endChangeFrom, true)
-      this.changeRange()
-      this.startXFrom = 0
-      this.moveDelayFrom = 0
-    },
-    changeFrom(e) {
+    changeFrom({ x, y }) {
       if (!this.$el) return
       const width = this.$el.getBoundingClientRect().width
-      const rate = (e.pageX - this.startXFrom) / width
+      const rate = x / width
       this.moveDelayFrom = rate * this.wholeDelay
     },
-    startChangeTo(e) {
-      this.startXTo = e.pageX
-      window.addEventListener('mousemove', this.changeTo, true)
-      window.addEventListener('mouseup', this.endChangeTo, true)
-    },
-    endChangeTo() {
-      window.removeEventListener('mousemove', this.changeTo, true)
-      window.removeEventListener('mouseup', this.endChangeTo, true)
-      this.changeRange()
-      this.startXTo = 0
-      this.moveDelayTo = 0
-    },
-    changeTo(e) {
+    changeTo({ x, y }) {
       if (!this.$el) return
       const width = this.$el.getBoundingClientRect().width
-      const rate = (e.pageX - this.startXTo) / width
+      const rate = x / width
       this.moveDelayTo = rate * this.wholeDelay
     },
     changeRange() {
@@ -115,6 +91,8 @@ export default {
         from: this.localFrom,
         to: this.localTo
       })
+      this.moveDelayFrom = 0
+      this.moveDelayTo = 0
     }
   }
 }
