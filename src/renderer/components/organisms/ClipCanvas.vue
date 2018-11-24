@@ -665,6 +665,7 @@ $split-handler-height: 0.8rem;
       outline-offset: -0.2rem;
       .svg-element-background {
         opacity: 0.3;
+        pointer-events: none;
       }
       .svg-element {
         cursor: pointer;
