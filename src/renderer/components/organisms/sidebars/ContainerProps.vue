@@ -1,6 +1,6 @@
 <template>
-  <div class="container-props">
-    <div v-if="EDIT_TARGET_SVG_ELEMENT_CONTAINER">
+  <div class="container-props" v-if="EDIT_TARGET_SVG_ELEMENT_CONTAINER">
+    <div>
       <template v-if="selectedClip">
         <p class="title">Clip</p>
         <div class="content">
