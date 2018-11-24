@@ -60,12 +60,19 @@
           />
         </transition-group>
       </draggable>
-      <div class="add-layer-button-box">
+      <div class="layer-button-box">
+        <el-button
+          :type="playGifTimer ? 'warning' : 'success'"
+          size="mini"
+          class="play-gif"
+          @click="playGif"
+        >
+          {{playGifTimer ? 'Stop' : 'Play'}}
+        </el-button>
         <el-button
           type="primary"
           size="mini"
           icon="el-icon-circle-plus"
-          class="add-layer-button"
           @click="createLayer"
         />
       </div>
@@ -98,7 +105,8 @@ export default {
     DragHandler
   },
   data: () => ({
-    currentTimeAtStart: 0
+    currentTimeAtStart: 0,
+    playGifTimer: null
   }),
   computed: {
     ...mapGetters({
@@ -180,6 +188,24 @@ export default {
       const width = this.$refs.currentTimeSlider.getBoundingClientRect().width
       const rate = p.x / width
       this._setCurrentTime(rate * this.WHOLE_DELAY)
+    },
+    playGif() {
+      if (this.playGifTimer) {
+        clearTimeout(this.playGifTimer)
+        this.playGifTimer = null
+        return
+      }
+      // 30フレームで再生
+      const unitFrame = 1000 / 30
+      const frameLoop = () => {
+        if (!this.playGifTimer) return
+        let nextFrame = this.CURRENT_TIME + unitFrame
+        // 最後まで来たら最初に戻る
+        if (this.WHOLE_DELAY < nextFrame) nextFrame = 0
+        this._setCurrentTime(nextFrame)
+        this.playGifTimer = setTimeout(frameLoop, unitFrame)
+      }
+      this.playGifTimer = setTimeout(frameLoop, unitFrame)
     }
   }
 }
@@ -297,11 +323,12 @@ $time-line-slider-item-width: 3rem;
     transition: transform 0.5s;
   }
 }
-.add-layer-button-box {
+.layer-button-box {
   display: flex;
+  justify-content: center;
   padding: 0.2rem 0;
-  .add-layer-button {
-    margin: 0 auto;
+  .play-gif {
+    width: 7rem;
   }
 }
 </style>

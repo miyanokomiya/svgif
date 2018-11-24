@@ -472,7 +472,7 @@ export default {
         x: p.x - this.downStartPoint.x,
         y: p.y - this.downStartPoint.y
       }
-      if (this.$svgif.canvasMode === 'draw') {
+      if (this.$svgif.canvasMode === 'draw' && this.selectedElement) {
         this.resizeElement({ element: this.selectedElement, ...p })
       }
     },
