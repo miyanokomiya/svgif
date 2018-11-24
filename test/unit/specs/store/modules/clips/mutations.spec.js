@@ -39,7 +39,7 @@ describe('store/modules/clips/mutations', () => {
     })
   })
   describe('SET_MAX_SIZE maxSizeセット', () => {
-    it('selectedId が -1 の場合、末尾に追加されること', () => {
+    it('maxSize がセットされること', () => {
       const state = { maxSize: 1 }
       mutations[types.m.SET_MAX_SIZE](state, 2)
       expect(state.maxSize).to.equal(2)
@@ -47,28 +47,25 @@ describe('store/modules/clips/mutations', () => {
   })
   describe('ADD_CLIP', () => {
     context('index省略の場合', () => {
-      it('selectedId が -1 の場合、末尾に追加されること', () => {
+      it('選択中クリップがないの場合、末尾に追加されること', () => {
         const state = {
-          clipList: [
-            { id: 1, svgElementList: [] },
-            { id: 2, svgElementList: [] }
-          ],
-          selectedId: -1
+          clipList: [],
+          currentTime: 0
         }
         mutations[types.m.ADD_CLIP](state, {
           clip: { id: 3, svgElementList: [] }
         })
-        expect(state.clipList).to.have.lengthOf(3)
-        expect(state.clipList[2].id).to.equal(3)
+        expect(state.clipList).to.have.lengthOf(1)
+        expect(state.clipList[0].id).to.equal(3)
         expect(state.editTargetType).to.equal('clip')
       })
-      it('selectedId が -1 ではない場合、 selectedId の次に追加されること', () => {
+      it('選択中クリップがある場合、その次に追加されること', () => {
         const state = {
           clipList: [
-            { id: 1, svgElementList: [] },
-            { id: 2, svgElementList: [] }
+            { id: 1, svgElementList: [], delay: 10 },
+            { id: 2, svgElementList: [], delay: 10 }
           ],
-          selectedId: 1
+          currentTime: 0
         }
         mutations[types.m.ADD_CLIP](state, {
           clip: { id: 3, svgElementList: [] }
@@ -84,8 +81,7 @@ describe('store/modules/clips/mutations', () => {
           clipList: [
             { id: 1, svgElementList: [] },
             { id: 2, svgElementList: [] }
-          ],
-          selectedId: -1
+          ]
         }
         mutations[types.m.ADD_CLIP](state, {
           clip: { id: 3, svgElementList: [] },
@@ -98,79 +94,44 @@ describe('store/modules/clips/mutations', () => {
     })
   })
   describe('REMOVE_CLIP', () => {
-    context('selectedId が 削除対象ではないとき', () => {
+    context('currentTime が削除後も全体時間に収まるとき', () => {
       const state = {
         clipList: [
-          { id: 1, svgElementList: [] },
-          { id: 2, svgElementList: [] }
+          { id: 1, svgElementList: [], delay: 10 },
+          { id: 2, svgElementList: [], delay: 10 },
+          { id: 3, svgElementList: [], delay: 10 }
         ],
-        selectedId: 2
+        currentTime: 15
       }
-      mutations[types.m.REMOVE_CLIP](state, 1)
-      it('引数で指定した id の要素が削除されること', () => {
-        expect(state.clipList).to.have.lengthOf(1)
-        expect(state.clipList[0].id).to.equal(2)
-      })
-      it('selectedId が変化ないこと', () => {
-        expect(state.selectedId).to.equal(2)
+      mutations[types.m.REMOVE_CLIP](state, 2)
+      it('currentTime が 変化しないこと', () => {
+        expect(state.currentTime).to.equal(15)
       })
     })
-    context('selectedId が 削除対象のとき', () => {
-      context('selectedId の要素が配列の先頭以外のとき', () => {
-        const state = {
-          clipList: [
-            { id: 1, svgElementList: [] },
-            { id: 2, svgElementList: [] },
-            { id: 3, svgElementList: [] }
-          ],
-          selectedId: 2
-        }
-        mutations[types.m.REMOVE_CLIP](state, 2)
-        it('selectedId が 削除対象の前の要素の id になること', () => {
-          expect(state.selectedId).to.equal(1)
-        })
-      })
-      context('selectedId の要素が配列の先頭のとき', () => {
-        context('削除後の clipList に要素が１つ以上あるとき', () => {
-          const state = {
-            clipList: [
-              { id: 1, svgElementList: [] },
-              { id: 2, svgElementList: [] },
-              { id: 3, svgElementList: [] }
-            ],
-            selectedId: 1
-          }
-          mutations[types.m.REMOVE_CLIP](state, 1)
-          it('selectedId が 先頭要素の id になること', () => {
-            expect(state.selectedId).to.equal(2)
-          })
-        })
-        context('削除後の clipList に要素がないとき', () => {
-          const state = {
-            clipList: [{ id: 1, svgElementList: [] }],
-            selectedId: 1
-          }
-          mutations[types.m.REMOVE_CLIP](state, 1)
-          it('selectedId が -1 になること', () => {
-            expect(state.selectedId).to.equal(-1)
-          })
-        })
+    context('currentTime が削除後の全体時間に収まらないとき', () => {
+      const state = {
+        clipList: [
+          { id: 1, svgElementList: [], delay: 10 },
+          { id: 2, svgElementList: [], delay: 10 },
+          { id: 3, svgElementList: [], delay: 10 }
+        ],
+        currentTime: 25
+      }
+      mutations[types.m.REMOVE_CLIP](state, 2)
+      it('currentTime が 全体最終時間になること', () => {
+        expect(state.currentTime).to.equal(20)
       })
     })
   })
   describe('REMOVE_ALL_CLIP', () => {
     const state = {
       clipList: [{ id: 1 }, { id: 2 }, { id: 3 }],
-      selectedId: 1,
       selectedLayerId: 2,
       currentTime: 3
     }
     mutations[types.m.REMOVE_ALL_CLIP](state, 1)
     it('clipList が 空になること', () => {
       expect(state.clipList).to.be.lengthOf(0)
-    })
-    it('selectedId が -1 になること', () => {
-      expect(state.selectedId).to.equal(-1)
     })
     it('layerList が 空になること', () => {
       expect(state.layerList).to.be.lengthOf(0)
@@ -183,21 +144,13 @@ describe('store/modules/clips/mutations', () => {
     })
   })
   describe('SELECT_CLIP', () => {
-    it('選択対象が存在する場合、 selectedId が変更されること', () => {
+    it('editTargetType が clip に変更されること', () => {
       const state = {
         clipList: [{ id: 1 }, { id: 2 }, { id: 3 }],
-        selectedId: 2
+        editTargetType: 'layer'
       }
       mutations[types.m.SELECT_CLIP](state, 1)
-      expect(state.selectedId).to.equal(1)
-    })
-    it('選択対象が存在しない場合、 selectedId が変更されないこと', () => {
-      const state = {
-        clipList: [{ id: 1 }, { id: 2 }, { id: 3 }],
-        selectedId: 2
-      }
-      mutations[types.m.SELECT_CLIP](state, 4)
-      expect(state.selectedId).to.equal(2)
+      expect(state.editTargetType).to.equal('clip')
     })
     describe('currentTime 更新', () => {
       it('currentTime が選択クリップの範囲に収まらない場合、from に移動すること', () => {
@@ -207,7 +160,6 @@ describe('store/modules/clips/mutations', () => {
             { id: 2, delay: 10 },
             { id: 3, delay: 10 }
           ],
-          selectedId: 2,
           currentTime: 20
         }
         mutations[types.m.SELECT_CLIP](state, 2)
@@ -220,7 +172,6 @@ describe('store/modules/clips/mutations', () => {
             { id: 2, delay: 10 },
             { id: 3, delay: 10 }
           ],
-          selectedId: 2,
           currentTime: 15
         }
         mutations[types.m.SELECT_CLIP](state, 2)
@@ -232,8 +183,7 @@ describe('store/modules/clips/mutations', () => {
     context('from < to のとき', () => {
       it('from の要素がと to の位置に変更されること', () => {
         const state = {
-          clipList: [{ id: 1 }, { id: 2 }, { id: 3 }, { id: 4 }],
-          selectedId: 2
+          clipList: [{ id: 1 }, { id: 2 }, { id: 3 }, { id: 4 }]
         }
         mutations[types.m.SWAP_CLIP_ORDER](state, { from: 0, to: 2 })
         expect(state.clipList[0].id).to.equal(2)
@@ -245,8 +195,7 @@ describe('store/modules/clips/mutations', () => {
     context('from > to のとき', () => {
       it('from の要素がと to の位置に変更されること', () => {
         const state = {
-          clipList: [{ id: 1 }, { id: 2 }, { id: 3 }, { id: 4 }],
-          selectedId: 2
+          clipList: [{ id: 1 }, { id: 2 }, { id: 3 }, { id: 4 }]
         }
         mutations[types.m.SWAP_CLIP_ORDER](state, { from: 2, to: 0 })
         expect(state.clipList[0].id).to.equal(3)
@@ -270,7 +219,6 @@ describe('store/modules/clips/mutations', () => {
     it('指定 clipId の clip に svgElement が追加されること', () => {
       const state = {
         editTargetType: 'clip',
-        selectedId: 1,
         clipList: [
           {
             id: 1,
@@ -289,7 +237,6 @@ describe('store/modules/clips/mutations', () => {
     it('svgElementList を渡すと複数要素が追加されること', () => {
       const state = {
         editTargetType: 'clip',
-        selectedId: 1,
         clipList: [
           {
             id: 1,
@@ -311,7 +258,6 @@ describe('store/modules/clips/mutations', () => {
     it('svgElementUndoStack に履歴が追加されること', () => {
       const state = {
         editTargetType: 'clip',
-        selectedId: 1,
         clipList: [
           {
             id: 1,
@@ -334,7 +280,6 @@ describe('store/modules/clips/mutations', () => {
     it('指定 clipId の clip の svgElement が差分更新されること', () => {
       const state = {
         editTargetType: 'clip',
-        selectedId: 1,
         clipList: [
           {
             id: 1,
@@ -357,7 +302,6 @@ describe('store/modules/clips/mutations', () => {
     it('svgElementList を渡すと複数要素が更新されること', () => {
       const state = {
         editTargetType: 'clip',
-        selectedId: 1,
         clipList: [
           {
             id: 1,
@@ -380,7 +324,6 @@ describe('store/modules/clips/mutations', () => {
     it('更新された要素の前回状態が差分として履歴に追加されること', () => {
       const state = {
         editTargetType: 'clip',
-        selectedId: 1,
         clipList: [
           {
             id: 1,
@@ -405,7 +348,6 @@ describe('store/modules/clips/mutations', () => {
     it('指定 clipId の clip の svgElement が削除されること', () => {
       const state = {
         editTargetType: 'clip',
-        selectedId: 1,
         clipList: [
           {
             id: 1,
@@ -425,7 +367,6 @@ describe('store/modules/clips/mutations', () => {
     it('svgElementIdList を渡すと複数要素が削除されること', () => {
       const state = {
         editTargetType: 'clip',
-        selectedId: 1,
         clipList: [
           {
             id: 1,
@@ -446,7 +387,6 @@ describe('store/modules/clips/mutations', () => {
   it('削除した要素が履歴に追加されること', () => {
     const state = {
       editTargetType: 'clip',
-      selectedId: 1,
       clipList: [
         {
           id: 1,
@@ -470,7 +410,6 @@ describe('store/modules/clips/mutations', () => {
     describe('ADD 追加をもとに戻す', () => {
       const state = {
         editTargetType: 'clip',
-        selectedId: 1,
         clipList: [
           {
             id: 1,
@@ -503,7 +442,6 @@ describe('store/modules/clips/mutations', () => {
     describe('UPDATE 更新をもとに戻す', () => {
       const state = {
         editTargetType: 'clip',
-        selectedId: 1,
         clipList: [
           {
             id: 1,
@@ -540,7 +478,6 @@ describe('store/modules/clips/mutations', () => {
     describe('REMOVE 削除をもとに戻す', () => {
       const state = {
         editTargetType: 'clip',
-        selectedId: 1,
         clipList: [
           {
             id: 1,
@@ -576,7 +513,6 @@ describe('store/modules/clips/mutations', () => {
     describe('ADD 追加をやり直す', () => {
       const state = {
         editTargetType: 'clip',
-        selectedId: 1,
         clipList: [
           {
             id: 1,
@@ -610,7 +546,6 @@ describe('store/modules/clips/mutations', () => {
     describe('UPDATE 更新をやり直す', () => {
       const state = {
         editTargetType: 'clip',
-        selectedId: 1,
         clipList: [
           {
             id: 1,
@@ -648,7 +583,6 @@ describe('store/modules/clips/mutations', () => {
     describe('REMOVE 削除をやり直す', () => {
       const state = {
         editTargetType: 'clip',
-        selectedId: 1,
         clipList: [
           {
             id: 1,
@@ -684,7 +618,6 @@ describe('store/modules/clips/mutations', () => {
   describe('JUMP_SVG_ELEMENT_HISTORY 履歴ジャンプ', () => {
     const getState = () => ({
       editTargetType: 'clip',
-      selectedId: 1,
       clipList: [
         {
           id: 1,
@@ -749,7 +682,6 @@ describe('store/modules/clips/mutations', () => {
   describe('CLEAR_SVG_ELEMENT_HISTORY 履歴クリア', () => {
     const getState = () => ({
       editTargetType: 'clip',
-      selectedId: 1,
       clipList: [
         {
           id: 1,
@@ -805,7 +737,6 @@ describe('store/modules/clips/mutations', () => {
         },
         { id: 2 }
       ],
-      selectedId: 2,
       maxSize: 300,
       layerList: [
         {
@@ -813,7 +744,10 @@ describe('store/modules/clips/mutations', () => {
           ...getSvgElementProps()
         },
         { id: 2 }
-      ]
+      ],
+      selectedLayerId: 1,
+      editTargetType: 'layer',
+      currentTime: 1
     })
     it('clipList が復元されること', () => {
       const state = {}
@@ -832,20 +766,19 @@ describe('store/modules/clips/mutations', () => {
     it('clipList layerList 以外が復元されること', () => {
       const state = {}
       mutations[types.m.IMPORT_STATE](state, getState())
-      expect(state.selectedId).to.equal(2)
+      expect(state.selectedLayerId).to.equal(1)
+      expect(state.editTargetType).to.equal('layer')
+      expect(state.currentTime).to.equal(1)
       expect(state.maxSize).to.equal(300)
     })
     it('省略されたプロパティはデフォルトのままであること', () => {
-      const state = {
-        clipList: [],
-        selectedId: -1,
-        maxSize: 1200,
-        layerList: []
-      }
+      const state = {}
       mutations[types.m.IMPORT_STATE](state, {})
       expect(state.clipList).to.lengthOf(0)
-      expect(state.selectedId).to.equal(-1)
       expect(state.maxSize).to.equal(1200)
+      expect(state.editTargetType).to.equal('clip')
+      expect(state.currentTime).to.equal(0)
+      expect(state.selectedLayerId).to.equal(-1)
     })
   })
   describe('ADD_LAYER', () => {
@@ -908,34 +841,9 @@ describe('store/modules/clips/mutations', () => {
       mutations[types.m.SELECT_LAYER](state, 4)
       expect(state.selectedLayerId).to.equal(2)
     })
-    describe('selectedId 更新', () => {
-      it('時間に対応するクリップが選択されること', () => {
-        const state = {
-          selectedId: 1,
-          clipList: [{ id: 1, delay: 100 }, { id: 2, delay: 100 }],
-          selectedLayerId: -1,
-          layerList: [{ id: 1, from: 0 }, { id: 2 }, { id: 3 }],
-          currentTime: 5
-        }
-        mutations[types.m.SELECT_LAYER](state, 1)
-        expect(state.selectedId).to.equal(1)
-      })
-      it('境界値は後方要素が選択されること', () => {
-        const state = {
-          selectedId: 1,
-          clipList: [{ id: 1, delay: 100 }, { id: 2, delay: 100 }],
-          selectedLayerId: -1,
-          layerList: [{ id: 1, from: 100 }, { id: 2 }, { id: 3 }],
-          currentTime: 5
-        }
-        mutations[types.m.SELECT_LAYER](state, 1)
-        expect(state.selectedId).to.equal(2)
-      })
-    })
     describe('currentTime 更新', () => {
       it('currentTime が選択レイヤーに包含されていない場合、 from に変更されること', () => {
         const state = {
-          selectedId: -1,
           clipList: [],
           selectedLayerId: -1,
           layerList: [{ id: 1, from: 0, to: 10 }],
@@ -946,7 +854,6 @@ describe('store/modules/clips/mutations', () => {
       })
       it('currentTime が選択レイヤーに包含されている場合、 変更されないこと', () => {
         const state = {
-          selectedId: -1,
           clipList: [],
           selectedLayerId: -1,
           layerList: [{ id: 1, from: 0, to: 10 }],
@@ -971,7 +878,6 @@ describe('store/modules/clips/mutations', () => {
   describe('SET_CURRENT_TIME', () => {
     it('currentTime が変更されること', () => {
       const state = {
-        selectedId: -1,
         currentTime: 0,
         clipList: [],
         selectedLayerId: -1,
@@ -980,34 +886,9 @@ describe('store/modules/clips/mutations', () => {
       mutations[types.m.SET_CURRENT_TIME](state, 1)
       expect(state.currentTime).to.equal(1)
     })
-    describe('selectedId 更新', () => {
-      it('時間に対応するクリップが選択されること', () => {
-        const state = {
-          selectedId: -1,
-          clipList: [{ id: 1, delay: 100 }, { id: 2, delay: 100 }],
-          currentTime: 0,
-          selectedLayerId: -1,
-          layerList: []
-        }
-        mutations[types.m.SET_CURRENT_TIME](state, 1)
-        expect(state.selectedId).to.equal(1)
-      })
-      it('境界値は後方要素が選択されること', () => {
-        const state = {
-          selectedId: -1,
-          clipList: [{ id: 1, delay: 100 }, { id: 2, delay: 100 }],
-          currentTime: 0,
-          selectedLayerId: -1,
-          layerList: []
-        }
-        mutations[types.m.SET_CURRENT_TIME](state, 100)
-        expect(state.selectedId).to.equal(2)
-      })
-    })
     describe('selectedLayerId 更新', () => {
       it('選択レイヤーの範囲に収まっていないなら、選択解除されること', () => {
         const state = {
-          selectedId: -1,
           clipList: [{ id: 1, delay: 100 }, { id: 2, delay: 100 }],
           currentTime: 0,
           selectedLayerId: 1,
@@ -1018,7 +899,6 @@ describe('store/modules/clips/mutations', () => {
       })
       it('選択レイヤーの範囲に収まっているなら、変更されないこと', () => {
         const state = {
-          selectedId: -1,
           clipList: [{ id: 1, delay: 100 }, { id: 2, delay: 100 }],
           currentTime: 0,
           selectedLayerId: 1,

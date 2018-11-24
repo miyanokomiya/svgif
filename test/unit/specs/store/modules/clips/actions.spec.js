@@ -156,8 +156,7 @@ describe('store/modules/clips/actions', () => {
         clipList: [
           { id: 1, base64: 'a', width: 1, height: 2 },
           { id: 2, base64: 'b', width: 10, height: 20 }
-        ],
-        selectedId: -1
+        ]
       }
       testAction({
         done,
@@ -183,8 +182,7 @@ describe('store/modules/clips/actions', () => {
         clipList: [
           { id: 1, base64: 'a', width: 1, height: 2 },
           { id: 2, base64: 'b', width: 10, height: 20 }
-        ],
-        selectedId: -1
+        ]
       }
       testAction({
         done,

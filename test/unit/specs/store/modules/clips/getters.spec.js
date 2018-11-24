@@ -21,24 +21,46 @@ describe('store/modules/clips/getters', () => {
     })
   })
   describe('SELECTED_CLIP', () => {
-    context('selectedId に対応した要素が存在する場合', () => {
-      it('selectedId に対応した要素 が取得されること', () => {
+    context('currentTime に対応した要素が存在する場合', () => {
+      it('currentTime に対応した要素 が取得されること', () => {
         const state = {
-          clipList: [{ id: 1 }, { id: 2 }, { id: 3 }],
-          selectedId: 2
+          clipList: [
+            { id: 1, delay: 10 },
+            { id: 2, delay: 10 },
+            { id: 3, delay: 10 }
+          ],
+          currentTime: 10
         }
         const clip = getters[types.g.SELECTED_CLIP](state)
         expect(clip.id).to.equal(2)
       })
     })
-    context('selectedId に対応した要素が存在しない場合', () => {
-      it('null が取得されること', () => {
+    context('currentTime が全体を超える場合', () => {
+      it('最後のクリップが取得されること', () => {
         const state = {
-          clipList: [{ id: 1 }, { id: 2 }, { id: 3 }],
-          selectedId: 4
+          clipList: [
+            { id: 1, delay: 10 },
+            { id: 2, delay: 10 },
+            { id: 3, delay: 10 }
+          ],
+          currentTime: 40
         }
         const clip = getters[types.g.SELECTED_CLIP](state)
-        expect(clip).to.equal(null)
+        expect(clip.id).to.equal(3)
+      })
+    })
+    context('currentTime が0未満の場合', () => {
+      it('最初のクリップが取得されること', () => {
+        const state = {
+          clipList: [
+            { id: 1, delay: 10 },
+            { id: 2, delay: 10 },
+            { id: 3, delay: 10 }
+          ],
+          currentTime: -1
+        }
+        const clip = getters[types.g.SELECTED_CLIP](state)
+        expect(clip.id).to.equal(1)
       })
     })
   })
@@ -159,8 +181,8 @@ describe('store/modules/clips/getters', () => {
     it('editTargetType が clip のとき SELECTED_CLIP が取得されること', () => {
       const state = {
         editTargetType: 'clip',
-        clipList: [{ id: 1 }],
-        selectedId: 1
+        clipList: [{ id: 1, delay: 10 }],
+        currentTime: 0
       }
       const val = getters[types.g.EDIT_TARGET_SVG_ELEMENT_CONTAINER](state)
       expect(val.id).to.equal(1)

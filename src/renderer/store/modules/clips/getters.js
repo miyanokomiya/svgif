@@ -1,5 +1,21 @@
 import types from './types'
 
+function getSelectedClip(state) {
+  let current = 0
+  let selectedClip = null
+  state.clipList.some(clip => {
+    selectedClip = clip
+    current += clip.delay
+    return state.currentTime < current
+  })
+  return selectedClip
+}
+
+export function getSelectedClipId(state) {
+  const clip = getSelectedClip(state)
+  return clip ? clip.id : -1
+}
+
 const getters = {
   [types.g.MAX_SIZE](state) {
     return state.maxSize
@@ -8,7 +24,7 @@ const getters = {
     return state.clipList
   },
   [types.g.SELECTED_CLIP](state) {
-    return state.clipList.find(c => c.id === state.selectedId) || null
+    return getSelectedClip(state)
   },
   [types.g.WHOLE_SIZE](state) {
     return state.clipList.reduce(
@@ -49,7 +65,7 @@ const getters = {
   },
   [types.g.EDIT_TARGET_SVG_ELEMENT_CONTAINER](state) {
     return state.editTargetType === 'clip'
-      ? state.clipList.find(c => c.id === state.selectedId) || null
+      ? getSelectedClip(state)
       : state.layerList.find(l => l.id === state.selectedLayerId) || null
   }
 }

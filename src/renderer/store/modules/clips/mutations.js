@@ -1,5 +1,5 @@
 import types from './types'
-import getters from './getters'
+import getters, { getSelectedClipId } from './getters'
 import * as elementUtils from '@/commons/utils/element'
 import { completeClip } from '@/commons/models/clip'
 import { completeLayer } from '@/commons/models/layer'
@@ -144,32 +144,6 @@ function redo({ clip }) {
   }
 }
 
-function adjustSelectedIdForCurrentTime(state) {
-  let current = 0
-  state.clipList.some(clip => {
-    state.selectedId = clip.id
-    current += clip.delay
-    return state.currentTime < current
-  })
-}
-
-function adjustCurrentTimeForSelectedId(state) {
-  // currentTime が選択クリップに包含されてなければ移動する
-  let from = 0
-  let to = 0
-  state.clipList.some(clip => {
-    if (clip.id === state.selectedId) {
-      to = from + clip.delay
-      return true
-    }
-    from += clip.delay
-  })
-  if (state.currentTime < from || to <= state.currentTime) {
-    state.currentTime = from
-    return true
-  }
-}
-
 const mutations = {
   [types.m.SET_MAX_SIZE](state, maxSize) {
     state.maxSize = maxSize
@@ -179,14 +153,14 @@ const mutations = {
       state,
       getters,
       mainFunction: () => {
+        const selectedId = getSelectedClipId(state)
         if (index === -1) {
           index =
-            state.selectedId !== -1
-              ? state.clipList.findIndex(c => c.id === state.selectedId) + 1
+            selectedId !== -1
+              ? state.clipList.findIndex(c => c.id === selectedId) + 1
               : state.clipList.length
         }
         state.clipList.splice(index, 0, clip)
-        state.selectedId = clip.id
         state.editTargetType = 'clip'
       }
     })
@@ -199,26 +173,35 @@ const mutations = {
         const index = state.clipList.findIndex(c => c.id === id)
         if (index === -1) return
         state.clipList.splice(index, 1)
-        if (state.selectedId !== id) return
-        if (index > 0) state.selectedId = state.clipList[index - 1].id
-        else if (index === 0 && state.clipList.length > 0)
-          state.selectedId = state.clipList[0].id
-        else state.selectedId = -1
+        const wholeDelay = getters[types.g.WHOLE_DELAY](state)
+        if (wholeDelay < state.currentTime) {
+          state.currentTime = wholeDelay
+        }
       }
     })
   },
   [types.m.REMOVE_ALL_CLIP](state) {
     state.clipList = []
-    state.selectedId = -1
     state.layerList = []
     state.selectedLayerId = -1
     state.currentTime = 0
   },
   [types.m.SELECT_CLIP](state, id) {
-    if (!state.clipList.find(c => c.id === id)) return
-    state.selectedId = id
     state.editTargetType = 'clip'
-    adjustCurrentTimeForSelectedId(state)
+    // currentTime が選択クリップに包含されてなければ移動する
+    let from = 0
+    let to = 0
+    state.clipList.some(clip => {
+      if (clip.id === id) {
+        to = from + clip.delay
+        return true
+      }
+      from += clip.delay
+    })
+    if (state.currentTime < from || to <= state.currentTime) {
+      state.currentTime = from
+      return true
+    }
   },
   [types.m.SWAP_CLIP_ORDER](state, { from, to }) {
     const clip = state.clipList[from]
@@ -331,9 +314,11 @@ const mutations = {
   },
   [types.m.IMPORT_STATE](state, data = {}) {
     state.clipList = (data.clipList || []).map(completeClip)
-    state.selectedId = data.selectedId || state.selectedId
-    state.maxSize = data.maxSize || state.maxSize
     state.layerList = (data.layerList || []).map(completeLayer)
+    state.selectedLayerId = data.selectedLayerId || -1
+    state.editTargetType = data.editTargetType || 'clip'
+    state.currentTime = data.currentTime || 0
+    state.maxSize = data.maxSize || 1200
   },
   [types.m.ADD_LAYER](state, { layer, index = -1 }) {
     if (index === -1) {
@@ -362,7 +347,6 @@ const mutations = {
     if (state.currentTime < layer.from || layer.to <= state.currentTime) {
       state.currentTime = layer.from
     }
-    adjustSelectedIdForCurrentTime(state)
   },
   [types.m.UPDATE_LAYER_RANGE](state, { id, from, to }) {
     const layer = state.layerList.find(c => c.id === id)
@@ -372,7 +356,6 @@ const mutations = {
   },
   [types.m.SET_CURRENT_TIME](state, currentTime) {
     state.currentTime = currentTime
-    adjustSelectedIdForCurrentTime(state)
     const selectedLayer = getters[types.g.SELECTED_LAYER](state)
     if (!selectedLayer) return
     if (selectedLayer.from <= currentTime && currentTime < selectedLayer.to)

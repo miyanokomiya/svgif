@@ -5,7 +5,6 @@ import mutations from './mutations'
 const state = {
   clipList: [],
   layerList: [],
-  selectedId: -1,
   selectedLayerId: -1,
   editTargetType: ['clip', 'layer'][0],
   currentTime: 0,
