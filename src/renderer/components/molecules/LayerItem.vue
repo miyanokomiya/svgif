@@ -73,13 +73,13 @@ export default {
     }
   },
   methods: {
-    changeFrom({ x, y }) {
+    changeFrom({ x }) {
       if (!this.$el) return
       const width = this.$el.getBoundingClientRect().width
       const rate = x / width
       this.moveDelayFrom = rate * this.wholeDelay
     },
-    changeTo({ x, y }) {
+    changeTo({ x }) {
       if (!this.$el) return
       const width = this.$el.getBoundingClientRect().width
       const rate = x / width

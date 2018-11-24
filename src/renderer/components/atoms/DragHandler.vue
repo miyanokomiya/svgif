@@ -24,10 +24,14 @@ export default {
     },
     endDrag() {
       this.clearHandler()
-      this.$emit('dragEnd', {
-        x: this.moveP.x - this.startP.x,
-        y: this.moveP.y - this.startP.y
-      })
+      if (this.startP && this.moveP) {
+        this.$emit('dragEnd', {
+          x: this.moveP.x - this.startP.x,
+          y: this.moveP.y - this.startP.y,
+          from: this.startP,
+          to: this.moveP
+        })
+      }
       this.startP = null
       this.moveP = null
     },
@@ -38,7 +42,9 @@ export default {
       }
       this.$emit('drag', {
         x: this.moveP.x - this.startP.x,
-        y: this.moveP.y - this.startP.y
+        y: this.moveP.y - this.startP.y,
+        from: this.startP,
+        to: this.moveP
       })
     }
   }

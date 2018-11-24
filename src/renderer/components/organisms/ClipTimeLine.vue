@@ -1,5 +1,13 @@
 <template>
   <div class="time-line-wrapper">
+    <div class="current-time-slider" ref="currentTimeSlider">
+      <DragHandler
+        class="current-time-slider-item"
+        :style="{ 'margin-left': `${CURRENT_TIME / WHOLE_DELAY * 100}%` }"
+        @dragStart="startChangeCurrentTime"
+        @drag="setCurrentTime"
+      />
+    </div>
     <div class="time-line-body">
       <draggable
         class="clip-time-line"
@@ -61,6 +69,8 @@
           @click="createLayer"
         />
       </div>
+    </div>
+    <div class="current-time-wrapper">
       <div
         class="current-time"
         :style="{ left: `${CURRENT_TIME / WHOLE_DELAY * 100}%` }"
@@ -76,14 +86,19 @@ import draggable from 'vuedraggable'
 import SvgRender from '@/components/organisms/SvgRender'
 import ImagePanel from '@/components/atoms/ImagePanel'
 import LayerItem from '@/components/molecules/LayerItem'
+import DragHandler from '@/components/atoms/DragHandler'
 
 export default {
   components: {
     draggable,
     SvgRender,
     ImagePanel,
-    LayerItem
+    LayerItem,
+    DragHandler
   },
+  data: () => ({
+    currentTimeAtStart: 0
+  }),
   computed: {
     ...mapGetters({
       CLIP_LIST: clipTypes.g.CLIP_LIST,
@@ -104,7 +119,8 @@ export default {
       _createLayer: clipTypes.a.CREATE_LAYER,
       _deleteLayer: clipTypes.a.DELETE_LAYER,
       _selectLayer: clipTypes.a.SELECT_LAYER,
-      _updateLayerRange: clipTypes.a.UPDATE_LAYER_RANGE
+      _updateLayerRange: clipTypes.a.UPDATE_LAYER_RANGE,
+      _setCurrentTime: clipTypes.a.SET_CURRENT_TIME
     }),
     isEditTargetLayer(id) {
       if (this.EDIT_TARGET_TYPE !== 'layer') return false
@@ -114,6 +130,7 @@ export default {
       return !!this.CURRENT_LAYER_LIST.find(l => l.id === id)
     },
     isSelectedLayer(id) {
+      if (!this.SELECTED_LAYER) return false
       return this.SELECTED_LAYER.id === id
     },
     selectClip(id) {
@@ -145,6 +162,16 @@ export default {
     },
     changeRange({ id, from, to }) {
       this._updateLayerRange({ id, from, to })
+    },
+    startChangeCurrentTime() {
+      this.currentTimeAtStart = this.CURRENT_TIME
+    },
+    setCurrentTime({ x }) {
+      if (!this.$refs.currentTimeSlider) return
+      const width = this.$refs.currentTimeSlider.getBoundingClientRect().width
+      const rate = x / width
+      const currentTime = this.currentTimeAtStart + rate * this.WHOLE_DELAY
+      this._setCurrentTime(Math.max(Math.min(currentTime, this.WHOLE_DELAY), 0))
     }
   }
 }
@@ -152,23 +179,52 @@ export default {
 
 <style lang="scss" scoped>
 $button-width: 2rem;
+$time-line-slider-height: 1rem;
+$time-line-slider-item-width: 3rem;
 
 .time-line-wrapper {
-  overflow: auto;
+  position: relative;
+  height: 100%;
+}
+.current-time-slider {
+  position: relative;
+  height: $time-line-slider-height;
+  margin-left: $button-width;
+  background-color: gray;
+  border: 0.1rem solid #aaa;
+  overflow: hidden;
+  user-select: none;
+  .current-time-slider-item {
+    position: absolute;
+    left: -$time-line-slider-item-width / 2;
+    height: 100%;
+    width: $time-line-slider-item-width;
+    background-color: #eee;
+    border: 0.1rem solid #ccc;
+    cursor: move;
+  }
 }
 .time-line-body {
-  position: relative;
+  height: calc(100% - #{$time-line-slider-height});
+  overflow: auto;
+}
+.current-time-wrapper {
+  position: absolute;
+  top: 0;
+  margin-left: $button-width;
+  width: calc(100% - #{$button-width});
+  height: calc(100% - #{$time-line-slider-height});
+  pointer-events: none;
 }
 .current-time {
   position: absolute;
+  top: $time-line-slider-height;
+  width: 0.2rem;
   height: 100%;
-  top: 0;
-  width: 0.3rem;
-  margin-left: $button-width; // FIXME 削除ボタン部分の幅を含めた％計算になってしまっている
+  margin-left: -0.1rem;
   background-color: lime;
   border-radius: 0.2rem;
   opacity: 0.8;
-  pointer-events: none;
 }
 .clip-time-line {
   padding-left: $button-width;
