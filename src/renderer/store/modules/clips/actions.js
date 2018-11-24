@@ -120,6 +120,21 @@ const actions = {
     commit(types.m.SWAP_LAYER_ORDER, { from, to })
     return Promise.resolve()
   },
+  [types.a.CLONE_LAYER]({ commit, state }, { id, index }) {
+    const originalIndex = state.layerList.findIndex(l => l.id === id)
+    const original = state.layerList[originalIndex]
+    commit(types.m.ADD_LAYER, {
+      layer: getLayer({
+        from: original.from,
+        to: original.to,
+        svgElementList: original.svgElementList,
+        svgElementUndoStack: original.svgElementUndoStack,
+        svgElementRedoStack: original.svgElementRedoStack
+      }),
+      index: index >= 0 ? index : originalIndex + 1
+    })
+    return Promise.resolve()
+  },
   [types.a.SELECT_LAYER]({ commit }, id) {
     commit(types.m.SELECT_LAYER, id)
     return Promise.resolve()

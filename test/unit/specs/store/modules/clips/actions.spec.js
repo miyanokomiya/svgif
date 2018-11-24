@@ -400,6 +400,52 @@ describe('store/modules/clips/actions', () => {
       })
     })
   })
+  describe('CLONE_LAYER', () => {
+    it('from to が継承されたクリップが追加されること', done => {
+      const state = {
+        layerList: [{ id: 1, from: 10, to: 100 }, { id: 2, from: 20, to: 200 }]
+      }
+      testAction({
+        done,
+        action: actions[types.a.CLONE_LAYER],
+        state,
+        payload: { id: 1, index: 0 },
+        mutations: [
+          {
+            type: types.m.ADD_LAYER,
+            test: ({ layer, index }) => {
+              expect(layer.id).not.to.equal(1)
+              expect(layer.from).to.equal(10)
+              expect(layer.to).to.equal(100)
+              expect(index).to.equal(0)
+            }
+          }
+        ]
+      })
+    })
+    it('index を省略すると、複製対象の直後に挿入されること', done => {
+      const state = {
+        layerList: [{ id: 1, from: 10, to: 100 }, { id: 2, from: 20, to: 200 }]
+      }
+      testAction({
+        done,
+        action: actions[types.a.CLONE_LAYER],
+        state,
+        payload: { id: 1 },
+        mutations: [
+          {
+            type: types.m.ADD_LAYER,
+            test: ({ layer, index }) => {
+              expect(layer.id).not.to.equal(1)
+              expect(layer.from).to.equal(10)
+              expect(layer.to).to.equal(100)
+              expect(index).to.equal(1)
+            }
+          }
+        ]
+      })
+    })
+  })
   describe('SELECT_LAYER', () => {
     it('mutationが正しく実行されること', done => {
       testAction({
