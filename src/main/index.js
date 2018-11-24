@@ -19,8 +19,8 @@ function createMainWindow() {
       ? `http://localhost:9080/index.html`
       : `file://${__dirname}/index.html`
   mainWindow = new BrowserWindow({
-    height: 563,
-    width: 1000,
+    height: 800,
+    width: 1200,
     useContentSize: true
   })
 
