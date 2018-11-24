@@ -54,6 +54,7 @@
             :wholeSize="WHOLE_SIZE"
             :current="isCurrentLayer(layer.id)"
             :editing="isEditTargetLayer(layer.id)"
+            :splitFrameList="splitFrameList"
             @deleteLayer="deleteLayer"
             @selectLayer="selectLayer"
             @changeRange="changeRange"
@@ -95,6 +96,7 @@ import SvgRender from '@/components/organisms/SvgRender'
 import ImagePanel from '@/components/atoms/ImagePanel'
 import LayerItem from '@/components/molecules/LayerItem'
 import DragHandler from '@/components/atoms/DragHandler'
+import { getSplitFrameList } from '@/commons/utils/gif'
 
 export default {
   components: {
@@ -119,7 +121,13 @@ export default {
       SELECTED_LAYER: clipTypes.g.SELECTED_LAYER,
       CURRENT_TIME: clipTypes.g.CURRENT_TIME,
       EDIT_TARGET_TYPE: clipTypes.g.EDIT_TARGET_TYPE
-    })
+    }),
+    splitFrameList() {
+      return getSplitFrameList({
+        clipList: this.CLIP_LIST,
+        layerList: this.LAYER_LIST
+      })
+    }
   },
   beforeDestroy() {
     if (this.playGifTimer) {

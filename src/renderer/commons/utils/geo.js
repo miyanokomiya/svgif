@@ -114,3 +114,11 @@ export function rotate(p, radian, base = { x: 0, y: 0 }) {
     y: base.y + rotateVec.y
   }
 }
+
+export function fitNearValue(val, list = [], threshold = 0) {
+  const nearList = list
+    .map(a => ({ val: a, dif: Math.abs(a - val) }))
+    .filter(info => info.dif <= threshold)
+    .sort((a, b) => a.dif - b.dif)
+  return nearList.length > 0 ? nearList[0].val : val
+}

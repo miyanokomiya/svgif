@@ -199,4 +199,28 @@ describe('geo 幾何計算モジュールのテスト', () => {
       expect(p.y).to.closeTo(0, THRESHOLD)
     })
   })
+  describe('fitNearValue 近傍値へのフィット', () => {
+    context('閾値以下に近い値がない場合', () => {
+      it('もとの値が取得できること', () => {
+        const res = geo.fitNearValue(3.1, [1, 2, 3, 4], 0.05)
+        expect(res).to.equal(3.1)
+      })
+    })
+    context('閾値以下に近い値が１つある場合', () => {
+      it('閾値以下の値が取得できること', () => {
+        const res = geo.fitNearValue(3.1, [1, 2, 3, 4], 0.2)
+        expect(res).to.equal(3)
+      })
+    })
+    context('閾値以下に近い値が複数ある場合', () => {
+      it('最も近い値が取得できること', () => {
+        const res = geo.fitNearValue(3.4, [1, 2, 3, 4], 1)
+        expect(res).to.equal(3)
+      })
+      it('最も近い値が取得できること', () => {
+        const res = geo.fitNearValue(3.6, [1, 2, 3, 4], 1)
+        expect(res).to.equal(4)
+      })
+    })
+  })
 })

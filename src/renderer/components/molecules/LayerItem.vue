@@ -32,6 +32,7 @@
 <script>
 import SvgRender from '@/components/organisms/SvgRender'
 import DragHandler from '@/components/atoms/DragHandler'
+import { fitNearValue } from '@/commons/utils/geo'
 
 export default {
   components: {
@@ -62,6 +63,10 @@ export default {
     editing: {
       type: Boolean,
       default: false
+    },
+    splitFrameList: {
+      type: Array,
+      default: () => []
     }
   },
   computed: {
@@ -70,9 +75,20 @@ export default {
     },
     localTo() {
       return this.layer.to + this.moveDelayTo
+    },
+    fitTargetList() {
+      return this.splitFrameList.filter(
+        a => a !== this.layer.from && a !== this.layer.to
+      )
+    },
+    fitThreshold() {
+      return Math.min(Math.max(this.wholeDelay / 1000, 10), 100)
     }
   },
   methods: {
+    fitNearFrame(val) {
+      return fitNearValue(val, this.fitTargetList, this.fitThreshold)
+    },
     changeFrom({ x }) {
       if (!this.$el) return
       const width = this.$el.getBoundingClientRect().width
@@ -81,6 +97,8 @@ export default {
       if (this.localFrom < 0) this.moveDelayFrom = -this.layer.from
       else if (this.localTo < this.localFrom)
         this.moveDelayFrom = this.localTo - this.layer.from
+      // フィット
+      this.moveDelayFrom = this.fitNearFrame(this.localFrom) - this.layer.from
     },
     changeTo({ x }) {
       if (!this.$el) return
@@ -91,6 +109,8 @@ export default {
         this.moveDelayTo = this.layer.from - this.layer.to
       else if (this.wholeDelay < this.localTo)
         this.moveDelayTo = this.wholeDelay - this.layer.to
+      // フィット
+      this.moveDelayTo = this.fitNearFrame(this.localTo) - this.layer.to
     },
     changeFromTo({ x }) {
       this.changeFrom({ x })
