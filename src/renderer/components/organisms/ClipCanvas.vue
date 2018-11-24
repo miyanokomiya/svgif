@@ -608,6 +608,7 @@ export default {
             this.$svgif.elementType = 'rectangle'
             const elm = this.createElement({ ...p })
             elm.base64 = base64
+            elm.strokeWidth = 0
             elm.defaultAspect = width / height
             // サイズはキャンバスに収める
             elm.width = Math.min(width, this.WHOLE_SIZE.width / 3)

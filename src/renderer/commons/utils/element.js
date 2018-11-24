@@ -118,8 +118,12 @@ function resizeRectangle({ element, x, y, drawMode, scale }) {
     const d = geo.distance(geo.getRectangleCenter(element), { x, y })
     to = {
       id: element.id,
+      // 画像ありの場合は0を許容
       strokeWidth: Math.min(
-        Math.max((d - element.height / 2 - htmlToSvg(scale, 15)) * 2, 1),
+        Math.max(
+          (d - element.height / 2 - htmlToSvg(scale, 15)) * 2,
+          element.base64 ? 0 : 1
+        ),
         element.height
       )
     }
