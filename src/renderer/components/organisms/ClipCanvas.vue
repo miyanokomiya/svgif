@@ -677,6 +677,7 @@ $split-handler-height: 0.8rem;
     align-items: center;
     flex-direction: column;
     border-top: 0.1rem solid gray;
+    border-bottom: 0.1rem solid gray;
     &:hover {
       opacity: 0.8;
       background-color: #eee;

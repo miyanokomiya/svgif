@@ -42,7 +42,7 @@
       <draggable
         class="layer-time-line"
         :value="LAYER_LIST"
-        :options="{ handle: '.handle' }"
+        :options="{ handle: '.layer-order-handle' }"
         @change="swapLayerOrder"
       >
         <transition-group type="transition" class="layer-list" name="layer-list">
@@ -60,7 +60,7 @@
           />
         </transition-group>
       </draggable>
-      <div>
+      <div class="add-layer-button-box">
         <el-button
           type="primary"
           size="mini"
@@ -119,6 +119,7 @@ export default {
       _swapClipOrder: clipTypes.a.SWAP_CLIP_ORDER,
       _createLayer: clipTypes.a.CREATE_LAYER,
       _deleteLayer: clipTypes.a.DELETE_LAYER,
+      _swapLayerOrder: clipTypes.a.SWAP_LAYER_ORDER,
       _selectLayer: clipTypes.a.SELECT_LAYER,
       _updateLayerRange: clipTypes.a.UPDATE_LAYER_RANGE,
       _setCurrentTime: clipTypes.a.SET_CURRENT_TIME
@@ -149,8 +150,7 @@ export default {
       this._swapClipOrder({ to: newIndex, from: oldIndex })
     },
     swapLayerOrder({ moved: { newIndex, oldIndex } }) {
-      console.log({ to: newIndex, from: oldIndex })
-      // this._swapClipOrder({ to: newIndex, from: oldIndex })
+      this._swapLayerOrder({ to: newIndex, from: oldIndex })
     },
     createLayer() {
       this._createLayer()
@@ -186,6 +186,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+$handle-width: 1rem;
 $button-width: 2rem;
 $time-line-slider-height: 1.4rem;
 $time-line-slider-item-width: 3rem;
@@ -197,7 +198,8 @@ $time-line-slider-item-width: 3rem;
 .current-time-slider {
   position: relative;
   height: $time-line-slider-height;
-  margin-left: $button-width;
+  margin-left: $handle-width;
+  margin-right: $button-width;
   background-color: gray;
   border: 0.1rem solid #aaa;
   overflow: hidden;
@@ -220,8 +222,9 @@ $time-line-slider-item-width: 3rem;
 .current-time-wrapper {
   position: absolute;
   top: 0;
-  margin-left: $button-width;
-  width: calc(100% - #{$button-width});
+  margin-left: $handle-width;
+  margin-right: $button-width;
+  width: calc(100% - #{$handle-width} - #{$button-width});
   height: calc(100% - #{$time-line-slider-height});
   pointer-events: none;
 }
@@ -236,7 +239,9 @@ $time-line-slider-item-width: 3rem;
   opacity: 0.8;
 }
 .clip-time-line {
-  padding-left: $button-width;
+  padding-left: $handle-width;
+  padding-right: $button-width;
+  border-bottom: 0.1rem solid gray;
   .clip-list {
     display: flex;
     height: 8rem;
@@ -292,9 +297,11 @@ $time-line-slider-item-width: 3rem;
     transition: transform 0.5s;
   }
 }
-.add-layer-button {
-  width: $button-width;
-  padding-right: 0;
-  padding-left: 0;
+.add-layer-button-box {
+  display: flex;
+  padding: 0.2rem 0;
+  .add-layer-button {
+    margin: 0 auto;
+  }
 }
 </style>

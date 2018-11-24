@@ -1,12 +1,6 @@
 <template>
   <div class="layer-item">
-    <el-button
-      type="danger"
-      size="mini"
-      icon="el-icon-delete"
-      class="delete-layer-button"
-      @click="$emit('deleteLayer', layer.id)"
-    />
+    <div class="layer-order-handle"><div/><div/></div>
     <div class="right" :class="{ current, editing }">
       <div class="box" :style="{left: `${localFrom / wholeDelay * 100}%`, right: `${(wholeDelay - localTo) / wholeDelay * 100}%`}" >
         <DragHandler class="from" @drag="changeFrom" @dragEnd="changeRange" />
@@ -25,6 +19,13 @@
         <DragHandler class="to" @drag="changeTo" @dragEnd="changeRange" />
       </div>
     </div>
+    <el-button
+      type="danger"
+      size="mini"
+      icon="el-icon-delete"
+      class="delete-layer-button"
+      @click="$emit('deleteLayer', layer.id)"
+    />
   </div>
 </template>
 
@@ -109,6 +110,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+$handle-width: 1rem;
 $button-width: 2rem;
 $edge-width: 0.8rem;
 
@@ -117,7 +119,23 @@ $edge-width: 0.8rem;
   height: 3rem;
   width: 100%;
   border-bottom: 0.1rem solid gray;
-  cursor: pointer;
+  .layer-order-handle {
+    width: $handle-width;
+    height: 100%;
+    border: 0.1rem solid gray;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: move;
+    div {
+      height: 0.3rem;
+      width: 0.3rem;
+      margin: 0.2rem 0;
+      background-color: gray;
+      border-radius: 50%;
+    }
+  }
   .delete-layer-button {
     width: $button-width;
     padding-right: 0;
