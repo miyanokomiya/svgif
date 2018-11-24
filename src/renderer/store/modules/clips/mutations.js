@@ -364,6 +364,11 @@ const mutations = {
       state.selectedLayerId = state.layerList[0].id
     else state.selectedLayerId = -1
   },
+  [types.m.SWAP_LAYER_ORDER](state, { from, to }) {
+    const layer = state.layerList[from]
+    state.layerList.splice(from, 1)
+    state.layerList.splice(to, 0, layer)
+  },
   [types.m.SELECT_LAYER](state, id) {
     const layer = state.layerList.find(c => c.id === id)
     if (!layer) return

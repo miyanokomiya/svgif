@@ -116,6 +116,10 @@ const actions = {
     commit(types.m.REMOVE_LAYER, id)
     return Promise.resolve()
   },
+  [types.a.SWAP_LAYER_ORDER]({ commit }, { from, to }) {
+    commit(types.m.SWAP_LAYER_ORDER, { from, to })
+    return Promise.resolve()
+  },
   [types.a.SELECT_LAYER]({ commit }, id) {
     commit(types.m.SELECT_LAYER, id)
     return Promise.resolve()

@@ -857,6 +857,32 @@ describe('store/modules/clips/mutations', () => {
       expect(state.layerList[0].id).to.equal(2)
     })
   })
+  describe('SWAP_LAYER_ORDER', () => {
+    context('from < to のとき', () => {
+      it('from の要素がと to の位置に変更されること', () => {
+        const state = {
+          layerList: [{ id: 1 }, { id: 2 }, { id: 3 }, { id: 4 }]
+        }
+        mutations[types.m.SWAP_LAYER_ORDER](state, { from: 0, to: 2 })
+        expect(state.layerList[0].id).to.equal(2)
+        expect(state.layerList[1].id).to.equal(3)
+        expect(state.layerList[2].id).to.equal(1)
+        expect(state.layerList[3].id).to.equal(4)
+      })
+    })
+    context('from > to のとき', () => {
+      it('from の要素がと to の位置に変更されること', () => {
+        const state = {
+          layerList: [{ id: 1 }, { id: 2 }, { id: 3 }, { id: 4 }]
+        }
+        mutations[types.m.SWAP_LAYER_ORDER](state, { from: 2, to: 0 })
+        expect(state.layerList[0].id).to.equal(3)
+        expect(state.layerList[1].id).to.equal(1)
+        expect(state.layerList[2].id).to.equal(2)
+        expect(state.layerList[3].id).to.equal(4)
+      })
+    })
+  })
   describe('SELECT_LAYER', () => {
     it('選択対象が存在する場合、 selectedLayerId が変更されること', () => {
       const state = {

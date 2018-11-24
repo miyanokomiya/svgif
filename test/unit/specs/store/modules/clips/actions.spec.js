@@ -382,6 +382,24 @@ describe('store/modules/clips/actions', () => {
       })
     })
   })
+  describe('SWAP_LAYER_ORDER', () => {
+    it('mutationが正しく実行されること', done => {
+      testAction({
+        done,
+        action: actions[types.a.SWAP_LAYER_ORDER],
+        payload: { from: 1, to: 10 },
+        mutations: [
+          {
+            type: types.m.SWAP_LAYER_ORDER,
+            test: ({ from, to }) => {
+              expect(from).to.equal(1)
+              expect(to).to.equal(10)
+            }
+          }
+        ]
+      })
+    })
+  })
   describe('SELECT_LAYER', () => {
     it('mutationが正しく実行されること', done => {
       testAction({
