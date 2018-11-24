@@ -101,7 +101,8 @@ describe('store/modules/clips/mutations', () => {
           { id: 2, svgElementList: [], delay: 10 },
           { id: 3, svgElementList: [], delay: 10 }
         ],
-        currentTime: 15
+        currentTime: 15,
+        layerList: []
       }
       mutations[types.m.REMOVE_CLIP](state, 2)
       it('currentTime が 変化しないこと', () => {
@@ -115,11 +116,47 @@ describe('store/modules/clips/mutations', () => {
           { id: 2, svgElementList: [], delay: 10 },
           { id: 3, svgElementList: [], delay: 10 }
         ],
-        currentTime: 25
+        currentTime: 25,
+        layerList: []
       }
       mutations[types.m.REMOVE_CLIP](state, 2)
       it('currentTime が 全体最終時間になること', () => {
         expect(state.currentTime).to.equal(20)
+      })
+    })
+    describe('layer の時間範囲調整', () => {
+      const state = {
+        clipList: [
+          { id: 1, svgElementList: [], delay: 10 },
+          { id: 2, svgElementList: [], delay: 10 },
+          { id: 3, svgElementList: [], delay: 10 }
+        ],
+        currentTime: 25,
+        layerList: [
+          { from: 0, to: 10 },
+          { from: 18, to: 25 },
+          { from: 26, to: 30 },
+          { from: 5, to: 15 },
+          { from: 5, to: 25 },
+          { from: 15, to: 18 }
+        ]
+      }
+      mutations[types.m.REMOVE_CLIP](state, 2)
+      it('to と from が 全体最終時間に収まる場合は変化ないこと', () => {
+        expect(state.layerList[0].from).to.equal(0)
+        expect(state.layerList[0].to).to.equal(10)
+      })
+      it('to と from が 全体最終時間に収まらない場合はずれること', () => {
+        expect(state.layerList[1].from).to.equal(10)
+        expect(state.layerList[1].to).to.equal(15)
+        expect(state.layerList[2].from).to.equal(16)
+        expect(state.layerList[2].to).to.equal(20)
+        expect(state.layerList[3].from).to.equal(5)
+        expect(state.layerList[3].to).to.equal(10)
+        expect(state.layerList[4].from).to.equal(5)
+        expect(state.layerList[4].to).to.equal(15)
+        expect(state.layerList[5].from).to.equal(10)
+        expect(state.layerList[5].to).to.equal(10)
       })
     })
   })

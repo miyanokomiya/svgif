@@ -172,11 +172,37 @@ const mutations = {
       mainFunction: () => {
         const index = state.clipList.findIndex(c => c.id === id)
         if (index === -1) return
+        const clip = state.clipList[index]
+        // 削除クリップの時間範囲
+        const from = state.clipList.reduce(
+          (sum, c, i) => (i < index ? sum + c.delay : sum),
+          0
+        )
+        const to = from + clip.delay
         state.clipList.splice(index, 1)
         const wholeDelay = getters[types.g.WHOLE_DELAY](state)
         if (wholeDelay < state.currentTime) {
           state.currentTime = wholeDelay
         }
+        // レイヤーの時間範囲調整
+        state.layerList.forEach(layer => {
+          if (layer.to < from) {
+            // 変更なし
+          } else if (layer.from < from && layer.to < to) {
+            layer.to = from
+          } else if (layer.from < from && to <= layer.to) {
+            layer.to -= clip.delay
+          } else if (from <= layer.from && layer.to < to) {
+            layer.from = from
+            layer.to = from
+          } else if (from <= layer.from && layer.from < to && to <= layer.to) {
+            layer.from = from
+            layer.to = from + (layer.to - (from + clip.delay))
+          } else {
+            layer.from -= clip.delay
+            layer.to = from + (layer.to - (from + clip.delay))
+          }
+        })
       }
     })
   },
