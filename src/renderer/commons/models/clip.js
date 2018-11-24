@@ -14,16 +14,32 @@ export function getClip(clip = {}) {
   }
 }
 
+function cloneSvgElementList(svgElementList) {
+  return svgElementList.map(elm => ({ ...elm, id: createId() }))
+}
+
 export function getSvgElementProps(clip = {}) {
   return {
     svgElementList: clip.svgElementList
-      ? clip.svgElementList.map(elm => ({ id: createId(), ...elm }))
+      ? cloneSvgElementList(clip.svgElementList)
       : [],
     svgElementUndoStack: clip.svgElementUndoStack
-      ? clip.svgElementUndoStack.map(data => JSON.parse(JSON.stringify(data)))
+      ? clip.svgElementUndoStack.map(data => {
+          const clone = JSON.parse(JSON.stringify(data))
+          return {
+            ...clone,
+            svgElementList: cloneSvgElementList(data.svgElementList)
+          }
+        })
       : [],
     svgElementRedoStack: clip.svgElementRedoStack
-      ? clip.svgElementRedoStack.map(data => JSON.parse(JSON.stringify(data)))
+      ? clip.svgElementRedoStack.map(data => {
+          const clone = JSON.parse(JSON.stringify(data))
+          return {
+            ...clone,
+            svgElementList: cloneSvgElementList(data.svgElementList)
+          }
+        })
       : []
   }
 }
