@@ -197,7 +197,7 @@ export default {
         )
       } else {
         return this.CURRENT_LAYER_LIST.filter(
-          layer => layer.id !== this.SELECTED_LAYER.id
+          layer => !this.SELECTED_LAYER || layer.id !== this.SELECTED_LAYER.id
         ).reduce(
           (list, layer) => [...list, ...layer.svgElementList],
           this.SELECTED_CLIP.svgElementList
