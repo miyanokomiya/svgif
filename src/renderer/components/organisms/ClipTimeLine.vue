@@ -1,11 +1,11 @@
 <template>
   <div class="time-line-wrapper">
-    <div class="current-time-slider" ref="currentTimeSlider">
+    <div class="current-time-slider" ref="currentTimeSlider" @click.self="setCurrentTime">
       <DragHandler
         class="current-time-slider-item"
         :style="{ 'margin-left': `${CURRENT_TIME / WHOLE_DELAY * 100}%` }"
         @dragStart="startChangeCurrentTime"
-        @drag="setCurrentTime"
+        @drag="moveCurrentTime"
       />
     </div>
     <div class="time-line-body">
@@ -82,6 +82,7 @@
 <script>
 import { mapGetters, mapActions } from 'vuex'
 import clipTypes from '@/store/modules/clips/types'
+import { getPoint } from '@/commons/utils/canvas'
 import draggable from 'vuedraggable'
 import SvgRender from '@/components/organisms/SvgRender'
 import ImagePanel from '@/components/atoms/ImagePanel'
@@ -166,12 +167,19 @@ export default {
     startChangeCurrentTime() {
       this.currentTimeAtStart = this.CURRENT_TIME
     },
-    setCurrentTime({ x }) {
+    moveCurrentTime({ x }) {
       if (!this.$refs.currentTimeSlider) return
       const width = this.$refs.currentTimeSlider.getBoundingClientRect().width
       const rate = x / width
       const currentTime = this.currentTimeAtStart + rate * this.WHOLE_DELAY
       this._setCurrentTime(Math.max(Math.min(currentTime, this.WHOLE_DELAY), 0))
+    },
+    setCurrentTime(e) {
+      if (!this.$refs.currentTimeSlider) return
+      const p = getPoint(e)
+      const width = this.$refs.currentTimeSlider.getBoundingClientRect().width
+      const rate = p.x / width
+      this._setCurrentTime(rate * this.WHOLE_DELAY)
     }
   }
 }
@@ -194,6 +202,7 @@ $time-line-slider-item-width: 3rem;
   border: 0.1rem solid #aaa;
   overflow: hidden;
   user-select: none;
+  cursor: pointer;
   .current-time-slider-item {
     position: absolute;
     left: -$time-line-slider-item-width / 2;
