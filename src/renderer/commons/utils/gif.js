@@ -60,6 +60,22 @@ export function splitFrame(rangeList) {
   return ret
 }
 
+export function getSplitFrameList({ clipList, layerList }) {
+  let current = 0
+  const clipRangeList = clipList.map(clip => {
+    const range = {
+      from: current,
+      to: current + clip.delay
+    }
+    current += clip.delay
+    return range
+  })
+  return splitFrame([
+    ...clipRangeList,
+    ...layerList.map(l => ({ from: l.from, to: l.to }))
+  ])
+}
+
 export function getFrameInfo({ clipList, layerList, currentTime }) {
   let current = 0
   let currentClip = null
@@ -80,19 +96,7 @@ export function getFrameInfo({ clipList, layerList, currentTime }) {
 }
 
 export function getFrameInfoList({ clipList, layerList }) {
-  let current = 0
-  const clipRangeList = clipList.map(clip => {
-    const range = {
-      from: current,
-      to: current + clip.delay
-    }
-    current += clip.delay
-    return range
-  })
-  const frameList = splitFrame([
-    ...clipRangeList,
-    ...layerList.map(l => ({ from: l.from, to: l.to }))
-  ])
+  const frameList = getSplitFrameList({ clipList, layerList })
   return frameList.map((currentTime, i) => {
     return {
       ...getFrameInfo({ clipList, layerList, currentTime }),

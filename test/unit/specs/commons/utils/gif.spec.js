@@ -43,6 +43,29 @@ describe('gif GIF関連処理モジュール', () => {
       expect(res.layerList[1].id).to.equal(102)
     })
   })
+  describe('getSplitFrameList', () => {
+    const getArgs = () => ({
+      clipList: [
+        { id: 1, delay: 10 },
+        { id: 2, delay: 10 },
+        { id: 3, delay: 10 }
+      ],
+      layerList: [
+        { id: 101, from: 0, to: 10 },
+        { id: 102, from: 5, to: 10 },
+        { id: 103, from: 10, to: 15 }
+      ]
+    })
+    it('クリップとレイヤーのフレーム区切り一覧を取得できること', () => {
+      const res = gif.getSplitFrameList(getArgs())
+      expect(res).to.have.lengthOf(5)
+      expect(res[0]).to.equal(0)
+      expect(res[1]).to.equal(5)
+      expect(res[2]).to.equal(10)
+      expect(res[3]).to.equal(15)
+      expect(res[4]).to.equal(20)
+    })
+  })
   describe('getFrameInfoList', () => {
     const getArgs = () => ({
       clipList: [
