@@ -10,13 +10,18 @@
     <div class="right" :class="{ current, editing }">
       <div class="box" :style="{left: `${localFrom / wholeDelay * 100}%`, right: `${(wholeDelay - localTo) / wholeDelay * 100}%`}" >
         <DragHandler class="from" @drag="changeFrom" @dragEnd="changeRange" />
-        <div class="range"  @click="$emit('selectLayer', layer.id)">
+        <DragHandler
+          class="range"
+          @click.native="$emit('selectLayer', layer.id)"
+          @drag="changeFromTo"
+          @dragEnd="changeRange"
+        >
           <SvgRender
             class="svg"
             :svgElementList="layer.svgElementList"
             :size="wholeSize"
           />
-        </div>
+        </DragHandler>
         <DragHandler class="to" @drag="changeTo" @dragEnd="changeRange" />
       </div>
     </div>
@@ -60,16 +65,10 @@ export default {
   },
   computed: {
     localFrom() {
-      return Math.max(
-        Math.min(this.layer.from + this.moveDelayFrom, this.layer.to),
-        0
-      )
+      return this.layer.from + this.moveDelayFrom
     },
     localTo() {
-      return Math.min(
-        Math.max(this.layer.to + this.moveDelayTo, this.layer.from),
-        this.wholeDelay
-      )
+      return this.layer.to + this.moveDelayTo
     }
   },
   methods: {
@@ -78,12 +77,23 @@ export default {
       const width = this.$el.getBoundingClientRect().width
       const rate = x / width
       this.moveDelayFrom = rate * this.wholeDelay
+      if (this.localFrom < 0) this.moveDelayFrom = -this.layer.from
+      else if (this.localTo < this.localFrom)
+        this.moveDelayFrom = this.localTo - this.layer.from
     },
     changeTo({ x }) {
       if (!this.$el) return
       const width = this.$el.getBoundingClientRect().width
       const rate = x / width
       this.moveDelayTo = rate * this.wholeDelay
+      if (this.localTo < this.localFrom)
+        this.moveDelayTo = this.layer.from - this.layer.to
+      else if (this.wholeDelay < this.localTo)
+        this.moveDelayTo = this.wholeDelay - this.layer.to
+    },
+    changeFromTo({ x }) {
+      this.changeFrom({ x })
+      this.changeTo({ x })
     },
     changeRange() {
       this.$emit('changeRange', {
