@@ -121,6 +121,11 @@ export default {
       EDIT_TARGET_TYPE: clipTypes.g.EDIT_TARGET_TYPE
     })
   },
+  beforeDestroy() {
+    if (this.playGifTimer) {
+      clearTimeout(this.playGifTimer)
+    }
+  },
   methods: {
     ...mapActions({
       _selectClip: clipTypes.a.SELECT_CLIP,
