@@ -896,6 +896,7 @@ describe('store/modules/clips/mutations', () => {
         }
         mutations[types.m.SET_CURRENT_TIME](state, 100)
         expect(state.selectedLayerId).to.equal(-1)
+        expect(state.editTargetType).to.equal('clip')
       })
       it('選択レイヤーの範囲に収まっているなら、変更されないこと', () => {
         const state = {

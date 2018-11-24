@@ -361,6 +361,7 @@ const mutations = {
     if (selectedLayer.from <= currentTime && currentTime < selectedLayer.to)
       return
     state.selectedLayerId = -1
+    state.editTargetType = 'clip'
   },
   [types.m.SET_EDIT_TARGET_TYPE](state, type) {
     state.editTargetType = type
