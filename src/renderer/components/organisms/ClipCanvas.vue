@@ -8,7 +8,8 @@
     <template v-if="SELECTED_CLIP">
       <div
         class="canvas"
-        ref="wrapper"
+        ref="canvas"
+        :style="{ height: `${$svgif.canvasSplitRate * 100}%` }"
       >
         <ImagePanel
           :src="SELECTED_CLIP.base64"
@@ -80,7 +81,16 @@
           />
         </SvgCanvas>
       </div>
-      <ClipTimeLine class="time-line" />
+      <div :style="{ height: `${100 - $svgif.canvasSplitRate * 100}%` }">
+        <DragHandler
+          class="split-handler"
+          @dragStart="moveCanvasSplitRateStart"
+          @drag="moveCanvasSplitRate"
+        >
+          <div/><div/>
+        </DragHandler>
+        <ClipTimeLine class="time-line" />
+      </div>
       <el-dialog title="Text" :visible.sync="showEtidTextDialog">
         <form @submit.prevent="changeText">
           <el-input
@@ -130,6 +140,7 @@ import ClipTimeLine from '@/components/organisms/ClipTimeLine'
 import SvgCanvas from '@/components/molecules/SvgCanvas'
 import SvgElement from '@/components/molecules/SvgElement'
 import SvgRectangle from '@/components/atoms/SvgRectangle'
+import DragHandler from '@/components/atoms/DragHandler'
 import { createId } from '@/commons/models/base'
 
 export default {
@@ -138,7 +149,8 @@ export default {
     SvgCanvas,
     SvgElement,
     SvgRectangle,
-    ClipTimeLine
+    ClipTimeLine,
+    DragHandler
   },
   data: () => ({
     scale: 1,
@@ -154,7 +166,8 @@ export default {
     canvasDragging: false,
     showEtidTextDialog: false,
     editedText: '',
-    clipboard: []
+    clipboard: [],
+    canvasSplitRatePast: 0.7
   }),
   computed: {
     ...mapGetters({
@@ -243,6 +256,9 @@ export default {
     elementMoveVec() {
       if (this.$svgif.canvasMode !== 'move') return { x: 0, y: 0 }
       return this.moveVec
+    },
+    canvasSplitRate() {
+      return this.$svgif.canvasSplitRate
     }
   },
   mounted() {
@@ -251,6 +267,9 @@ export default {
   },
   watch: {
     windowInfo() {
+      this.rescale()
+    },
+    canvasSplitRate() {
       this.rescale()
     },
     SELECTED_CLIP() {
@@ -298,8 +317,8 @@ export default {
     },
     rescale() {
       this.$nextTick(() => {
-        if (!this.$refs.wrapper) return
-        const wrapperRect = this.$refs.wrapper.getBoundingClientRect()
+        if (!this.$refs.canvas) return
+        const wrapperRect = this.$refs.canvas.getBoundingClientRect()
         const wRate = wrapperRect.width / this.WHOLE_SIZE.width
         const hRate = wrapperRect.height / this.WHOLE_SIZE.height
         const rate = Math.min(wRate, hRate)
@@ -608,18 +627,29 @@ export default {
     },
     startSelectFile() {
       this.$refs.fileInput.click()
+    },
+    moveCanvasSplitRateStart() {
+      this.canvasSplitRatePast = this.$svgif.canvasSplitRate
+    },
+    moveCanvasSplitRate({ y }) {
+      if (!this.$el || !this.$refs.canvas) return
+      const wrapperRect = this.$el.getBoundingClientRect()
+      const rate = y / wrapperRect.height
+      this.$svgif.canvasSplitRate = Math.min(
+        Math.max(this.canvasSplitRatePast + rate, 0.05),
+        0.95
+      )
     }
   }
 }
 </script>
 
 <style lang="scss" scoped>
-$time-line-height: 30%;
+$split-handler-height: 0.8rem;
 
 .clip-canvas {
   height: 100%;
   .canvas {
-    height: calc(100% - #{$time-line-height});
     position: relative;
     user-select: none;
     .svg {
@@ -640,8 +670,27 @@ $time-line-height: 30%;
       }
     }
   }
+  .split-handler {
+    height: $split-handler-height;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    border-top: 0.1rem solid gray;
+    &:hover {
+      opacity: 0.8;
+      background-color: #eee;
+    }
+    div {
+      width: 4rem;
+      height: 0.1rem;
+      margin-top: 0.13rem;
+      user-select: none;
+      background-color: gray;
+    }
+  }
   .time-line {
-    height: $time-line-height;
+    height: calc(100% - #{$split-handler-height});
   }
   .empty-board {
     display: flex;

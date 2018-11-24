@@ -187,7 +187,7 @@ export default {
 
 <style lang="scss" scoped>
 $button-width: 2rem;
-$time-line-slider-height: 1rem;
+$time-line-slider-height: 1.4rem;
 $time-line-slider-item-width: 3rem;
 
 .time-line-wrapper {

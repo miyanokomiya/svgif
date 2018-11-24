@@ -1,5 +1,5 @@
 <template>
-  <div @mousedown="startDrag"><slot/></div>
+  <div class="drag-handler" @mousedown="startDrag"><slot/></div>
 </template>
 
 <script>
@@ -50,3 +50,9 @@ export default {
   }
 }
 </script>
+
+<style lang="scss" scoped>
+.drag-handler {
+  cursor: move;
+}
+</style>

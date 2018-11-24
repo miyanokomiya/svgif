@@ -140,7 +140,6 @@ $edge-width: 0.8rem;
         width: $edge-width;
         background-color: #aaa;
         border: 0.1rem solid #666;
-        cursor: move;
       }
       .range {
         position: relative;
