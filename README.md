@@ -1,6 +1,7 @@
 # svgif
 
-> An electron-vue project
+#### Demo
+https://svgif-c077b.firebaseapp.com/
 
 #### Build Setup
 
@@ -14,9 +15,11 @@ npm run dev
 # build electron application for production
 npm run build
 
-# run unit & end-to-end tests
-npm test
+# build web application for production
+npm run build:web
 
+# test
+npm unit
 
 # lint all JS/Vue component files in `src/`
 npm run lint
